@@ -116,7 +116,7 @@ before_script:
   - drupal-ti before_script
   - pwd
   - ls -al
-  - phantomjs --ssl-protocol=any --ignore-ssl-errors=true drupal/vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768
+  - phantomjs --ssl-protocol=any --ignore-ssl-errors=true ../../drupal-8/vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768
 
 script:
   - drupal-ti script
