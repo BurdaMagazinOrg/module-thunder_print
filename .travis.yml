@@ -118,10 +118,10 @@ before_script:
   - cd ../../
   - pwd
   - ls -al
-  - cd drupal-8
+  - cd drupal-8/drupal
   - ls -al
 
-  - phantomjs --ssl-protocol=any --ignore-ssl-errors=true ../../drupal-8/vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768
+  - phantomjs --ssl-protocol=any --ignore-ssl-errors=true vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768
 
 script:
   - drupal-ti script
