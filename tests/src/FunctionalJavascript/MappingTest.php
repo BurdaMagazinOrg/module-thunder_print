@@ -19,6 +19,8 @@ class MappingTest extends JavascriptTestBase {
     $this->drupalGet('<front>');
 
     $this->assertSession()->pageTextContains('Drupal');
+
+    $this->assertTrue(TRUE);
   }
 
 }
