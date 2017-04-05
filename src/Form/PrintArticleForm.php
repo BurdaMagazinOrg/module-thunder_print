@@ -44,7 +44,7 @@ class PrintArticleForm extends ContentEntityForm {
 
       // If a new revision is created, save the current user as revision author.
       $entity->setRevisionCreationTime(REQUEST_TIME);
-      $entity->setRevisionUserId(\Drupal::currentUser()->id());
+      $entity->setRevisionUserId($this->currentUser()->id());
     }
     else {
       $entity->setNewRevision(FALSE);

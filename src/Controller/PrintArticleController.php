@@ -4,9 +4,12 @@ namespace Drupal\thunder_print\Controller;
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class PrintArticleController.
@@ -16,6 +19,33 @@ use Drupal\thunder_print\Entity\PrintArticleInterface;
  * @package Drupal\thunder_print\Controller
  */
 class PrintArticleController extends ControllerBase implements ContainerInjectionInterface {
+
+  protected $dateFormatter;
+
+  protected $renderer;
+
+  /**
+   * PrintArticleController constructor.
+   *
+   * @param \Drupal\Core\Datetime\DateFormatter $dateFormatter
+   *   Data formatter service.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   Renderer service.
+   */
+  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer) {
+    $this->dateFormatter = $dateFormatter;
+    $this->renderer = $renderer;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('date.formatter'),
+      $container->get('renderer')
+    );
+  }
 
   /**
    * Displays a Print article  revision.
@@ -50,7 +80,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
       ->loadRevision($print_article_revision);
     return $this->t('Revision of %title from %date', [
       '%title' => $print_article->label(),
-      '%date' => \Drupal::service('date.formatter')->format($print_article->getRevisionCreationTime()),
+      '%date' => $this->dateFormatter->format($print_article->getRevisionCreationTime()),
     ]);
   }
 
@@ -99,8 +129,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
         ];
 
         // Use revision link to link to revisions that are not active.
-        $date = \Drupal::service('date.formatter')
-          ->format($revision->revision_timestamp->value, 'short');
+        $date = $this->dateFormatter->format($revision->revision_timestamp->value, 'short');
         if ($vid != $print_article->getRevisionId()) {
           $link = $this->l($date, new Url('entity.print_article.revision', [
             'print_article' => $print_article->id(),
@@ -118,8 +147,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
             '#template' => '{% trans %}{{ date }} by {{ username }}{% endtrans %}{% if message %}<p class="revision-log">{{ message }}</p>{% endif %}',
             '#context' => [
               'date' => $link,
-              'username' => \Drupal::service('renderer')
-                ->renderPlain($username),
+              'username' => $this->renderer->renderPlain($username),
               'message' => [
                 '#markup' => $revision->revision_log_message->value,
                 '#allowed_tags' => Xss::getHtmlTagList(),
