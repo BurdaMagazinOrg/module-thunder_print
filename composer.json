@@ -1,0 +1,17 @@
+{
+    "name": "drupal/thunder_print",
+    "type": "drupal-module",
+    "description": "Connects Thunder with an InDesign Server to create IDMS snipptes.",
+    "license": "GPL-2.0+",
+    "keywords": ["Drupal"],
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Christian Fritsch",
+            "email": "christian.fritsch@burda.com"
+        }
+    ],
+    "require": {
+        "drupal/core": "~8.3"
+    }
+}
