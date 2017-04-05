@@ -23,7 +23,9 @@ class PrintArticleTypeAddForm extends PrintArticleTypeForm {
       '#type' => 'file',
       '#title' => $print_article_type->getEntityType()->getLabel(),
       '#description' => $this->t("IDMS file exported from InDesign."),
-    // '#required' => TRUE,.
+      // It's not possible to require the file field because of
+      // https://www.drupal.org/node/59750.
+      // '#required' => TRUE,.
     ];
 
     return $form;
@@ -32,44 +34,17 @@ class PrintArticleTypeAddForm extends PrintArticleTypeForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
-    $print_article_type = $this->entity;
-
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
     $all_files = \Drupal::request()->files->get('files', []);
     // Make sure there's an upload to process.
     if (!empty($all_files['idms'])) {
-
       $file_upload = $all_files['idms'];
-      $print_article_type->set('idms', file_get_contents($file_upload->getPathname()));
-
-      $status = $print_article_type->save();
-
-      switch ($status) {
-        case SAVED_NEW:
-          drupal_set_message($this->t('Created the %label @print_article_type.', [
-            '%label' => $print_article_type->label(),
-            '@print_article_type' => $print_article_type->getEntityType()
-              ->getLabel(),
-          ]));
-          break;
-
-        default:
-          drupal_set_message($this->t('Saved the %label @print_article_type.', [
-            '%label' => $print_article_type->label(),
-            '@print_article_type' => $print_article_type->getEntityType()
-              ->getLabel(),
-          ]));
-      }
+      $form_state->setValue('idms', file_get_contents($file_upload->getPathname()));
     }
     else {
-      drupal_set_message($this->t('It was not possible to upload idms file for the %label @print_article_type.', [
-        '%label' => $print_article_type->label(),
-        '@print_article_type' => $print_article_type->getEntityType()
-          ->getLabel(),
-      ]), 'error');
+      $form_state->setErrorByName('idms', $this->t('It was not possible to upload idms file.'));
     }
-
-    $form_state->setRedirectUrl($print_article_type->toUrl('collection'));
   }
 
 }

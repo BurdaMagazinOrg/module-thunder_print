@@ -46,7 +46,6 @@ class PrintArticleTypeForm extends EntityForm {
         '@print_article_type' => $print_article_type->getEntityType()
           ->getLabel(),
       ]),
-      '#required' => TRUE,
       '#default_value' => $print_article_type->get('description'),
     ];
 
