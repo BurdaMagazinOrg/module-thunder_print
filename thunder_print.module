@@ -1,0 +1,58 @@
+<?php
+
+/**
+ * @file
+ * Contains thunder_print.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function thunder_print_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the thunder_print module.
+    case 'help.page.thunder_print':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function thunder_print_theme() {
+  $theme = [];
+  $theme['print_article'] = array(
+    'render element' => 'elements',
+    'file' => 'print_article.page.inc',
+    'template' => 'print_article',
+  );
+  $theme['print_article_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'print_article.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+* Implements hook_theme_suggestions_HOOK().
+*/
+function thunder_print_theme_suggestions_print_article(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#print_article'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'print_article__' . $sanitized_view_mode;
+  $suggestions[] = 'print_article__' . $entity->bundle();
+  $suggestions[] = 'print_article__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'print_article__' . $entity->id();
+  $suggestions[] = 'print_article__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}

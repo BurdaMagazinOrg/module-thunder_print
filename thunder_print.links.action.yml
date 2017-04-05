@@ -1,0 +1,10 @@
+entity.print_article.add_form:
+  route_name: 'entity.print_article.add_page'
+  title: 'Add Print article'
+  appears_on:
+    - entity.print_article.collection
+entity.print_article_type.add_form:
+  route_name: 'entity.print_article_type.add_form'
+  title: 'Add Print article type'
+  appears_on:
+    - entity.print_article_type.collection
