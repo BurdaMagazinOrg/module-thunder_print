@@ -34,9 +34,9 @@ class PrintArticleListBuilder extends EntityListBuilder {
     $row['name'] = $this->l(
       $entity->label(),
       new Url(
-        'entity.print_article.edit_form', array(
+        'entity.print_article.edit_form', [
           'print_article' => $entity->id(),
-        )
+        ]
       )
     );
     return $row + parent::buildRow($entity);

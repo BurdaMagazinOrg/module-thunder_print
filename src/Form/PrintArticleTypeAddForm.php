@@ -23,7 +23,7 @@ class PrintArticleTypeAddForm extends PrintArticleTypeForm {
       '#type' => 'file',
       '#title' => $print_article_type->getEntityType()->getLabel(),
       '#description' => $this->t("IDMS file exported from InDesign."),
-      '#required' => TRUE,
+    // '#required' => TRUE,.
     ];
 
     return $form;

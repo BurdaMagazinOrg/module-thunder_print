@@ -80,7 +80,7 @@ class PrintArticleRevisionRevertForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.print_article.version_history', array('print_article' => $this->revision->id()));
+    return new Url('entity.print_article.version_history', ['print_article' => $this->revision->id()]);
   }
 
   /**
@@ -123,7 +123,7 @@ class PrintArticleRevisionRevertForm extends ConfirmFormBase {
     drupal_set_message(t('Print article %title has been reverted to the revision from %revision-date.', ['%title' => $this->revision->label(), '%revision-date' => $this->dateFormatter->format($original_revision_timestamp)]));
     $form_state->setRedirect(
       'entity.print_article.version_history',
-      array('print_article' => $this->revision->id())
+      ['print_article' => $this->revision->id()]
     );
   }
 

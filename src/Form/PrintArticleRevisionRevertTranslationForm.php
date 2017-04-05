@@ -10,7 +10,7 @@ use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form for reverting a Print article revision for a single translation.
+ * Provides a form for reverting a article revision for a single translation.
  *
  * @ingroup thunder_print
  */
@@ -78,11 +78,11 @@ class PrintArticleRevisionRevertTranslationForm extends PrintArticleRevisionReve
     $this->langcode = $langcode;
     $form = parent::buildForm($form, $form_state, $print_article_revision);
 
-    $form['revert_untranslated_fields'] = array(
+    $form['revert_untranslated_fields'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Revert content shared among translations'),
       '#default_value' => FALSE,
-    );
+    ];
 
     return $form;
   }

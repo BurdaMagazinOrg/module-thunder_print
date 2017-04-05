@@ -4,8 +4,6 @@ namespace Drupal\thunder_print\Entity;
 
 use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\RevisionableInterface;
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
 
@@ -15,8 +13,6 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup thunder_print
  */
 interface PrintArticleInterface extends RevisionableInterface, RevisionLogInterface, EntityChangedInterface, EntityOwnerInterface {
-
-  // Add get/set methods for your configuration properties here.
 
   /**
    * Gets the Print article type.
@@ -78,7 +74,7 @@ interface PrintArticleInterface extends RevisionableInterface, RevisionLogInterf
    * Sets the published status of a Print article.
    *
    * @param bool $published
-   *   TRUE to set this Print article to published, FALSE to set it to unpublished.
+   *   TRUE to set this article to published, FALSE to set it to unpublished.
    *
    * @return \Drupal\thunder_print\Entity\PrintArticleInterface
    *   The called Print article entity.

@@ -27,7 +27,9 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *   An array suitable for drupal_render().
    */
   public function revisionShow($print_article_revision) {
-    $print_article = $this->entityManager()->getStorage('print_article')->loadRevision($print_article_revision);
+    $print_article = $this->entityManager()
+      ->getStorage('print_article')
+      ->loadRevision($print_article_revision);
     $view_builder = $this->entityManager()->getViewBuilder('print_article');
 
     return $view_builder->view($print_article);
@@ -43,8 +45,13 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *   The page title.
    */
   public function revisionPageTitle($print_article_revision) {
-    $print_article = $this->entityManager()->getStorage('print_article')->loadRevision($print_article_revision);
-    return $this->t('Revision of %title from %date', array('%title' => $print_article->label(), '%date' => format_date($print_article->getRevisionCreationTime())));
+    $print_article = $this->entityManager()
+      ->getStorage('print_article')
+      ->loadRevision($print_article_revision);
+    return $this->t('Revision of %title from %date', [
+      '%title' => $print_article->label(),
+      '%date' => \Drupal::service('date.formatter')->format($print_article->getRevisionCreationTime()),
+    ]);
   }
 
   /**
@@ -62,15 +69,19 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     $langname = $print_article->language()->getName();
     $languages = $print_article->getTranslationLanguages();
     $has_translations = (count($languages) > 1);
-    $print_article_storage = $this->entityManager()->getStorage('print_article');
+    $print_article_storage = $this->entityManager()
+      ->getStorage('print_article');
 
-    $build['#title'] = $has_translations ? $this->t('@langname revisions for %title', ['@langname' => $langname, '%title' => $print_article->label()]) : $this->t('Revisions for %title', ['%title' => $print_article->label()]);
-    $header = array($this->t('Revision'), $this->t('Operations'));
+    $build['#title'] = $has_translations ? $this->t('@langname revisions for %title', [
+      '@langname' => $langname,
+      '%title' => $print_article->label(),
+    ]) : $this->t('Revisions for %title', ['%title' => $print_article->label()]);
+    $header = [$this->t('Revision'), $this->t('Operations')];
 
     $revert_permission = (($account->hasPermission("revert all print article revisions") || $account->hasPermission('administer print article entities')));
     $delete_permission = (($account->hasPermission("delete all print article revisions") || $account->hasPermission('administer print article entities')));
 
-    $rows = array();
+    $rows = [];
 
     $vids = $print_article_storage->revisionIds($print_article);
 
@@ -88,9 +99,13 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
         ];
 
         // Use revision link to link to revisions that are not active.
-        $date = \Drupal::service('date.formatter')->format($revision->revision_timestamp->value, 'short');
+        $date = \Drupal::service('date.formatter')
+          ->format($revision->revision_timestamp->value, 'short');
         if ($vid != $print_article->getRevisionId()) {
-          $link = $this->l($date, new Url('entity.print_article.revision', ['print_article' => $print_article->id(), 'print_article_revision' => $vid]));
+          $link = $this->l($date, new Url('entity.print_article.revision', [
+            'print_article' => $print_article->id(),
+            'print_article_revision' => $vid,
+          ]));
         }
         else {
           $link = $print_article->link($date);
@@ -103,8 +118,12 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
             '#template' => '{% trans %}{{ date }} by {{ username }}{% endtrans %}{% if message %}<p class="revision-log">{{ message }}</p>{% endif %}',
             '#context' => [
               'date' => $link,
-              'username' => \Drupal::service('renderer')->renderPlain($username),
-              'message' => ['#markup' => $revision->revision_log_message->value, '#allowed_tags' => Xss::getHtmlTagList()],
+              'username' => \Drupal::service('renderer')
+                ->renderPlain($username),
+              'message' => [
+                '#markup' => $revision->revision_log_message->value,
+                '#allowed_tags' => Xss::getHtmlTagList(),
+              ],
             ],
           ],
         ];
@@ -128,16 +147,24 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
           if ($revert_permission) {
             $links['revert'] = [
               'title' => $this->t('Revert'),
-              'url' => $has_translations ?
-              Url::fromRoute('entity.print_article.translation_revert', ['print_article' => $print_article->id(), 'print_article_revision' => $vid, 'langcode' => $langcode]) :
-              Url::fromRoute('entity.print_article.revision_revert', ['print_article' => $print_article->id(), 'print_article_revision' => $vid]),
+              'url' => $has_translations ? Url::fromRoute('entity.print_article.translation_revert', [
+                'print_article' => $print_article->id(),
+                'print_article_revision' => $vid,
+                'langcode' => $langcode,
+              ]) : Url::fromRoute('entity.print_article.revision_revert', [
+                'print_article' => $print_article->id(),
+                'print_article_revision' => $vid,
+              ]),
             ];
           }
 
           if ($delete_permission) {
             $links['delete'] = [
               'title' => $this->t('Delete'),
-              'url' => Url::fromRoute('entity.print_article.revision_delete', ['print_article' => $print_article->id(), 'print_article_revision' => $vid]),
+              'url' => Url::fromRoute('entity.print_article.revision_delete', [
+                'print_article' => $print_article->id(),
+                'print_article_revision' => $vid,
+              ]),
             ];
           }
 
@@ -153,11 +180,11 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
       }
     }
 
-    $build['print_article_revisions_table'] = array(
+    $build['print_article_revisions_table'] = [
       '#theme' => 'table',
       '#rows' => $rows,
       '#header' => $header,
-    );
+    ];
 
     return $build;
   }
