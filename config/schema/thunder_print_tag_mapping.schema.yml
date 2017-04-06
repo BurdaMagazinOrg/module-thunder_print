@@ -1,0 +1,12 @@
+thunder_print.thunder_print_tag_mapping.*:
+  type: config_entity
+  label: 'Tag Mapping config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
