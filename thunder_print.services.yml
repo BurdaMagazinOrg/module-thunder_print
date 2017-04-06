@@ -1,0 +1,4 @@
+services:
+  plugin.manager.thunder_print_tag_mapping_type:
+    class: Drupal\thunder_print\Plugin\TagMappingTypeManager
+    parent: default_plugin_manager
