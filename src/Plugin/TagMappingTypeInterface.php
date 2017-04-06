@@ -9,7 +9,11 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
  */
 interface TagMappingTypeInterface extends PluginInspectionInterface {
 
-
-  // Add get/set methods for your plugin type here.
+  /**
+   * Defines a list of properties.
+   *
+   * @return array
+   */
+  public function getPropertyDefinitions();
 
 }

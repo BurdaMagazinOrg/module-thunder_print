@@ -38,12 +38,16 @@ class TagMappingForm extends EntityForm {
       '#disabled' => !$tag_mapping->isNew(),
     ];
 
+    /** @var \Drupal\thunder_print\Plugin\TagMappingTypeManager $mapping_type_manager */
+    $mapping_type_manager = \Drupal::service('plugin.manager.thunder_print_tag_mapping_type');
+
     $form['mapping_type'] = [
-      '#type' => 'textfield',
+      '#type' => 'select',
       '#title' => $this->t('Mapping type'),
       '#maxlength' => 255,
       '#default_value' => $tag_mapping->getMappingType(),
       '#description' => $this->t("Type for the mapping."),
+      '#options' => $mapping_type_manager->getOptions(),
       '#required' => TRUE,
     ];
 

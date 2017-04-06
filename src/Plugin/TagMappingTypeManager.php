@@ -11,7 +11,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
  */
 class TagMappingTypeManager extends DefaultPluginManager {
 
-
   /**
    * Constructor for TagMappingTypeManager objects.
    *
@@ -28,6 +27,20 @@ class TagMappingTypeManager extends DefaultPluginManager {
 
     $this->alterInfo('thunder_print_thunder_print_tag_mapping_type_info');
     $this->setCacheBackend($cache_backend, 'thunder_print_thunder_print_tag_mapping_type_plugins');
+  }
+
+  /**
+   * Provides an options list to be used in a select element.
+   *
+   * @return String[String]
+   */
+  public function getOptions() {
+    $options = [];
+    $definitions = $this->getDefinitions();
+    foreach ($definitions as $plugin_id => $definition) {
+      $options[$plugin_id] = $definition['label'];
+    }
+    return $options;
   }
 
 }
