@@ -1,4 +1,4 @@
-thunder_print.thunder_print_tag_mapping.*:
+thunder_print.tag_mapping.*:
   type: config_entity
   label: 'Tag Mapping config'
   mapping:

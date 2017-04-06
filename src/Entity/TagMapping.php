@@ -21,7 +21,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *       "html" = "Drupal\thunder_print\TagMappingHtmlRouteProvider",
  *     },
  *   },
- *   config_prefix = "thunder_print_tag_mapping",
+ *   config_prefix = "tag_mapping",
  *   admin_permission = "administer site configuration",
  *   entity_keys = {
  *     "id" = "id",
@@ -29,11 +29,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/thunder_print/thunder_print_tag_mapping/{thunder_print_tag_mapping}",
- *     "add-form" = "/admin/structure/thunder_print/thunder_print_tag_mapping/add",
- *     "edit-form" = "/admin/structure/thunder_print/thunder_print_tag_mapping/{thunder_print_tag_mapping}/edit",
- *     "delete-form" = "/admin/structure/thunder_print/thunder_print_tag_mapping/{thunder_print_tag_mapping}/delete",
- *     "collection" = "/admin/structure/thunder_print/thunder_print_tag_mapping"
+ *     "canonical" = "/admin/structure/thunder_print/tag_mapping/{thunder_print_tag_mapping}",
+ *     "add-form" = "/admin/structure/thunder_print/tag_mapping/add",
+ *     "edit-form" = "/admin/structure/thunder_print/tag_mapping/{thunder_print_tag_mapping}/edit",
+ *     "delete-form" = "/admin/structure/thunder_print/tag_mapping/{thunder_print_tag_mapping}/delete",
+ *     "collection" = "/admin/structure/thunder_print/tag_mapping"
  *   }
  * )
  */
