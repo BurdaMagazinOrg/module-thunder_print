@@ -53,4 +53,36 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
    */
   protected $label;
 
+  /**
+   * @var string
+   */
+  protected $mapping_type;
+
+  /**
+   * @var array
+   */
+  protected $mapping;
+
+  public function getMappingType() {
+    return $this->mapping_type;
+  }
+
+  public function getMapping() {
+    $return = [];
+    foreach ($this->mapping as $spec) {
+      $return[$spec['property']] = $spec['tag'];
+    }
+    return $return;
+  }
+
+  public function getTags() {
+    return array_unique(array_values($this->getMapping()));
+  }
+
+  public function getTag($property) {
+    $mapping = $this->getMapping();
+    if (isset($mapping[$property])) {
+      return $mapping[$property];
+    }
+  }
 }

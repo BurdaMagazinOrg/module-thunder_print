@@ -10,4 +10,23 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface TagMappingInterface extends ConfigEntityInterface {
 
   // Add get/set methods for your configuration properties here.
+
+  /**
+   * @return string
+   */
+  public function getMappingType();
+
+  /**
+   * @return array
+   */
+  public function getMapping();
+
+  /**
+   * @param $property
+   *
+   * @return mixed
+   */
+  public function getTag($property);
+
+  public function getTags();
 }

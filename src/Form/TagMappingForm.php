@@ -18,26 +18,62 @@ class TagMappingForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    $thunder_print_tag_mapping = $this->entity;
+    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tag_mapping */
+    $tag_mapping = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
-      '#default_value' => $thunder_print_tag_mapping->label(),
+      '#default_value' => $tag_mapping->label(),
       '#description' => $this->t("Label for the Tag Mapping."),
       '#required' => TRUE,
     ];
 
     $form['id'] = [
       '#type' => 'machine_name',
-      '#default_value' => $thunder_print_tag_mapping->id(),
+      '#default_value' => $tag_mapping->id(),
       '#machine_name' => [
         'exists' => '\Drupal\thunder_print\Entity\TagMapping::load',
       ],
-      '#disabled' => !$thunder_print_tag_mapping->isNew(),
+      '#disabled' => !$tag_mapping->isNew(),
     ];
 
-    /* You will need additional form elements for your custom properties. */
+    $form['mapping_type'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Mapping type'),
+      '#maxlength' => 255,
+      '#default_value' => $tag_mapping->getMappingType(),
+      '#description' => $this->t("Type for the mapping."),
+      '#required' => TRUE,
+    ];
+
+    $properties = [
+      'value' => [
+        'name' => 'Value',
+        'required' => TRUE,
+      ],
+    ];
+
+    $form['mapping'] = [
+      '#tree' => TRUE,
+      '#type' => 'fieldset',
+      '#title' => $this->t('Mapping'),
+    ];
+
+    foreach ($properties as $property => $spec) {
+      $form['mapping'][] = [
+        'property' => [
+          '#type' => 'value',
+          '#value' => $property,
+        ],
+        'tag' => [
+          '#type' => 'textfield',
+          '#title' => $spec['name'],
+          '#required' => !empty($spec['required']),
+          '#default_value' => $tag_mapping->getTag($property),
+        ],
+      ];
+    }
 
     return $form;
   }
@@ -46,22 +82,23 @@ class TagMappingForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $thunder_print_tag_mapping = $this->entity;
-    $status = $thunder_print_tag_mapping->save();
+    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tag_mapping */
+    $tag_mapping = $this->entity;
+    $status = $tag_mapping->save();
 
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Tag Mapping.', [
-          '%label' => $thunder_print_tag_mapping->label(),
+          '%label' => $tag_mapping->label(),
         ]));
         break;
 
       default:
         drupal_set_message($this->t('Saved the %label Tag Mapping.', [
-          '%label' => $thunder_print_tag_mapping->label(),
+          '%label' => $tag_mapping->label(),
         ]));
     }
-    $form_state->setRedirectUrl($thunder_print_tag_mapping->toUrl('collection'));
+    $form_state->setRedirectUrl($tag_mapping->toUrl('collection'));
   }
 
 }
