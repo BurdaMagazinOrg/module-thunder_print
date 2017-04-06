@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Contains thunder_print.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function thunder_print_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the thunder_print module.
+    case 'help.page.thunder_print':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function thunder_print_theme() {
+  $theme = [];
+
+  $theme['print_article_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'print_article.page.inc',
+  ];
+  return $theme;
+}

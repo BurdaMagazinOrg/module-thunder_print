@@ -1,0 +1,17 @@
+
+# Print article menu items definition
+entity.print_article.collection:
+  title: 'Print article list'
+  route_name: entity.print_article.collection
+  description: 'List Print article entities'
+  parent: system.admin_content
+  weight: 100
+
+
+# Print article type menu items definition
+entity.print_article_type.collection:
+  title: 'Snippet-Templates'
+  route_name: entity.print_article_type.collection
+  description: 'Manage "Thunder for Print" Snippet-Templates'
+  parent: system.admin_structure
+  weight: 99

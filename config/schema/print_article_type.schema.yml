@@ -1,0 +1,21 @@
+thunder_print.print_article_type.*:
+  type: config_entity
+  label: 'Print article type config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    uuid:
+      type: string
+    grid:
+      type: integer
+      label: 'Grid'
+    idms:
+      type: string
+      label: 'IDMS xml content'
+    status:
+      type: boolean
+      label: 'Status'
