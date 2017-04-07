@@ -45,39 +45,48 @@ class TagMappingForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Mapping type'),
       '#maxlength' => 255,
-      '#default_value' => $tag_mapping->getMappingType(),
+      '#default_value' => $tag_mapping->getMappingTypeId(),
       '#description' => $this->t("Type for the mapping."),
       '#options' => $mapping_type_manager->getOptions(),
       '#required' => TRUE,
     ];
 
-    $properties = [
-      'value' => [
-        'name' => 'Value',
-        'required' => TRUE,
-      ],
-    ];
+    $plugin = $tag_mapping->getMappingType();
 
-    $form['mapping'] = [
-      '#tree' => TRUE,
-      '#type' => 'fieldset',
-      '#title' => $this->t('Mapping'),
-    ];
+    if ($plugin) {
 
-    foreach ($properties as $property => $spec) {
-      $form['mapping'][] = [
-        'property' => [
-          '#type' => 'value',
-          '#value' => $property,
-        ],
-        'tag' => [
-          '#type' => 'textfield',
-          '#title' => $spec['name'],
-          '#required' => !empty($spec['required']),
-          '#default_value' => $tag_mapping->getTag($property),
-        ],
+      $properties = $plugin->getPropertyDefinitions();
+      $form['mapping'] = [
+        '#tree' => TRUE,
+        '#type' => 'fieldset',
+        '#title' => $this->t('Mapping'),
       ];
-    }
+
+      foreach ($properties as $property => $spec) {
+        $form['mapping'][] = [
+          'property' => [
+            '#type' => 'value',
+            '#value' => $property,
+          ],
+          'tag' => [
+            '#type' => 'textfield',
+            '#title' => $spec['name'],
+            '#required' => !empty($spec['required']),
+            '#default_value' => $tag_mapping->getTag($property),
+          ],
+        ];
+      }
+
+      $options_form = $plugin->optionsForm([], $form_state);
+
+      if (!empty($options_form)) {
+        $form['options'] = [
+          '#tree' => TRUE,
+          '#type' => 'fieldset',
+          '#title' => $this->t('Options'),
+        ] + $options_form;
+      }
+    };
 
     return $form;
   }

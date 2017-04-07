@@ -59,14 +59,30 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
   protected $mapping_type;
 
   /**
+   * @var \Drupal\thunder_print\Plugin\TagMappingTypeManager $mapping_type_manager
+   */
+  protected $mapping_type_manager;
+
+  /**
    * @var array
    */
-  protected $mapping;
+  protected $mapping = [];
 
-  public function getMappingType() {
+  /**
+   * @var array
+   */
+  protected $options = [];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMappingTypeId() {
     return $this->mapping_type;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getMapping() {
     $return = [];
     foreach ($this->mapping as $spec) {
@@ -75,14 +91,47 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
     return $return;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getTags() {
     return array_unique(array_values($this->getMapping()));
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getTag($property) {
     $mapping = $this->getMapping();
     if (isset($mapping[$property])) {
       return $mapping[$property];
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMappingType() {
+    if (!empty($this->mapping_type) && $this->mapping_type_manager->hasDefinition($this->mapping_type)) {
+      $plugin = $this->mapping_type_manager->createInstance($this->mapping_type,
+        [
+          'mapping' => $this->getMapping(),
+          'options' => $this->options,
+        ]
+      );
+      return $plugin;
+    }
+  }
+
+  /**
+   * Provides mapping type manager for internal usage.
+   *
+   * @return \Drupal\thunder_print\Plugin\TagMappingTypeManager|mixed
+   */
+  protected function getMappingTypeManager() {
+    if (!isset($this->mapping_type_manager)) {
+      $this->mapping_type_manager = \Drupal::service('plugin.manager.thunder_print_tag_mapping_type');
+    }
+    return $this->mapping_type_manager;
   }
 }
