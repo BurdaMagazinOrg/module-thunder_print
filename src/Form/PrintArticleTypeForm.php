@@ -57,6 +57,13 @@ class PrintArticleTypeForm extends EntityForm {
       '#default_value' => $print_article_type->get('grid'),
     ];
 
+    if ($thumbnail_url = $print_article_type->getThumbnailUrl()) {
+      $form['thumbnail_file']['data'] = [
+        '#theme' => 'image',
+        '#uri' => $thumbnail_url,
+      ];
+    }
+
     return $form;
   }
 

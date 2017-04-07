@@ -36,7 +36,7 @@ class IDMSTest extends UnitTestCase {
   public function tagProvider() {
     return [
       [
-        dirname(__FILE__) . '/../../assets/Zeitung1.idms',
+        dirname(__FILE__) . '/../../fixtures/Zeitung1.idms',
         [
           'XMLTag/Story',
           'XMLTag/Caption',
@@ -48,7 +48,7 @@ class IDMSTest extends UnitTestCase {
         ],
       ],
       [
-        dirname(__FILE__) . '/../../assets/Zeitung2.idms',
+        dirname(__FILE__) . '/../../fixtures/Zeitung2.idms',
         [
           'XMLTag/Textabschnitt',
           'XMLTag/Author',
@@ -85,9 +85,27 @@ class IDMSTest extends UnitTestCase {
    */
   public function uniqueTagsValidationProvider() {
     return [
-      [dirname(__FILE__) . '/../../assets/Zeitung1.idms', 0],
-      [dirname(__FILE__) . '/../../assets/Zeitung2.idms', 1],
+      [dirname(__FILE__) . '/../../fixtures/Zeitung1.idms', 0],
+      [dirname(__FILE__) . '/../../fixtures/Zeitung2.idms', 1],
     ];
+  }
+
+  /**
+   *
+   */
+  public function testExtractThumbnail() {
+
+    $xml = file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms');
+
+    $idms = new IDMS($xml);
+
+    list ($data , $extension) = $idms->extractThumbnail();
+
+    // Check is binary.
+    $this->assertTrue(preg_match('~[^\x20-\x7E\t\r\n]~', $data) > 0);
+
+    $this->assertSame('JPEG', $extension);
+
   }
 
 }

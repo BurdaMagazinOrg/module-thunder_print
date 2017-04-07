@@ -14,7 +14,11 @@ class PrintArticleTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('Print article type');
+
+    $header['thumbnail_file'] = [
+      'data' => $this->t('Thumbnail'),
+    ];
+    $header['label'] = $this->t('Label');
     $header['id'] = $this->t('Machine name');
     return $header + parent::buildHeader();
   }
@@ -23,9 +27,17 @@ class PrintArticleTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+
+    $row['thumbnail_file'] = '';
+    if ($thumbnail_url = $entity->getThumbnailUrl()) {
+      $row['thumbnail_file']['data'] = [
+        '#theme' => 'image',
+        '#uri' => $thumbnail_url,
+        '#height' => 50,
+      ];
+    }
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
-    // You probably want a few more properties here...
     return $row + parent::buildRow($entity);
   }
 
