@@ -112,8 +112,8 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
    * {@inheritdoc}
    */
   public function getMappingType() {
-    if (!empty($this->mapping_type) && $this->mapping_type_manager->hasDefinition($this->mapping_type)) {
-      $plugin = $this->mapping_type_manager->createInstance($this->mapping_type,
+    if (!empty($this->mapping_type) && $this->getMappingTypeManager()->hasDefinition($this->mapping_type)) {
+      $plugin = $this->getMappingTypeManager()->createInstance($this->mapping_type,
         [
           'mapping' => $this->getMapping(),
           'options' => $this->options,

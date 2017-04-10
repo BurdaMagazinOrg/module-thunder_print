@@ -2,13 +2,14 @@
 
 namespace Drupal\thunder_print\Plugin;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines an interface for Tag mapping type plugins.
  */
-interface TagMappingTypeInterface extends PluginInspectionInterface {
+interface TagMappingTypeInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
    * Defines a list of properties.
@@ -16,6 +17,30 @@ interface TagMappingTypeInterface extends PluginInspectionInterface {
    * @return array
    */
   public function getPropertyDefinitions();
+
+  /**
+   * Retrieve the options for this mapping type instance.
+   *
+   * @return array
+   */
+  public function getOptions();
+
+  /**
+   * Retrieve a single option value for this mapping type instance.
+   *
+   * @param string $key
+   *
+   * @return mixed
+   */
+  public function getOption($key);
+
+  /**
+   * Set options for this mapping type instance.
+   *
+   * @param array $options
+   */
+  public function setOptions(array $options);
+
 
   /**
    * Generates options form for Tag Mapping.

@@ -39,7 +39,7 @@ class TextPlain extends TagMappingTypeBase {
     $form['title'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Can be used as title'),
-      '#default_value' => $this->configuration['options']['title'],
+      '#default_value' => $this->getOption('title'),
     ];
     return $form;
   }
