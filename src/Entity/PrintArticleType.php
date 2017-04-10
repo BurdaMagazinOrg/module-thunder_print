@@ -158,7 +158,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     file_prepare_directory($dir, FILE_CREATE_DIRECTORY);
     $thumbnail = file_save_data($data, 'public://idms/' . $this->label . '.' . $extension, FILE_EXISTS_REPLACE);
 
-    // Set the file UUID to the paragraph configuration.
+    // Set the file UUID to the print article type configuration.
     if (!empty($thumbnail)) {
       $this->set('thumbnail_uuid', $thumbnail->uuid());
       $this->save();
