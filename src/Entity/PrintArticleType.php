@@ -175,7 +175,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
-    parent::preSave($storage);
+    return parent::preSave($storage);
 
     $idms = new IDMS($this->idms);
 
