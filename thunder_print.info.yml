@@ -4,4 +4,4 @@ package: Thunder
 type: module
 core: '8.x'
 dependencies:
-  - file
+  - drupal:file
