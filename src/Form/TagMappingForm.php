@@ -2,6 +2,7 @@
 
 namespace Drupal\thunder_print\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -41,6 +42,8 @@ class TagMappingForm extends EntityForm {
     /** @var \Drupal\thunder_print\Plugin\TagMappingTypeManager $mapping_type_manager */
     $mapping_type_manager = \Drupal::service('plugin.manager.thunder_print_tag_mapping_type');
 
+    $wrapper_id = Html::getId('tap-mapping-form-ajax-wrapper');
+
     $form['mapping_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Mapping type'),
@@ -49,21 +52,33 @@ class TagMappingForm extends EntityForm {
       '#description' => $this->t("Type for the mapping."),
       '#options' => $mapping_type_manager->getOptions(),
       '#required' => TRUE,
+      '#ajax' => [
+        'callback' => '::ajaxCallback',
+        'wrapper' => $wrapper_id,
+      ],
     ];
 
     $plugin = $tag_mapping->getMappingType();
 
+    $form['configuration'] = [
+      '#type' => 'container',
+      '#id' => $wrapper_id,
+      '#attributes' => array(
+        'id' => $wrapper_id,
+      ),
+    ];
+
     if ($plugin) {
 
       $properties = $plugin->getPropertyDefinitions();
-      $form['mapping'] = [
+      $form['configuration']['mapping'] = [
         '#tree' => TRUE,
         '#type' => 'fieldset',
         '#title' => $this->t('Mapping'),
       ];
 
       foreach ($properties as $property => $spec) {
-        $form['mapping'][] = [
+        $form['configuration']['mapping'][] = [
           'property' => [
             '#type' => 'value',
             '#value' => $property,
@@ -80,7 +95,7 @@ class TagMappingForm extends EntityForm {
       $options_form = $plugin->optionsForm([], $form_state);
 
       if (!empty($options_form)) {
-        $form['options'] = [
+        $form['configuration']['options'] = [
           '#tree' => TRUE,
           '#type' => 'fieldset',
           '#title' => $this->t('Options'),
@@ -112,6 +127,13 @@ class TagMappingForm extends EntityForm {
         ]));
     }
     $form_state->setRedirectUrl($tag_mapping->toUrl('collection'));
+  }
+
+  /**
+   * Callback for ajax requests.
+   */
+  public static function ajaxCallback(array $form, FormStateInterface $form_state) {
+    return $form['configuration'];
   }
 
 }
