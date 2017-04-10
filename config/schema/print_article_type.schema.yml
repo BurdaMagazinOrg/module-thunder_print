@@ -22,3 +22,6 @@ thunder_print.print_article_type.*:
     thumbnail_uuid:
       type: string
       label: 'Thumbnail uuid'
+    description:
+      type: string
+      label: 'Description'
