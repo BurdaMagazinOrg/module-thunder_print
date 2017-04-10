@@ -45,9 +45,11 @@ class PrintArticleTypeAddForm extends PrintArticleTypeForm {
       $xml = file_get_contents($file_upload->getPathname());
       $idms = new IDMS($xml);
 
+      /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $errors */
       $errors = $idms->validate();
 
-      if (count($errors) > 1) {
+      if ($errors->count()) {
+
         $form_state->setErrorByName('idms', $this->t('IDMS is not valid.'));
       }
 

@@ -91,7 +91,7 @@ class IDMSTest extends UnitTestCase {
   }
 
   /**
-   *
+   * Test extraction of an image from idms file.
    */
   public function testExtractThumbnail() {
 

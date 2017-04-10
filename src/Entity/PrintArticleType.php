@@ -3,6 +3,7 @@
 namespace Drupal\thunder_print\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\thunder_print\IDMS;
 
 /**
@@ -168,6 +169,22 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     }
 
     return $thumbnail;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    parent::preSave($storage);
+
+    $idms = new IDMS($this->idms);
+
+    /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $errors */
+    $errors = $idms->validate();
+
+    if ($errors->count()) {
+      throw new \Exception('IDMS file not valid.');
+    }
   }
 
 }

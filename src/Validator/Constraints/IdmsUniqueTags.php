@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraint;
  *   label = @Translation("Unique tags in idms file.", context = "Validation"),
  * )
  */
-class IdmsUniqueTags extends Constraint
-{
+class IdmsUniqueTags extends Constraint {
   public $message = 'The xml contains a multiple amount of "%xmltag%" tags.';
+
 }

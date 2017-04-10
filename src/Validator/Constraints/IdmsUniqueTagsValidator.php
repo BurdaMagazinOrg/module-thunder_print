@@ -13,7 +13,7 @@ class IdmsUniqueTagsValidator extends ConstraintValidator {
   /**
    * Validates an idms file.
    *
-   * @param \Drupal\thunder_print\IDMS $idms
+   * @param mixed|\Drupal\thunder_print\IDMS $idms
    *   An idms objct.
    * @param \Symfony\Component\Validator\Constraint $constraint
    *   The constraint.
