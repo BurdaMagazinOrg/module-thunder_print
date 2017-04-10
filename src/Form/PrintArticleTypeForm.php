@@ -65,16 +65,18 @@ class PrintArticleTypeForm extends EntityForm {
       ];
     }
 
-    $form['number_articles'] = [
-      '#type' => 'item',
-      '#markup' => $this->t('%count %string currently using this @print_article_type.', [
-        '%count' => $this->getLinkGenerator()
-          ->generate($this->getEntityCount(), Url::fromRoute('entity.print_article.collection')),
-        '%string' => $this->formatPlural($this->getEntityCount(), 'article is', 'articles are'),
-        '@print_article_type' => $print_article_type->getEntityType()
-          ->getLabel(),
-      ]),
-    ];
+    if (!$this->entity->isNew()) {
+      $form['number_articles'] = [
+        '#type' => 'item',
+        '#markup' => $this->t('%count %string currently using this @print_article_type.', [
+          '%count' => $this->getLinkGenerator()
+            ->generate($this->getEntityCount(), Url::fromRoute('entity.print_article.collection')),
+          '%string' => $this->formatPlural($this->getEntityCount(), 'article is', 'articles are'),
+          '@print_article_type' => $print_article_type->getEntityType()
+            ->getLabel(),
+        ]),
+      ];
+    }
 
     return $form;
   }
@@ -108,11 +110,19 @@ class PrintArticleTypeForm extends EntityForm {
 
     $actions = parent::actions($form, $form_state);
 
-    $actions['delete']['#access'] = ($this->getEntityCount() > 0) ? FALSE : TRUE;
+    if ($actions['delete']) {
+      $actions['delete']['#access'] = ($this->getEntityCount()) ? FALSE : TRUE;
+    }
 
     return $actions;
   }
 
+  /**
+   * Get number of print articles of the current bundle.
+   *
+   * @return int
+   *   Number of articles.
+   */
   protected function getEntityCount() {
 
     $entities = $this->entityTypeManager
