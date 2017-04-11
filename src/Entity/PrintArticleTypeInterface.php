@@ -33,4 +33,28 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    */
   public function getIdms();
 
+  /**
+   * Returns the thumbnail file entity.
+   *
+   * @return \Drupal\file\FileInterface|bool
+   *   The thumbnail's file entity or FALSE if thumbnail does not exist.
+   */
+  public function getThumbnailFile();
+
+  /**
+   * Returns the thumbnail's URL.
+   *
+   * @return string|null
+   *   The thumbnail's URL or NULL if icon does not exits.
+   */
+  public function getThumbnailUrl();
+
+  /**
+   * Extract thumbnail from idms and create file entity.
+   *
+   * @return \Drupal\file\FileInterface|null
+   *   The thumbnail's file entity or NULL if thumbnail does not exist.
+   */
+  public function buildThumbnail();
+
 }

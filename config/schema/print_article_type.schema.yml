@@ -19,3 +19,9 @@ thunder_print.print_article_type.*:
     status:
       type: boolean
       label: 'Status'
+    thumbnail_uuid:
+      type: string
+      label: 'Thumbnail uuid'
+    description:
+      type: string
+      label: 'Description'

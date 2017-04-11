@@ -3,6 +3,8 @@
 namespace Drupal\thunder_print\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\thunder_print\IDMS;
 
 /**
  * Defines the Print article type entity.
@@ -36,6 +38,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "grid",
  *     "idms",
  *     "status",
+ *     "thumbnail_uuid",
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/print_article_type/{print_article_type}",
@@ -84,6 +87,13 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   protected $idms;
 
   /**
+   * UUID of the print type icon file.
+   *
+   * @var string
+   */
+  protected $thumbnail_uuid;
+
+  /**
    * {@inheritdoc}
    */
   public function getDescription() {
@@ -102,6 +112,79 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
    */
   public function getIdms() {
     return $this->idms;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getThumbnailFile() {
+    if ($this->thumbnail_uuid) {
+      $files = $this->entityTypeManager()
+        ->getStorage('file')
+        ->loadByProperties(['uuid' => $this->thumbnail_uuid]);
+
+      if ($files) {
+        return array_shift($files);
+      }
+    }
+
+    return $this->buildThumbnail();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getThumbnailUrl() {
+    if ($image = $this->getThumbnailFile()) {
+      return file_create_url($image->getFileUri());
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildThumbnail() {
+
+    if (!$this->idms) {
+      return FALSE;
+    }
+
+    $idms = new IDMS($this->idms);
+
+    list ($data, $extension) = $idms->extractThumbnail();
+
+    $dir = 'public://idms/';
+    file_prepare_directory($dir, FILE_CREATE_DIRECTORY);
+    $thumbnail = file_save_data($data, 'public://idms/' . $this->label . '.' . $extension, FILE_EXISTS_REPLACE);
+
+    // Set the file UUID to the print article type configuration.
+    if (!empty($thumbnail)) {
+      $this->set('thumbnail_uuid', $thumbnail->uuid());
+      $this->save();
+    }
+    else {
+      $this->set('thumbnail_uuid', NULL);
+      return FALSE;
+    }
+
+    return $thumbnail;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    parent::preSave($storage);
+
+    $idms = new IDMS($this->idms);
+
+    /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $errors */
+    $errors = $idms->validate();
+
+    if ($errors->count()) {
+      throw new \Exception('IDMS file not valid.');
+    }
   }
 
 }
