@@ -28,7 +28,7 @@ class PrintArticleTypeListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
 
-    $row['thumbnail_file'] = '';
+    $row['thumbnail_file'] = [];
     if ($thumbnail_url = $entity->getThumbnailUrl()) {
       $row['thumbnail_file']['data'] = [
         '#theme' => 'image',

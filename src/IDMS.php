@@ -26,6 +26,13 @@ class IDMS {
   public function __construct($xml) {
 
     $this->xml = new \SimpleXMLElement($xml);
+
+    // IDMS is using many different namespaces, so we have to register them.
+    $this->xml->registerXPathNamespace('x', 'adobe:ns:meta/');
+    $this->xml->registerXPathNamespace('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
+    $this->xml->registerXPathNamespace('xmp', 'http://ns.adobe.com/xap/1.0/');
+    $this->xml->registerXPathNamespace('xmpGImg', 'http://ns.adobe.com/xap/1.0/g/img/');
+
   }
 
   /**
@@ -73,10 +80,6 @@ class IDMS {
    */
   public function extractThumbnail() {
 
-    $this->xml->registerXPathNamespace('x', 'adobe:ns:meta/');
-    $this->xml->registerXPathNamespace('rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-    $this->xml->registerXPathNamespace('xmp', 'http://ns.adobe.com/xap/1.0/');
-    $this->xml->registerXPathNamespace('xmpGImg', 'http://ns.adobe.com/xap/1.0/g/img/');
     $xpath_format = "//x:xmpmeta/rdf:RDF/rdf:Description/xmp:Thumbnails/rdf:Alt/rdf:li/xmpGImg:format";
     $xpath_image = "//x:xmpmeta/rdf:RDF/rdf:Description/xmp:Thumbnails/rdf:Alt/rdf:li/xmpGImg:image";
 

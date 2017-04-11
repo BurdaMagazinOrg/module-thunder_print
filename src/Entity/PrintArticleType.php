@@ -128,7 +128,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
       }
     }
 
-    return $this->retrieveThumbnail();
+    return $this->buildThumbnail();
   }
 
   /**
@@ -144,7 +144,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   /**
    * {@inheritdoc}
    */
-  public function retrieveThumbnail() {
+  public function buildThumbnail() {
 
     if (!$this->idms) {
       return FALSE;
