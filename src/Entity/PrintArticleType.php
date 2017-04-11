@@ -187,4 +187,74 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+    if (!$update) {
+      $this->createBundleFields();
+    }
+  }
+
+  /**
+   * Create fields for the current bundle.
+   */
+  public function createBundleFields() {
+
+    $mapping = [
+      'tag1' => 'text',
+    ];
+
+    $entity_type_id = $this->getEntityType()->getBundleOf();
+
+    /** @var \Drupal\Core\Entity\Entity\EntityFormDisplay $form_display */
+    $form_display = $this->entityTypeManager()
+      ->getStorage('entity_form_display')
+      ->create([
+        'targetEntityType' => $entity_type_id,
+        'bundle' => $this->id(),
+        'mode' => 'default',
+        'status' => TRUE,
+      ]);
+
+    foreach ($mapping as $item => $value) {
+      $fieldStorage = $this->entityTypeManager()
+        ->getStorage('field_storage_config')
+        ->load("$entity_type_id.$item");
+
+      if (!$fieldStorage) {
+        $fieldStorage = $this->entityTypeManager()
+          ->getStorage('field_storage_config')
+          ->create([
+            'field_name' => $item,
+            'entity_type' => $entity_type_id,
+            'type' => 'text',
+            'cardinality' => 1,
+            'locked' => TRUE,
+          ]);
+        $fieldStorage->save();
+      }
+
+      $this->entityTypeManager()
+        ->getStorage('field_config')
+        ->create([
+          'field_storage' => $fieldStorage,
+          'bundle' => $this->id(),
+          'label' => $item,
+          'translatable' => FALSE,
+        ])->save();
+
+      $form_display->setComponent($item, [
+        'type' => 'text_textfield',
+        'settings' => [
+          'size' => 60,
+          'placeholder' => '',
+        ],
+      ]);
+    }
+
+    $form_display->save();
+  }
+
 }
