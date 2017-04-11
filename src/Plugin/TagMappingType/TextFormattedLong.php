@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * TextPlain.php for tfp
- */
 
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
@@ -11,8 +7,10 @@ use Drupal\thunder_print\Annotation\TagMappingType;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
- * Class TextFormattedLong
+ * Provides tag mapping for formatted long text.
+ *
  * @package Drupal\thunder_print\Plugin\TagMappingType
+ *
  * @TagMappingType(
  *   id = "text_formatted_long",
  *   label = @Translation("Text formatted (long)"),

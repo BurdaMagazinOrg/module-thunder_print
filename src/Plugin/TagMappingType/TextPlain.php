@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * TextPlain.php for tfp
- */
 
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
@@ -11,8 +7,10 @@ use Drupal\thunder_print\Annotation\TagMappingType;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
- * Class TextPlain
+ * Provides tag mapping for plain text field.
+ *
  * @package Drupal\thunder_print\Plugin\TagMappingType
+ *
  * @TagMappingType(
  *   id = "text_plain",
  *   label = @Translation("Text plain"),
