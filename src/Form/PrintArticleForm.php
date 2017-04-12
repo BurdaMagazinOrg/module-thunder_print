@@ -15,21 +15,58 @@ class PrintArticleForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\thunder_print\Entity\PrintArticle */
-    $form = parent::buildForm($form, $form_state);
+  public function form(array $form, FormStateInterface $form_state) {
+    $form = parent::form($form, $form_state);
 
-    if (!$this->entity->isNew()) {
-      $form['new_revision'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Create new revision'),
-        '#default_value' => FALSE,
-        '#weight' => 10,
-      ];
+    // Node author information for administrators.
+    $form['author'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Authoring information'),
+      '#group' => 'advanced',
+      '#attributes' => [
+        'class' => ['node-form-author'],
+      ],
+      '#attached' => [
+        'library' => ['node/drupal.node'],
+      ],
+      '#weight' => 90,
+      '#optional' => TRUE,
+    ];
+
+    if (isset($form['user_id'])) {
+      $form['user_id']['#group'] = 'author';
     }
 
-    // $entity = $this->entity;.
+    if (isset($form['created'])) {
+      $form['created']['#group'] = 'author';
+    }
+
+    $form['footer'] = [
+      '#type' => 'container',
+      '#weight' => 99,
+      'status' => $form['status'],
+    ];
+    unset($form['status']);
+
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function addRevisionableFormFields(array &$form) {
+    parent::addRevisionableFormFields($form);
+
+    if (isset($form['revision_log_message'])) {
+      $form['revision_log_message'] += [
+        '#group' => 'revision_information',
+        '#states' => [
+          'visible' => [
+            ':input[name="revision"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
+    }
   }
 
   /**

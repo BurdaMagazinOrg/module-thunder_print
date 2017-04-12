@@ -2,6 +2,7 @@
 
 namespace Drupal\thunder_print\Entity;
 
+use Drupal\Core\Entity\EntityPublishedTrait;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\RevisionableContentEntityBase;
@@ -41,6 +42,7 @@ use Drupal\user\UserInterface;
  *   revision_table = "print_article_revision",
  *   revision_data_table = "print_article_field_revision",
  *   translatable = TRUE,
+ *   show_revision_ui = TRUE,
  *   admin_permission = "administer print article entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -50,20 +52,20 @@ use Drupal\user\UserInterface;
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
- *     "status" = "status",
+ *     "published" = "status",
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/print_article/{print_article}",
- *     "add-page" = "/admin/structure/print_article/add",
- *     "add-form" = "/admin/structure/print_article/add/{print_article_type}",
- *     "edit-form" = "/admin/structure/print_article/{print_article}/edit",
- *     "delete-form" = "/admin/structure/print_article/{print_article}/delete",
- *     "version-history" = "/admin/structure/print_article/{print_article}/revisions",
- *     "revision" = "/admin/structure/print_article/{print_article}/revisions/{print_article_revision}/view",
- *     "revision_revert" = "/admin/structure/print_article/{print_article}/revisions/{print_article_revision}/revert",
- *     "translation_revert" = "/admin/structure/print_article/{print_article}/revisions/{print_article_revision}/revert/{langcode}",
- *     "revision_delete" = "/admin/structure/print_article/{print_article}/revisions/{print_article_revision}/delete",
- *     "collection" = "/admin/structure/print_article",
+ *     "canonical" = "/admin/content/thunder_print_article/{print_article}",
+ *     "add-page" = "/admin/content/thunder_print_article/add",
+ *     "add-form" = "/admin/content/thunder_print_article/add/{print_article_type}",
+ *     "edit-form" = "/admin/content/thunder_print_article/{print_article}/edit",
+ *     "delete-form" = "/admin/content/thunder_print_article/{print_article}/delete",
+ *     "version-history" = "/admin/content/thunder_print_article/{print_article}/revisions",
+ *     "revision" = "/admin/content/thunder_print_article/{print_article}/revisions/{print_article_revision}/view",
+ *     "revision_revert" = "/admin/content/thunder_print_article/{print_article}/revisions/{print_article_revision}/revert",
+ *     "translation_revert" = "/admin/content/thunder_print_article/{print_article}/revisions/{print_article_revision}/revert/{langcode}",
+ *     "revision_delete" = "/admin/content/thunder_print_article/{print_article}/revisions/{print_article_revision}/delete",
+ *     "collection" = "/admin/content/thunder_print_article",
  *   },
  *   bundle_entity_type = "print_article_type",
  *   field_ui_base_route = "entity.print_article_type.edit_form"
@@ -72,6 +74,7 @@ use Drupal\user\UserInterface;
 class PrintArticle extends RevisionableContentEntityBase implements PrintArticleInterface {
 
   use EntityChangedTrait;
+  use EntityPublishedTrait;
 
   /**
    * {@inheritdoc}
@@ -175,53 +178,9 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
-    return (bool) $this->getEntityKey('status');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPublished($published) {
-    $this->set('status', $published ? TRUE : FALSE);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getRevisionCreationTime() {
-    return $this->get('revision_timestamp')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionCreationTime($timestamp) {
-    $this->set('revision_timestamp', $timestamp);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getRevisionUser() {
-    return $this->get('revision_uid')->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setRevisionUserId($uid) {
-    $this->set('revision_uid', $uid);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields += static::publishedBaseFieldDefinitions($entity_type);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
@@ -273,7 +232,15 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Print article is published.'))
       ->setRevisionable(TRUE)
-      ->setDefaultValue(TRUE);
+      ->setDefaultValue(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 120,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
@@ -283,25 +250,34 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
 
-    $fields['revision_timestamp'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Revision timestamp'))
-      ->setDescription(t('The time that the current revision was created.'))
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
+    $fields['image'] = BaseFieldDefinition::create('image')
+      ->setLabel(t('Image'))
+      ->setDescription(t('Image field'))
+      ->setSettings([
+        'file_directory' => '[date:custom:Y]-[date:custom:m]',
+        'alt_field_required' => FALSE,
+        'file_extensions' => 'png jpg jpeg',
+      ])
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'default',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'label' => 'hidden',
+        'type' => 'image_image',
+        'weight' => 0,
+      ])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
 
-    $fields['revision_uid'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Revision user ID'))
-      ->setDescription(t('The user ID of the author of the current revision.'))
-      ->setSetting('target_type', 'user')
-      ->setQueryable(FALSE)
-      ->setRevisionable(TRUE);
-
-    $fields['revision_translation_affected'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Revision translation affected'))
-      ->setDescription(t('Indicates if the last edit of a translation belongs to current revision.'))
-      ->setReadOnly(TRUE)
+    $fields['indesign_info'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('IndDesign info'))
+      ->setDescription(t('IndDesign infos saved as json.'))
       ->setRevisionable(TRUE)
-      ->setTranslatable(TRUE);
+      ->setDefaultValue('')
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
 
     return $fields;
   }
