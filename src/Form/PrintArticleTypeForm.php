@@ -110,7 +110,7 @@ class PrintArticleTypeForm extends EntityForm {
 
     $actions = parent::actions($form, $form_state);
 
-    if ($actions['delete']) {
+    if (!empty($actions['delete'])) {
       $actions['delete']['#access'] = ($this->getEntityCount()) ? FALSE : TRUE;
     }
 
