@@ -4,6 +4,7 @@ namespace Drupal\thunder_print\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Class PrintArticleTypeForm.
@@ -64,6 +65,19 @@ class PrintArticleTypeForm extends EntityForm {
       ];
     }
 
+    if (!$this->entity->isNew()) {
+      $form['number_articles'] = [
+        '#type' => 'item',
+        '#markup' => $this->t('%count %string currently using this @print_article_type.', [
+          '%count' => $this->getLinkGenerator()
+            ->generate($this->getEntityCount(), Url::fromRoute('entity.print_article.collection')),
+          '%string' => $this->formatPlural($this->getEntityCount(), 'article is', 'articles are'),
+          '@print_article_type' => $print_article_type->getEntityType()
+            ->getLabel(),
+        ]),
+      ];
+    }
+
     return $form;
   }
 
@@ -87,6 +101,37 @@ class PrintArticleTypeForm extends EntityForm {
         ]));
     }
     $form_state->setRedirectUrl($print_article_type->toUrl('collection'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function actions(array $form, FormStateInterface $form_state) {
+
+    $actions = parent::actions($form, $form_state);
+
+    if (!empty($actions['delete'])) {
+      $actions['delete']['#access'] = ($this->getEntityCount()) ? FALSE : TRUE;
+    }
+
+    return $actions;
+  }
+
+  /**
+   * Get number of print articles of the current bundle.
+   *
+   * @return int
+   *   Number of articles.
+   */
+  protected function getEntityCount() {
+
+    $entities = $this->entityTypeManager
+      ->getStorage($this->entity->getEntityType()->getBundleOf())
+      ->loadByProperties([
+        'type' => $this->entity->id(),
+      ]);
+
+    return count($entities);
   }
 
 }

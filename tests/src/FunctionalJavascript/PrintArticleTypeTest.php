@@ -86,4 +86,31 @@ class PrintArticleTypeTest extends JavascriptTestBase {
 
   }
 
+  /**
+   * Test that delete button disappears if an article exists.
+   */
+  public function testDeleteButton() {
+
+    $values = [
+      'id' => 'test',
+      'label' => 'Test',
+      'grid' => 12,
+      'idms' => file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms'),
+    ];
+
+    $this->container->get('entity_type.manager')->getStorage('print_article_type')->create($values)->save();
+
+    $this->drupalGet('admin/structure/print_article_type/test/edit');
+    $this->assertTrue($this->getSession()->getPage()->hasLink('edit-delete'));
+
+    $this->container->get('entity_type.manager')->getStorage('print_article')->create([
+      'type' => 'test',
+      'name' => 'Foo',
+    ])->save();
+
+    $this->drupalGet('admin/structure/print_article_type/test/edit');
+    $this->assertFalse($this->getSession()->getPage()->hasLink('edit-delete'));
+
+  }
+
 }

@@ -21,17 +21,3 @@ function thunder_print_help($route_name, RouteMatchInterface $route_match) {
     default:
   }
 }
-
-/**
- * Implements hook_theme().
- */
-function thunder_print_theme() {
-  $theme = [];
-
-  $theme['print_article_content_add_list'] = [
-    'render element' => 'content',
-    'variables' => ['content' => NULL],
-    'file' => 'print_article.page.inc',
-  ];
-  return $theme;
-}
