@@ -134,4 +134,12 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
     }
     return $this->mapping_type_manager;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMainTag() {
+    $main_property = $this->getMappingType()->getMainProperty();
+    return $this->getTag($main_property);
+  }
 }

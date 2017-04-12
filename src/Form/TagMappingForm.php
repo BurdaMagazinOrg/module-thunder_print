@@ -10,6 +10,8 @@ use Drupal\Core\Form\FormStateInterface;
  * Class TagMappingForm.
  *
  * @package Drupal\thunder_print\Form
+ *
+ * @property \Drupal\thunder_print\Entity\TagMappingInterface $entity
  */
 class TagMappingForm extends EntityForm {
 
@@ -19,7 +21,6 @@ class TagMappingForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tag_mapping */
     $tag_mapping = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -136,4 +137,17 @@ class TagMappingForm extends EntityForm {
     return $form['configuration'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $new_entity */
+    $new_entity = $this->buildEntity($form, $form_state);
+    $main_tag = $new_entity->getMainTag();
+    if (!strlen($main_tag)) {
+      $form_state->setErrorByName('mapping', $this->t('The main tag must not be empty.'));
+    }
+  }
 }

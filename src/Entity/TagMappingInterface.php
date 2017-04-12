@@ -35,6 +35,15 @@ interface TagMappingInterface extends ConfigEntityInterface {
   public function getTag($property);
 
   /**
+   * Provides the main tag of this mapping.
+   *
+   * This main tag is used to generate an ID.
+   *
+   * @return string
+   */
+  public function getMainTag();
+
+  /**
    * Provides a list of tags used by this mapping.
    *
    * @return array

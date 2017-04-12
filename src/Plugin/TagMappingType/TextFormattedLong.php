@@ -37,4 +37,10 @@ class TextFormattedLong extends TagMappingTypeBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getMainProperty() {
+    return 'value';
+  }
 }

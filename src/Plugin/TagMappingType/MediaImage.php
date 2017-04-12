@@ -58,4 +58,12 @@ class MediaImage extends TagMappingTypeBase {
     }
     return TRUE;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMainProperty() {
+    // @todo: maybe provide this as an option, in case there are multiple required fields.
+    return 'field_image';
+  }
 }

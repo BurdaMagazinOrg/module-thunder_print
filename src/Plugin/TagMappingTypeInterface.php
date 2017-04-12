@@ -41,7 +41,6 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    */
   public function setOptions(array $options);
 
-
   /**
    * Generates options form for Tag Mapping.
    *
@@ -56,4 +55,10 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    */
   public function optionsForm(array $form, FormStateInterface $form_state);
 
+  /**
+   * Provides the key of the main property to be used as ID.
+   *
+   * @return string
+   */
+  public function getMainProperty();
 }
