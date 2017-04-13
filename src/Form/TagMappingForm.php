@@ -22,14 +22,6 @@ class TagMappingForm extends EntityForm {
     $form = parent::form($form, $form_state);
 
     $tag_mapping = $this->entity;
-    $form['label'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Label'),
-      '#maxlength' => 255,
-      '#default_value' => $tag_mapping->label(),
-      '#description' => $this->t("Label for the Tag Mapping."),
-      '#required' => TRUE,
-    ];
 
     /** @var \Drupal\thunder_print\Plugin\TagMappingTypeManager $mapping_type_manager */
     $mapping_type_manager = \Drupal::service('plugin.manager.thunder_print_tag_mapping_type');

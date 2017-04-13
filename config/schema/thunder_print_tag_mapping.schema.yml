@@ -5,9 +5,6 @@ thunder_print.tag_mapping.*:
     id:
       type: string
       label: 'ID'
-    label:
-      type: label
-      label: 'Label'
     uuid:
       type: string
     mapping_type:

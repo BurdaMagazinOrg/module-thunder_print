@@ -25,7 +25,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   admin_permission = "administer site configuration",
  *   entity_keys = {
  *     "id" = "id",
- *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
  *   links = {
@@ -47,13 +46,6 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
   protected $id;
 
   /**
-   * The Tag Mapping label.
-   *
-   * @var string
-   */
-  protected $label;
-
-  /**
    * @var string
    */
   protected $mapping_type;
@@ -72,6 +64,13 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
    * @var array
    */
   protected $options = [];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function label() {
+    return $this->getMainTag();
+  }
 
   /**
    * {@inheritdoc}
