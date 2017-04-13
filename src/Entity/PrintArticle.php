@@ -189,11 +189,6 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'author',
-        'weight' => 0,
-      ])
       ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
         'weight' => 5,
@@ -204,8 +199,7 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
           'placeholder' => '',
         ],
       ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
@@ -216,17 +210,11 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
         'text_processing' => 0,
       ])
       ->setDefaultValue('')
-      ->setDisplayOptions('view', [
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -4,
-      ])
       ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -4,
       ])
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('form', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
@@ -254,30 +242,16 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       ->setLabel(t('Image'))
       ->setDescription(t('Image field'))
       ->setSettings([
-        'file_directory' => '[date:custom:Y]-[date:custom:m]',
+        'file_directory' => 'print-article',
         'alt_field_required' => FALSE,
         'file_extensions' => 'png jpg jpeg',
-      ])
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'default',
-        'weight' => 0,
-      ])
-      ->setDisplayOptions('form', [
-        'label' => 'hidden',
-        'type' => 'image_image',
-        'weight' => 0,
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', FALSE);
+      ]);
 
     $fields['indesign_info'] = BaseFieldDefinition::create('string')
       ->setLabel(t('IndDesign info'))
       ->setDescription(t('IndDesign infos saved as json.'))
       ->setRevisionable(TRUE)
-      ->setDefaultValue('')
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', FALSE);
+      ->setDefaultValue('');
 
     return $fields;
   }
