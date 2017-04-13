@@ -31,15 +31,6 @@ class TagMappingForm extends EntityForm {
       '#required' => TRUE,
     ];
 
-    $form['id'] = [
-      '#type' => 'machine_name',
-      '#default_value' => $tag_mapping->id(),
-      '#machine_name' => [
-        'exists' => '\Drupal\thunder_print\Entity\TagMapping::load',
-      ],
-      '#disabled' => !$tag_mapping->isNew(),
-    ];
-
     /** @var \Drupal\thunder_print\Plugin\TagMappingTypeManager $mapping_type_manager */
     $mapping_type_manager = \Drupal::service('plugin.manager.thunder_print_tag_mapping_type');
 
@@ -149,5 +140,22 @@ class TagMappingForm extends EntityForm {
     if (!strlen($main_tag)) {
       $form_state->setErrorByName('mapping', $this->t('The main tag must not be empty.'));
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $entity */
+    $entity = parent::buildEntity($form, $form_state);
+
+    // We generate the machine name from the main tag in case the entity is new.
+    if ($entity->isNew()) {
+      /** @var \Drupal\thunder_print\MachineNameGeneratorInterface $generator */
+      $generator = \Drupal::service('thunder_print.machine_name');
+      $generator->setExistsCallback('\Drupal\thunder_print\Entity\TagMapping::load');
+      $entity->set('id', $generator->generateUniqueMachineName($entity->getMainTag()));
+    }
+    return $entity;
   }
 }
