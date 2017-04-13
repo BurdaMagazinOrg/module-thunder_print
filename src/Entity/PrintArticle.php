@@ -60,6 +60,7 @@ use Drupal\user\UserInterface;
  *     "add-form" = "/admin/content/thunder_print_article/add/{print_article_type}",
  *     "edit-form" = "/admin/content/thunder_print_article/{print_article}/edit",
  *     "delete-form" = "/admin/content/thunder_print_article/{print_article}/delete",
+ *     "delete-multiple-form" = "/admin/content/thunder_print_article/delete",
  *     "version-history" = "/admin/content/thunder_print_article/{print_article}/revisions",
  *     "revision" = "/admin/content/thunder_print_article/{print_article}/revisions/{print_article_revision}/view",
  *     "revision_revert" = "/admin/content/thunder_print_article/{print_article}/revisions/{print_article_revision}/revert",

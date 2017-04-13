@@ -15,8 +15,14 @@ class PrintArticleViewsData extends EntityViewsData {
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    // Additional information for Views integration, such as table joins, can be
-    // put here.
+    $data['print_article']['print_article_bulk_form'] = [
+      'title' => $this->t('Print article operations bulk form'),
+      'help' => $this->t('Add a form element that lets you run operations on multiple print article entities.'),
+      'field' => [
+        'id' => 'bulk_form',
+      ],
+    ];
+
     return $data;
   }
 
