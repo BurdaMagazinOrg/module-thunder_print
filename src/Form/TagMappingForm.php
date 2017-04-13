@@ -21,8 +21,6 @@ class TagMappingForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    $tag_mapping = $this->entity;
-
     /** @var \Drupal\thunder_print\Plugin\TagMappingTypeManager $mapping_type_manager */
     $mapping_type_manager = \Drupal::service('plugin.manager.thunder_print_tag_mapping_type');
 
@@ -32,7 +30,7 @@ class TagMappingForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Mapping type'),
       '#maxlength' => 255,
-      '#default_value' => $tag_mapping->getMappingTypeId(),
+      '#default_value' => $this->entity->getMappingTypeId(),
       '#description' => $this->t("Type for the mapping."),
       '#options' => $mapping_type_manager->getOptions(),
       '#required' => TRUE,
@@ -40,16 +38,14 @@ class TagMappingForm extends EntityForm {
         'callback' => '::ajaxCallback',
         'wrapper' => $wrapper_id,
       ],
+      '#disabled' => !$this->entity->isNew(),
     ];
 
-    $plugin = $tag_mapping->getMappingType();
+    $plugin = $this->entity->getMappingType();
 
     $form['configuration'] = [
       '#type' => 'container',
       '#id' => $wrapper_id,
-      '#attributes' => array(
-        'id' => $wrapper_id,
-      ),
     ];
 
     if ($plugin) {
@@ -71,7 +67,7 @@ class TagMappingForm extends EntityForm {
             '#type' => 'textfield',
             '#title' => $spec['name'],
             '#required' => !empty($spec['required']),
-            '#default_value' => $tag_mapping->getTag($property),
+            '#default_value' => $this->entity->getTag($property),
           ],
         ];
       }
@@ -94,23 +90,21 @@ class TagMappingForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tag_mapping */
-    $tag_mapping = $this->entity;
-    $status = $tag_mapping->save();
+    $status = $this->entity->save();
 
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Tag Mapping.', [
-          '%label' => $tag_mapping->label(),
+          '%label' => $this->entity->label(),
         ]));
         break;
 
       default:
         drupal_set_message($this->t('Saved the %label Tag Mapping.', [
-          '%label' => $tag_mapping->label(),
+          '%label' => $this->entity->label(),
         ]));
     }
-    $form_state->setRedirectUrl($tag_mapping->toUrl('collection'));
+    $form_state->setRedirectUrl($this->entity->toUrl('collection'));
   }
 
   /**
