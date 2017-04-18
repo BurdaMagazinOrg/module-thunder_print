@@ -4,6 +4,7 @@ namespace Drupal\thunder_print\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\thunder_print\Validator\Constraints\TagMappingTagsNotExist;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Validation;
@@ -204,6 +205,42 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
    */
   public static function loadValidatorMetadata(ClassMetadata $metadata) {
     $metadata->addGetterMethodConstraint('mapping', 'getMainTag', new NotBlank(['message' => 'The main tag must not be empty.']));
+    $metadata->addConstraint(new TagMappingTagsNotExist());
+  }
+
+  /**
+   * Provides list of mappings keyed by tag.
+   *
+   * @return \Drupal\thunder_print\Entity\TagMappingInterface[]
+   *   The keys are the tag name.
+   */
+  public static function loadMappingsByTag() {
+    $all = static::loadMultiple();
+
+    $tags = [];
+    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $mapping */
+    foreach ($all as $mapping) {
+      $add = $mapping->getTags();
+      foreach ($add as $tag) {
+        $tags[$tag] = $mapping;
+      }
+    }
+    return $tags;
+  }
+
+  /**
+   * Loads a single mapping using the given tag.
+   *
+   * @param string $tag
+   *
+   * @return \Drupal\thunder_print\Entity\TagMappingInterface
+   *   Returns the mapping when mapping is found. Otherwise NULL is returned.
+   */
+  public static function loadMappingForTag($tag) {
+    $map = static::loadMappingsByTag();
+    if (isset($map[$tag])) {
+      return $map[$tag];
+    }
   }
 
 }
