@@ -9,8 +9,6 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
  */
 interface TagMappingInterface extends ConfigEntityInterface {
 
-  // Add get/set methods for your configuration properties here.
-
   /**
    * Provides the raw mapping type id.
    *
@@ -56,4 +54,14 @@ interface TagMappingInterface extends ConfigEntityInterface {
    * @return \Drupal\thunder_print\Plugin\TagMappingTypeInterface
    */
   public function getMappingType();
+
+  /**
+   * Validates the currently set values.
+   *
+   * @return \Symfony\Component\Validator\ConstraintViolationListInterface
+   *   A list of constraint violations. If the list is empty, validation
+   *   succeeded.
+   */
+  public function validate();
+
 }
