@@ -35,6 +35,7 @@ use Drupal\user\UserInterface;
  *     "access" = "Drupal\thunder_print\PrintArticleAccessControlHandler",
  *     "route_provider" = {
  *       "html" = "Drupal\thunder_print\PrintArticleHtmlRouteProvider",
+ *       "delete-multiple" = "\Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
  *   },
  *   base_table = "print_article",
