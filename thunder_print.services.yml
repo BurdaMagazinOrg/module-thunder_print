@@ -5,4 +5,3 @@ services:
   thunder_print.machine_name:
     class: Drupal\thunder_print\MachineNameGenerator
     arguments: ['@transliteration']
-

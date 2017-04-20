@@ -15,6 +15,9 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    * Defines a list of properties.
    *
    * @return array
+   *   List of property definitions, each keyed by the property key and holding
+   *   - name: Translated property name
+   *   - required: Boolean (optional) defaults to FALSE
    */
   public function getPropertyDefinitions();
 
@@ -22,6 +25,7 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    * Retrieve the options for this mapping type instance.
    *
    * @return array
+   *   List of key value pairs of options.
    */
   public function getOptions();
 
@@ -29,8 +33,10 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    * Retrieve a single option value for this mapping type instance.
    *
    * @param string $key
+   *   Option key to get value for.
    *
    * @return mixed
+   *   Arbitrary value assigned to the option.
    */
   public function getOption($key);
 
@@ -38,6 +44,7 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    * Set options for this mapping type instance.
    *
    * @param array $options
+   *   List of options (key-value pairs).
    */
   public function setOptions(array $options);
 
@@ -59,6 +66,8 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    * Provides the key of the main property to be used as ID.
    *
    * @return string
+   *   Property key for the main property.
    */
   public function getMainProperty();
+
 }

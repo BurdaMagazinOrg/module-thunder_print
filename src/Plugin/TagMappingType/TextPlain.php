@@ -3,7 +3,6 @@
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\thunder_print\Annotation\TagMappingType;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -48,4 +47,5 @@ class TextPlain extends TagMappingTypeBase {
   public function getMainProperty() {
     return 'value';
   }
+
 }

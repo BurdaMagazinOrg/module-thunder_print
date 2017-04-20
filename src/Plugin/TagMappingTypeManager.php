@@ -33,6 +33,9 @@ class TagMappingTypeManager extends DefaultPluginManager {
    * Provides an options list to be used in a select element.
    *
    * @return String[String]
+   *   Key/value list of tag mappings types.
+   *   - Key: ID/machine name of the plugin
+   *   - Value: Human readable label of the plugin
    */
   public function getOptions() {
     $options = [];

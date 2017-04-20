@@ -13,4 +13,3 @@ entity.thunder_print_tag_mapping.add_form:
   title: 'Add Tag Mapping'
   appears_on:
     - entity.thunder_print_tag_mapping.collection
-

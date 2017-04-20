@@ -7,6 +7,9 @@ use Drupal\thunder_print\Entity\TagMappingInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validator for the constraint TagMappingTagsNotExist.
+ */
 class TagMappingTagsNotExistValidator extends ConstraintValidator {
 
   /**
@@ -27,4 +30,5 @@ class TagMappingTagsNotExistValidator extends ConstraintValidator {
       }
     }
   }
+
 }

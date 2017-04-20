@@ -5,7 +5,7 @@ namespace Drupal\thunder_print\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Validation constraint for checking tag is only ised in a single mapping config.
+ * Constraint for checking if tag is only used in a single mapping config.
  *
  * @Constraint(
  *   id = "TagMappingTagsNotExist",
@@ -27,4 +27,5 @@ class TagMappingTagsNotExist extends Constraint {
   public function getTargets() {
     return self::CLASS_CONSTRAINT;
   }
+
 }

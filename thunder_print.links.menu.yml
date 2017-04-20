@@ -23,4 +23,3 @@ entity.thunder_print_tag_mapping.collection:
   description: 'List Tag Mapping (bundles)'
   parent: system.admin_structure
   weight: 99
-

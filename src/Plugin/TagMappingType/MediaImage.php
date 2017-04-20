@@ -26,7 +26,7 @@ class MediaImage extends TagMappingTypeBase {
     /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entityManager */
     $entityManager = \Drupal::service('entity_field.manager');
     $fields = $entityManager->getFieldDefinitions('media', 'image');
-    foreach ($fields as $key => $field) {
+    foreach ($fields as $field) {
       if (!$field->getFieldStorageDefinition()->isBaseField()) {
         $return[$field->getName()] = [
           'required' => $field->isRequired(),
@@ -66,4 +66,5 @@ class MediaImage extends TagMappingTypeBase {
     // @todo: maybe provide this as an option, in case there are multiple required fields.
     return 'field_image';
   }
+
 }

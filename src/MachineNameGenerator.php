@@ -59,7 +59,7 @@ class MachineNameGenerator implements MachineNameGeneratorInterface {
     $appendcount = 0;
 
     do {
-      $unique = ($appendcount) ? $output . '_'  . $appendcount: $output;
+      $unique = ($appendcount) ? $output . '_' . $appendcount : $output;
       $return = call_user_func($this->existsCallback, $unique);
       $appendcount++;
     } while (!empty($return));
@@ -88,4 +88,5 @@ class MachineNameGenerator implements MachineNameGeneratorInterface {
   public function hasExistsCallback() {
     return isset($this->existsCallback);
   }
+
 }

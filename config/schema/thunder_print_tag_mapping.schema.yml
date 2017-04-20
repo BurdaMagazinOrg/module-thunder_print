@@ -26,4 +26,3 @@ thunder_print.tag_mapping_map:
     tag:
       type: string
       label: Tag
-
