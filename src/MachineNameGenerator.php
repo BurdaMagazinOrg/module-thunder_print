@@ -4,6 +4,7 @@ namespace Drupal\thunder_print;
 
 use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Language\LanguageManagerInterface;
 
 /**
  * Provides machine name generator.
@@ -20,6 +21,13 @@ class MachineNameGenerator implements MachineNameGeneratorInterface {
   protected $transliteration;
 
   /**
+   * Langauge manager service.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * Callback to check for existing machine name.
    *
    * @var callable
@@ -29,15 +37,16 @@ class MachineNameGenerator implements MachineNameGeneratorInterface {
   /**
    * Constructor.
    */
-  public function __construct(TransliterationInterface $transliteration) {
+  public function __construct(TransliterationInterface $transliteration, LanguageManagerInterface $languageManager) {
     $this->transliteration = $transliteration;
+    $this->languageManager = $languageManager;
   }
 
   /**
    * {@inheritdoc}
    */
   public function generateMachineName($input) {
-    $language = \Drupal::languageManager()->getCurrentLanguage();
+    $language = $this->languageManager->getCurrentLanguage();
     $machine_name = $this->transliteration->transliterate($input, $language->getId(), '_');
     $machine_name = Unicode::strtolower($machine_name);
     // Only allow a-z, 0-9 or '_'.

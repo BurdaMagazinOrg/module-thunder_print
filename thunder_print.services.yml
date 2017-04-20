@@ -4,4 +4,4 @@ services:
     parent: default_plugin_manager
   thunder_print.machine_name:
     class: Drupal\thunder_print\MachineNameGenerator
-    arguments: ['@transliteration']
+    arguments: ['@transliteration', '@language_manager']
