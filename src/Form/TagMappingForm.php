@@ -5,6 +5,9 @@ namespace Drupal\thunder_print\Form;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\thunder_print\MachineNameGeneratorInterface;
+use Drupal\thunder_print\Plugin\TagMappingTypeManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class TagMappingForm.
@@ -16,13 +19,47 @@ use Drupal\Core\Form\FormStateInterface;
 class TagMappingForm extends EntityForm {
 
   /**
+   * Service for handling tag Mapping type plugins.
+   *
+   * @var \Drupal\thunder_print\Plugin\TagMappingTypeManager
+   */
+  protected $mappingTypeManager;
+
+  /**
+   * Machine name generator.
+   *
+   * @var \Drupal\thunder_print\MachineNameGeneratorInterface
+   */
+  protected $machineNameGenerator;
+
+  /**
+   * TagMappingForm constructor.
+   *
+   * @param \Drupal\thunder_print\Plugin\TagMappingTypeManager $manager
+   *   Manager for accessing tag mapping types.
+   * @param \Drupal\thunder_print\MachineNameGeneratorInterface $machine_name_generator
+   *   Machine name generator service.
+   */
+  public function __construct(TagMappingTypeManager $manager, MachineNameGeneratorInterface $machine_name_generator) {
+    $this->mappingTypeManager = $manager;
+    $this->machineNameGenerator = $machine_name_generator;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('plugin.manager.thunder_print_tag_mapping_type'),
+      $container->get('thunder_print.machine_name')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
-
-    /** @var \Drupal\thunder_print\Plugin\TagMappingTypeManager $mapping_type_manager */
-    $mapping_type_manager = \Drupal::service('plugin.manager.thunder_print_tag_mapping_type');
 
     $wrapper_id = Html::getId('tap-mapping-form-ajax-wrapper');
 
@@ -32,7 +69,7 @@ class TagMappingForm extends EntityForm {
       '#maxlength' => 255,
       '#default_value' => $this->entity->getMappingTypeId(),
       '#description' => $this->t("Type for the mapping."),
-      '#options' => $mapping_type_manager->getOptions(),
+      '#options' => $this->mappingTypeManager->getOptions(),
       '#required' => TRUE,
       '#ajax' => [
         'callback' => '::ajaxCallback',
@@ -148,10 +185,8 @@ class TagMappingForm extends EntityForm {
   protected function buildEntityId() {
     // We generate the machine name from the main tag in case the entity is new.
     if ($this->entity->isNew()) {
-      /** @var \Drupal\thunder_print\MachineNameGeneratorInterface $generator */
-      $generator = \Drupal::service('thunder_print.machine_name');
-      $generator->setExistsCallback('\Drupal\thunder_print\Entity\TagMapping::load');
-      $this->entity->set('id', $generator->generateUniqueMachineName($this->entity->getMainTag()));
+      $this->machineNameGenerator->setExistsCallback('\Drupal\thunder_print\Entity\TagMapping::load');
+      $this->entity->set('id', $this->machineNameGenerator->generateUniqueMachineName($this->entity->getMainTag()));
     }
   }
 
