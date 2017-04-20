@@ -15,3 +15,11 @@ entity.print_article_type.collection:
   description: 'Manage "Thunder for Print" Snippet-Templates'
   parent: system.admin_structure
   weight: 99
+
+# Tag Mapping menu items definition
+entity.thunder_print_tag_mapping.collection:
+  title: 'Tag Mapping'
+  route_name: entity.thunder_print_tag_mapping.collection
+  description: 'List Tag Mapping (bundles)'
+  parent: system.admin_structure
+  weight: 99
