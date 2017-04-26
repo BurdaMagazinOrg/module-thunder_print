@@ -198,7 +198,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   }
 
   /**
-   * Create fields for the current bundle.
+   * {@inheritdoc}
    */
   public function createBundleFields() {
 

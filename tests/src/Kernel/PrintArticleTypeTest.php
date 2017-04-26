@@ -31,7 +31,6 @@ class PrintArticleTypeTest extends KernelTestBase {
    */
   public function testBundleFieldCreation() {
 
-
     $this->createTagMappings();
 
     $bundle_name = 'test';

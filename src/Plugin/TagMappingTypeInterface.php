@@ -5,7 +5,6 @@ namespace Drupal\thunder_print\Plugin;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\thunder_print\Entity\TagMapping;
 
 /**
  * Defines an interface for Tag mapping type plugins.
@@ -70,5 +69,29 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    *   Property key for the main property.
    */
   public function getMainProperty();
+
+  /**
+   * Returns the storage definitions for field creation.
+   *
+   * @return mixed
+   *   Storage definition array.
+   */
+  public function getFieldStorageDefinition();
+
+  /**
+   * Returns the field definitions for field creation.
+   *
+   * @return mixed
+   *   Field definition array.
+   */
+  public function getFieldConfigDefinition();
+
+  /**
+   * Returns the form display definitions for field creation.
+   *
+   * @return mixed
+   *   Form display definition array.
+   */
+  public function getFormDisplayDefinition();
 
 }

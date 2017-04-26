@@ -257,7 +257,6 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
     }
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -278,7 +277,6 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
           'status' => TRUE,
         ]);
     }
-
 
     $fieldStorage = $this->entityTypeManager()
       ->getStorage('field_storage_config')
@@ -306,7 +304,7 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
         ->create([
           'field_storage' => $fieldStorage,
           'bundle' => $bundle,
-          'label' => $this->id(),
+          'label' => $this->getMainTag(),
           'translatable' => FALSE,
         ] + $this->getMappingType()->getFieldConfigDefinition())->save();
     }
