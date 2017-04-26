@@ -40,7 +40,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
    */
   public function testTypeCreation() {
 
-    $this->drupalGet('admin/structure/print_article_type/add');
+    $this->drupalGet('admin/structure/thunder_print/print_article_type/add');
 
     $page = $this->getSession()->getPage();
 
@@ -100,7 +100,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
 
     $this->container->get('entity_type.manager')->getStorage('print_article_type')->create($values)->save();
 
-    $this->drupalGet('admin/structure/print_article_type/test/edit');
+    $this->drupalGet('admin/structure/thunder_print/print_article_type/test/edit');
     $this->assertTrue($this->getSession()->getPage()->hasLink('edit-delete'));
 
     $this->container->get('entity_type.manager')->getStorage('print_article')->create([
@@ -108,7 +108,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
       'name' => 'Foo',
     ])->save();
 
-    $this->drupalGet('admin/structure/print_article_type/test/edit');
+    $this->drupalGet('admin/structure/thunder_print/print_article_type/test/edit');
     $this->assertFalse($this->getSession()->getPage()->hasLink('edit-delete'));
 
   }

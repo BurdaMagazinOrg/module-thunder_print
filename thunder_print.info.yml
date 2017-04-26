@@ -6,3 +6,5 @@ core: '8.x'
 dependencies:
   - drupal:file
   - drupal:image
+  - drupal:views
+  - entity:entity

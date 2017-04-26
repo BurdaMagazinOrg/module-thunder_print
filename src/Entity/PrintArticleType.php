@@ -41,11 +41,11 @@ use Drupal\thunder_print\IDMS;
  *     "thumbnail_uuid",
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/print_article_type/{print_article_type}",
- *     "add-form" = "/admin/structure/print_article_type/add",
- *     "edit-form" = "/admin/structure/print_article_type/{print_article_type}/edit",
- *     "delete-form" = "/admin/structure/print_article_type/{print_article_type}/delete",
- *     "collection" = "/admin/structure/print_article_type"
+ *     "canonical" = "/admin/structure/thunder_print/print_article_type/{print_article_type}",
+ *     "add-form" = "/admin/structure/thunder_print/print_article_type/add",
+ *     "edit-form" = "/admin/structure/thunder_print/print_article_type/{print_article_type}/edit",
+ *     "delete-form" = "/admin/structure/thunder_print/print_article_type/{print_article_type}/delete",
+ *     "collection" = "/admin/structure/thunder_print/print_article_type"
  *   }
  * )
  */

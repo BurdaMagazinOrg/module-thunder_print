@@ -1,19 +1,32 @@
 
 # Print article menu items definition
 entity.print_article.collection:
-  title: 'Print article list'
-  route_name: entity.print_article.collection
+  title: 'Print articles'
+  route_name: view.print_article.print_article_list
   description: 'List Print article entities'
   parent: system.admin_content
   weight: 100
 
+entity.print_article.add:
+  title: 'Add a new print article'
+  parent: entity.print_article.collection
+  description: 'Add a new print article entity.'
+  route_name: entity.print_article.add_page
+
+# Thunder for Print menu items definition
+thunder_print.manage:
+  title: 'Thunder for Print'
+  route_name: entity.print_article_type.collection
+  description: 'Manage "Thunder for Print"'
+  parent: system.admin_structure
+  weight: 99
 
 # Print article type menu items definition
 entity.print_article_type.collection:
   title: 'Snippet-Templates'
   route_name: entity.print_article_type.collection
   description: 'Manage "Thunder for Print" Snippet-Templates'
-  parent: system.admin_structure
+  parent: thunder_print.manage
   weight: 99
 
 # Tag Mapping menu items definition
@@ -21,5 +34,5 @@ entity.thunder_print_tag_mapping.collection:
   title: 'Tag Mapping'
   route_name: entity.thunder_print_tag_mapping.collection
   description: 'List Tag Mapping (bundles)'
-  parent: system.admin_structure
+  parent: thunder_print.manage
   weight: 99

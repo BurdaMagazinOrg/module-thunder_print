@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - thunder_print
+id: print_article_unpublish_action
+label: 'Unpublish print article'
+type: print_article
+plugin: print_article_unpublish_action
+configuration: {  }
