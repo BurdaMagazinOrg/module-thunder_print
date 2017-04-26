@@ -309,7 +309,10 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
         ] + $this->getMappingType()->getFieldConfigDefinition())->save();
     }
 
-    $form_display->setComponent($this->id(), $this->getMappingType()->getFormDisplayDefinition());
+    $form_display->setComponent($this->id(),
+      [
+        'weight' => 1,
+      ] + $this->getMappingType()->getFormDisplayDefinition());
     $form_display->save();
 
   }

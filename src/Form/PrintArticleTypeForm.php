@@ -70,7 +70,7 @@ class PrintArticleTypeForm extends EntityForm {
         '#type' => 'item',
         '#markup' => $this->t('%count %string currently using this @print_article_type.', [
           '%count' => $this->getLinkGenerator()
-            ->generate($this->getEntityCount(), Url::fromRoute('entity.print_article.collection')),
+            ->generate($this->getEntityCount(), Url::fromRoute('view.print_article.print_article_list')),
           '%string' => $this->formatPlural($this->getEntityCount(), 'article is', 'articles are'),
           '@print_article_type' => $print_article_type->getEntityType()
             ->getLabel(),
@@ -100,7 +100,7 @@ class PrintArticleTypeForm extends EntityForm {
           '%label' => $print_article_type->label(),
         ]));
     }
-    $form_state->setRedirectUrl($print_article_type->toUrl('collection'));
+    $form_state->setRedirectUrl(Url::fromRoute('entity.entity_form_display.print_article.default', ['print_article_type' => $print_article_type->id()]));
   }
 
   /**

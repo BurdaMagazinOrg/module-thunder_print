@@ -67,7 +67,6 @@ use Drupal\user\UserInterface;
  *     "revision_revert" = "/print-article/{print_article}/revisions/{print_article_revision}/revert",
  *     "translation_revert" = "/print-article/{print_article}/revisions/{print_article_revision}/revert/{langcode}",
  *     "revision_delete" = "/print-article/{print_article}/revisions/{print_article_revision}/delete",
- *     "collection" = "/admin/content/print-articles",
  *   },
  *   bundle_entity_type = "print_article_type",
  *   field_ui_base_route = "entity.print_article_type.edit_form"
@@ -193,7 +192,7 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
+        'weight' => 100,
         'settings' => [
           'match_operator' => 'CONTAINS',
           'size' => '60',
