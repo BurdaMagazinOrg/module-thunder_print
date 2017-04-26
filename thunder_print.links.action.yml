@@ -2,7 +2,7 @@ entity.print_article.add_form:
   route_name: 'entity.print_article.add_page'
   title: 'Add Print article'
   appears_on:
-    - view.print_article.print_article_list
+    - entity.print_article.collection
 entity.print_article_type.add_form:
   route_name: 'entity.print_article_type.add_form'
   title: 'Add Print article type'
