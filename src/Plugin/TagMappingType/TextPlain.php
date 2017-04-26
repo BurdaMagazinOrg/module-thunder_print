@@ -48,4 +48,38 @@ class TextPlain extends TagMappingTypeBase {
     return 'value';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldStorageDefinition() {
+    return [
+      'type' => 'string',
+      'settings' => [
+        'max_length' => 255,
+        'is_ascii' => FALSE,
+        'case_sensitive' => FALSE,
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldConfigDefinition() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormDisplayDefinition() {
+    return [
+      'type' => 'text_textfield',
+      'settings' => [
+        'size' => 60,
+        'placeholder' => '',
+      ],
+    ];
+  }
+
 }

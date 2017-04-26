@@ -20,7 +20,6 @@ class PrintArticleTypeTest extends JavascriptTestBase {
    */
   public static $modules = [
     'thunder_print',
-    'text',
   ];
 
   /**

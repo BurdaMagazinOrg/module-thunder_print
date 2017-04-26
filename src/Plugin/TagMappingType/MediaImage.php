@@ -67,4 +67,54 @@ class MediaImage extends TagMappingTypeBase {
     return 'field_image';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldStorageDefinition() {
+    return [
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'media',
+      ],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldConfigDefinition() {
+    return [
+      'handler' => 'default:media',
+      'handler_settings' => [
+        'target_bundles' => ['image'],
+        'sort' => [
+          'field' => '_none',
+        ],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ],
+
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormDisplayDefinition() {
+    return [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'image_browser',
+        'field_widget_display' => 'rendered_entity',
+        'field_widget_edit' => TRUE,
+        'field_widget_remove' => TRUE,
+        'selection_mode' => 'selection_append',
+        'field_widget_display_settings' => [
+          'view_mode' => 'thumbnail',
+        ],
+        'open' => TRUE,
+      ],
+    ];
+  }
+
 }

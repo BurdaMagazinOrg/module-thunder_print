@@ -22,12 +22,17 @@ class PrintArticleTypeTest extends KernelTestBase {
     'thunder_print',
     'field',
     'text',
+    'media_entity',
+    'entity_browser',
   ];
 
   /**
    * Test the automatic generation of fields on bundle creation.
    */
   public function testBundleFieldCreation() {
+
+
+    $this->createTagMappings();
 
     $bundle_name = 'test';
 
@@ -39,7 +44,8 @@ class PrintArticleTypeTest extends KernelTestBase {
     ];
 
     $fields = [
-      'tag1',
+      'xmltag_story',
+      'xmltag_image',
     ];
 
     // Check that fields does not exists.
@@ -66,6 +72,48 @@ class PrintArticleTypeTest extends KernelTestBase {
       $this->assertNotNull($field);
     }
 
+  }
+
+  /**
+   * Create tag mappings.
+   */
+  protected function createTagMappings() {
+
+    $tag_xmltag_story = $this->container->get('entity_type.manager')
+      ->getStorage('thunder_print_tag_mapping')
+      ->create([
+        'id' => 'xmltag_story',
+        'mapping_type' => 'text_formatted_long',
+        'mapping' => [
+          [
+            'property' => 'value',
+            'tag' => 'XMLTag/Story',
+          ],
+        ],
+        'options' => [],
+      ]);
+    $tag_xmltag_story->validate();
+    $tag_xmltag_story->save();
+
+    $tag_xmltag_image = $this->container->get('entity_type.manager')
+      ->getStorage('thunder_print_tag_mapping')
+      ->create([
+        'id' => 'xmltag_image',
+        'mapping_type' => 'media_image',
+        'mapping' => [
+          [
+            'property' => 'field_image',
+            'tag' => 'XMLTag/Image',
+          ],
+          [
+            'property' => 'field_description',
+            'tag' => 'XMLTag/Caption',
+          ],
+        ],
+        'options' => [],
+      ]);
+    $tag_xmltag_image->validate();
+    $tag_xmltag_image->save();
   }
 
 }

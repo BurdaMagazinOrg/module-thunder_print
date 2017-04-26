@@ -5,6 +5,7 @@ namespace Drupal\thunder_print\Plugin;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\thunder_print\Entity\TagMapping;
 
 /**
  * Defines an interface for Tag mapping type plugins.
