@@ -70,7 +70,7 @@ class PrintArticleTypeTest extends KernelTestBase {
         ->load("print_article.$bundle_name.$fieldName");
 
       $this->assertNotNull($field);
-      $this->assertSame($fieldType, $field->getDataType());
+      $this->assertSame($fieldType, $field->getFieldStorageDefinition()->getType());
     }
 
   }
