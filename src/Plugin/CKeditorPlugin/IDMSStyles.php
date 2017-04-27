@@ -27,7 +27,6 @@ class IDMSStyles extends CKEditorPluginBase {
    */
   public function getLibraries(Editor $editor) {
     return [
-      'core/drupal.ajax',
     ];
   }
 
@@ -36,7 +35,7 @@ class IDMSStyles extends CKEditorPluginBase {
    */
   public function getConfig(Editor $editor) {
     return [
-      'fields' => [
+      'thunder_print_idmsstyle' => [
         'field_xy',
       ],
     ];
@@ -47,7 +46,7 @@ class IDMSStyles extends CKEditorPluginBase {
    */
   public function getButtons() {
     return [
-      'IDMS Styles' => [
+      'thunder_print_idmsstyle' => [
         'label' => $this->t('IDMS styles'),
         'image_alternative' => [
           '#type' => 'inline_template',
