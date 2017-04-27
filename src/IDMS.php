@@ -2,7 +2,7 @@
 
 namespace Drupal\thunder_print;
 
-use Drupal\thunder_print\Validator\Constraints\IdmsUniqueTags;
+use Drupal\thunder_print\Validator\Constraints\IdmsNoChangeTracking;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -58,7 +58,7 @@ class IDMS {
     $validator = Validation::createValidator();
 
     return $validator->validate($this, [
-      new IdmsUniqueTags(),
+      new IdmsNoChangeTracking(),
     ]);
   }
 

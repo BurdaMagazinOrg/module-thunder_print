@@ -4,7 +4,7 @@ namespace Drupal\Tests\thunder_print\Unit;
 
 use Drupal\Tests\UnitTestCase;
 use Drupal\thunder_print\IDMS;
-use Drupal\thunder_print\Validator\Constraints\IdmsUniqueTags;
+use Drupal\thunder_print\Validator\Constraints\IdmsNoChangeTracking;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -63,15 +63,15 @@ class IDMSTest extends UnitTestCase {
   /**
    * Test the extracting of tags.
    *
-   * @dataProvider uniqueTagsValidationProvider
+   * @dataProvider noChangeTrackingValidationProvider
    */
-  public function testUniqueTagsValidation($filename, $expectedViolations) {
+  public function testNoChangeTrackingValidation($filename, $expectedViolations) {
     $idms = new IDMS(file_get_contents($filename));
 
     $validator = Validation::createValidator();
 
     $violations = $validator->validate($idms, [
-      new IdmsUniqueTags(),
+      new IdmsNoChangeTracking(),
     ]);
 
     $this->assertSame($expectedViolations, count($violations));
@@ -83,10 +83,10 @@ class IDMSTest extends UnitTestCase {
    * @return array
    *   Filename and expected violations.
    */
-  public function uniqueTagsValidationProvider() {
+  public function noChangeTrackingValidationProvider() {
     return [
       [dirname(__FILE__) . '/../../fixtures/Zeitung1.idms', 0],
-      [dirname(__FILE__) . '/../../fixtures/Zeitung2.idms', 1],
+      [dirname(__FILE__) . '/../../fixtures/ChangeTracking.idms', 1],
     ];
   }
 

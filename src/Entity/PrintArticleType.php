@@ -5,6 +5,10 @@ namespace Drupal\thunder_print\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\thunder_print\IDMS;
+use Drupal\thunder_print\Validator\Constraints\IdmsUniqueTags;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
 
 /**
  * Defines the Print article type entity.
@@ -94,6 +98,13 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   protected $thumbnail_uuid;
 
   /**
+   * Whether entity validation was performed.
+   *
+   * @var bool
+   */
+  protected $validated = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function getDescription() {
@@ -174,17 +185,64 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   /**
    * {@inheritdoc}
    */
+  public function save() {
+    $violations = $this->validate();
+    if ($violations->count()) {
+
+      /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+      foreach ($violations as $violation) {
+        throw new \Exception($violation->getMessage());
+      }
+    }
+    return parent::save();
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @see \Drupal\Core\Entity\ContentEntityBase::preSave()
+   */
   public function preSave(EntityStorageInterface $storage) {
+    // The entity should not be saved, unless it was validated succesfully.
+    if (!$this->validated) {
+      throw new \LogicException('Entity validation was skipped.');
+    }
+    // We reset validated to FALSE, so any further changes would end up in
+    // checking validation again.
+    else {
+      $this->validated = FALSE;
+    }
+
     parent::preSave($storage);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validate() {
+    $this->validated = TRUE;
 
     $idms = new IDMS($this->idms);
 
-    /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $errors */
-    $errors = $idms->validate();
+    // Validate IDMS.
+    $idmsViolations = $idms->validate();
 
-    if ($errors->count()) {
-      throw new \Exception('IDMS file not valid.');
-    }
+    // Validate $this.
+    $printArticleTypeViolations = Validation::createValidator()->validate($this, [
+      new IdmsUniqueTags(),
+    ]);
+
+    $tagViolations = Validation::createValidator()->validate($this->getTags(), [
+      new NotBlank(),
+    ]);
+
+    $violationList = new ConstraintViolationList();
+    $violationList->addAll($idmsViolations);
+    $violationList->addAll($printArticleTypeViolations);
+    $violationList->addAll($tagViolations);
+
+    return $violationList;
+
   }
 
   /**
@@ -202,15 +260,28 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
    */
   public function createBundleFields() {
 
-    $idms = new IDMS($this->idms);
-
     $entity_type_id = $this->getEntityType()->getBundleOf();
 
+    foreach ($this->getTags() as $tagMapping) {
+      $tagMapping->createField($entity_type_id, $this->id());
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTags() {
+
+    $idms = new IDMS($this->idms);
+
+    $tags = [];
     foreach ($idms->getTags() as $tag) {
       if ($tagMapping = TagMapping::loadMappingForTag($tag)) {
-        $tagMapping->createField($entity_type_id, $this->id());
+        $tags[$tag] = $tagMapping;
       }
     }
+
+    return $tags;
   }
 
 }
