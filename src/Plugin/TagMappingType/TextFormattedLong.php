@@ -43,4 +43,34 @@ class TextFormattedLong extends TagMappingTypeBase {
     return 'value';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldStorageDefinition() {
+    return [
+      'type' => 'text_long',
+      'settings' => [],
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldConfigDefinition() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormDisplayDefinition() {
+    return [
+      'type' => 'text_textarea',
+      'settings' => [
+        'rows' => 5,
+        'placeholder' => '',
+      ],
+    ];
+  }
+
 }

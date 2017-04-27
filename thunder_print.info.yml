@@ -5,6 +5,8 @@ type: module
 core: '8.x'
 dependencies:
   - drupal:file
+  - drupal:field
   - drupal:image
+  - drupal:text
   - drupal:views
   - entity:entity

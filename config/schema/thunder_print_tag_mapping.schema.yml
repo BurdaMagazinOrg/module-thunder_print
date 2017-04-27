@@ -14,8 +14,6 @@ thunder_print.tag_mapping.*:
       type: sequence
       sequence:
         type: thunder_print.tag_mapping_map
-    options:
-      type: undefined
 
 thunder_print.tag_mapping_map:
   type: mapping

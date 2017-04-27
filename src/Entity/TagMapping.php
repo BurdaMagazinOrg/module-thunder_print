@@ -257,4 +257,64 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function createField($entity_type_id, $bundle) {
+
+    $form_display = $this->entityTypeManager()
+      ->getStorage('entity_form_display')
+      ->load("$entity_type_id.$bundle.default");
+
+    if (!$form_display) {
+      /** @var \Drupal\Core\Entity\Entity\EntityFormDisplay $form_display */
+      $form_display = $this->entityTypeManager()
+        ->getStorage('entity_form_display')
+        ->create([
+          'targetEntityType' => $entity_type_id,
+          'bundle' => $bundle,
+          'mode' => 'default',
+          'status' => TRUE,
+        ]);
+    }
+
+    $fieldStorage = $this->entityTypeManager()
+      ->getStorage('field_storage_config')
+      ->load("$entity_type_id." . $this->id());
+
+    if (!$fieldStorage) {
+      $fieldStorage = $this->entityTypeManager()
+        ->getStorage('field_storage_config')
+        ->create([
+          'field_name' => $this->id(),
+          'entity_type' => $entity_type_id,
+          'cardinality' => 1,
+          'locked' => TRUE,
+        ] + $this->getMappingType()->getFieldStorageDefinition());
+      $fieldStorage->save();
+    }
+
+    $fieldConfig = $this->entityTypeManager()
+      ->getStorage('field_config')
+      ->load("$entity_type_id.$bundle." . $this->id());
+
+    if (!$fieldConfig) {
+      $this->entityTypeManager()
+        ->getStorage('field_config')
+        ->create([
+          'field_storage' => $fieldStorage,
+          'bundle' => $bundle,
+          'label' => $this->getMainTag(),
+          'translatable' => FALSE,
+        ] + $this->getMappingType()->getFieldConfigDefinition())->save();
+    }
+
+    $form_display->setComponent($this->id(),
+      [
+        'weight' => 1,
+      ] + $this->getMappingType()->getFormDisplayDefinition());
+    $form_display->save();
+
+  }
+
 }

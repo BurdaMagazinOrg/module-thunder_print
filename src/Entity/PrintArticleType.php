@@ -187,4 +187,30 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+    if (!$update) {
+      $this->createBundleFields();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createBundleFields() {
+
+    $idms = new IDMS($this->idms);
+
+    $entity_type_id = $this->getEntityType()->getBundleOf();
+
+    foreach ($idms->getTags() as $tag) {
+      if ($tagMapping = TagMapping::loadMappingForTag($tag)) {
+        $tagMapping->createField($entity_type_id, $this->id());
+      }
+    }
+  }
+
 }
