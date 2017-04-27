@@ -15,7 +15,6 @@ thunder_print.tag_mapping.*:
       sequence:
         type: thunder_print.tag_mapping_map
 
-
 thunder_print.tag_mapping_map:
   type: mapping
   mapping:

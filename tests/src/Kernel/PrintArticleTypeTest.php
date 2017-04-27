@@ -83,6 +83,7 @@ class PrintArticleTypeTest extends KernelTestBase {
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('thunder_print_tag_mapping');
 
+    /** @var \Drupal\thunder_print\Entity\TagMapping $tag_xmltag_story */
     $tag_xmltag_story = $storage->create([
       'id' => 'xmltag_story',
       'mapping_type' => 'text_formatted_long',
@@ -97,6 +98,7 @@ class PrintArticleTypeTest extends KernelTestBase {
     $tag_xmltag_story->validate();
     $tag_xmltag_story->save();
 
+    /** @var \Drupal\thunder_print\Entity\TagMapping $tag_xmltag_story */
     $tag_xmltag_image = $storage->create([
       'id' => 'xmltag_image',
       'mapping_type' => 'media_image',
