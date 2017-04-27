@@ -44,9 +44,8 @@ class PrintArticleForm extends ContentEntityForm {
     $form['footer'] = [
       '#type' => 'container',
       '#weight' => 99,
-      'status' => $form['status'],
     ];
-    unset($form['status']);
+    $form['status']['#group'] = 'footer';
 
     return $form;
   }

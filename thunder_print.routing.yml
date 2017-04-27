@@ -1,0 +1,7 @@
+thunder_print.manage:
+  path: '/admin/structure/thunder_print'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer site configuration'
