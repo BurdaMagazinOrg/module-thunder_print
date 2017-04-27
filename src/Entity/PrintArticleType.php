@@ -208,7 +208,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
 
     foreach ($idms->getTags() as $tag) {
       if ($tagMapping = TagMapping::loadMappingForTag($tag)) {
-        $tagMapping->createFields($entity_type_id, $this->id());
+        $tagMapping->createField($entity_type_id, $this->id());
       }
     }
   }

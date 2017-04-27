@@ -43,8 +43,8 @@ class PrintArticleTypeTest extends KernelTestBase {
     ];
 
     $fields = [
-      'xmltag_story',
-      'xmltag_image',
+      'xmltag_story' => 'text_long',
+      'xmltag_image' => 'entity_reference',
     ];
 
     // Check that fields does not exists.
@@ -63,12 +63,14 @@ class PrintArticleTypeTest extends KernelTestBase {
     $bundle->save();
 
     // Check that fields exists now.
-    foreach ($fields as $field) {
+    foreach ($fields as $fieldName => $fieldType) {
+      /** @var \Drupal\field\Entity\FieldConfig $field */
       $field = $this->container->get('entity_type.manager')
         ->getStorage('field_config')
-        ->load("print_article.$bundle_name.$field");
+        ->load("print_article.$bundle_name.$fieldName");
 
       $this->assertNotNull($field);
+      $this->assertSame($fieldType, $field->getDataType());
     }
 
   }
@@ -78,39 +80,38 @@ class PrintArticleTypeTest extends KernelTestBase {
    */
   protected function createTagMappings() {
 
-    $tag_xmltag_story = $this->container->get('entity_type.manager')
-      ->getStorage('thunder_print_tag_mapping')
-      ->create([
-        'id' => 'xmltag_story',
-        'mapping_type' => 'text_formatted_long',
-        'mapping' => [
-          [
-            'property' => 'value',
-            'tag' => 'XMLTag/Story',
-          ],
+    $storage = $this->container->get('entity_type.manager')
+      ->getStorage('thunder_print_tag_mapping');
+
+    $tag_xmltag_story = $storage->create([
+      'id' => 'xmltag_story',
+      'mapping_type' => 'text_formatted_long',
+      'mapping' => [
+        [
+          'property' => 'value',
+          'tag' => 'XMLTag/Story',
         ],
-        'options' => [],
-      ]);
+      ],
+      'options' => [],
+    ]);
     $tag_xmltag_story->validate();
     $tag_xmltag_story->save();
 
-    $tag_xmltag_image = $this->container->get('entity_type.manager')
-      ->getStorage('thunder_print_tag_mapping')
-      ->create([
-        'id' => 'xmltag_image',
-        'mapping_type' => 'media_image',
-        'mapping' => [
-          [
-            'property' => 'field_image',
-            'tag' => 'XMLTag/Image',
-          ],
-          [
-            'property' => 'field_description',
-            'tag' => 'XMLTag/Caption',
-          ],
+    $tag_xmltag_image = $storage->create([
+      'id' => 'xmltag_image',
+      'mapping_type' => 'media_image',
+      'mapping' => [
+        [
+          'property' => 'field_image',
+          'tag' => 'XMLTag/Image',
         ],
-        'options' => [],
-      ]);
+        [
+          'property' => 'field_description',
+          'tag' => 'XMLTag/Caption',
+        ],
+      ],
+      'options' => [],
+    ]);
     $tag_xmltag_image->validate();
     $tag_xmltag_image->save();
   }

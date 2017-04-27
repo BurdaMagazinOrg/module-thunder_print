@@ -81,6 +81,6 @@ interface TagMappingInterface extends ConfigEntityInterface {
    * @param string $bundle
    *   Entity bundle to create the fields.
    */
-  public function createFields($entity_type_id, $bundle);
+  public function createField($entity_type_id, $bundle);
 
 }

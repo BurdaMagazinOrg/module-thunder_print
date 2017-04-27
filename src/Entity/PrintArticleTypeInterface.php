@@ -57,4 +57,9 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    */
   public function buildThumbnail();
 
+  /**
+   * Creates fields at bundle from an idms file.
+   */
+  public function createBundleFields();
+
 }

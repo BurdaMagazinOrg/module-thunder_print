@@ -260,7 +260,7 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
   /**
    * {@inheritdoc}
    */
-  public function createFields($entity_type_id, $bundle) {
+  public function createField($entity_type_id, $bundle) {
 
     $form_display = $this->entityTypeManager()
       ->getStorage('entity_form_display')
