@@ -16,7 +16,7 @@ entity.print_article.add:
 # Thunder for Print menu items definition
 thunder_print.manage:
   title: 'Thunder for Print'
-  route_name: entity.print_article_type.collection
+  route_name: thunder_print.manage
   description: 'Manage "Thunder for Print"'
   parent: system.admin_structure
   weight: 99

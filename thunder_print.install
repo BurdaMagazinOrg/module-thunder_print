@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains thunder_print.install.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function thunder_print_uninstall() {
+
+  $configs = [
+    'system.action.print_article_delete_action',
+    'system.action.print_article_publish_action',
+    'system.action.print_article_unpublish_action',
+    'views.view.print_article',
+  ];
+
+  foreach ($configs as $config) {
+    \Drupal::configFactory()->getEditable($config)->delete();
+  }
+
+}
