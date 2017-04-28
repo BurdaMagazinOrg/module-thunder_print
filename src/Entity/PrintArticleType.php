@@ -7,7 +7,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Validator\Constraints\IdmsUniqueTags;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -228,21 +228,25 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     $idmsViolations = $idms->validate();
 
     // Validate $this.
-    $printArticleTypeViolations = Validation::createValidator()->validate($this, [
-      new IdmsUniqueTags(),
-    ]);
+    $printArticleTypeViolations = Validation::createValidatorBuilder()
+      ->addMethodMapping('loadValidatorMetadata')
+      ->getValidator()
+      ->validate($this);
 
-    $tagViolations = Validation::createValidator()->validate($this->getTags(), [
-      new NotBlank(),
-    ]);
+    $printArticleTypeViolations->addAll($idmsViolations);
 
-    $violationList = new ConstraintViolationList();
-    $violationList->addAll($idmsViolations);
-    $violationList->addAll($printArticleTypeViolations);
-    $violationList->addAll($tagViolations);
+    return $printArticleTypeViolations;
+  }
 
-    return $violationList;
-
+  /**
+   * Provides metadata for validator.
+   *
+   * @param \Symfony\Component\Validator\Mapping\ClassMetadata $metadata
+   *   Symfony valdiator metadata object.
+   */
+  public static function loadValidatorMetadata(ClassMetadata $metadata) {
+    $metadata->addGetterMethodConstraint('mapping', 'getTags', new NotBlank(['message' => "IDMS doesn't contain defined tags from the tag-mapping."]));
+    $metadata->addConstraint(new IdmsUniqueTags());
   }
 
   /**

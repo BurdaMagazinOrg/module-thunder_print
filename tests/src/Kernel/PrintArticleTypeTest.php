@@ -91,7 +91,7 @@ class PrintArticleTypeTest extends KernelTestBase {
    */
   public function testNotMatchingTagsException() {
 
-    $this->setExpectedException('Exception', 'This value should not be blank.');
+    $this->setExpectedException('Exception', "IDMS doesn't contain defined tags from the tag-mapping.");
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('thunder_print_tag_mapping');
