@@ -245,7 +245,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
    *   Symfony valdiator metadata object.
    */
   public static function loadValidatorMetadata(ClassMetadata $metadata) {
-    $metadata->addGetterMethodConstraint('mapping', 'getTags', new NotBlank(['message' => "IDMS doesn't contain defined tags from the tag-mapping."]));
+    $metadata->addGetterMethodConstraint('idms', 'getTags', new NotBlank(['message' => "IDMS doesn't contain defined tags from the tag-mapping."]));
     $metadata->addConstraint(new IdmsUniqueTags());
   }
 
