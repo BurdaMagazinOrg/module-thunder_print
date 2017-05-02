@@ -6,18 +6,10 @@ thunder_print.manage:
   requirements:
     _permission: 'administer site configuration'
 
-thunder_print.print_article_type.disable:
-  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/disable'
+thunder_print.print_article_type.toggleStatus:
+  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/toggleStatus'
   defaults:
-    _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::disable'
-    _title: 'Thunder for Print'
-  requirements:
-    _permission: 'administer site configuration'
-
-thunder_print.print_article_type.enable:
-  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/enable'
-  defaults:
-    _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::enable'
+    _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::toggleStatus'
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer site configuration'

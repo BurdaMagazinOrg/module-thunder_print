@@ -35,7 +35,7 @@ function thunder_print_entity_operation(EntityInterface $entity) {
       return [
         'disable' => [
           'title' => t('Disable'),
-          'url' => Url::fromRoute('thunder_print.print_article_type.disable', ['print_article_type' => $entity->id()]),
+          'url' => Url::fromRoute('thunder_print.print_article_type.toggleStatus', ['print_article_type' => $entity->id()]),
           'weight' => 30,
         ],
       ];
@@ -44,7 +44,7 @@ function thunder_print_entity_operation(EntityInterface $entity) {
       return [
         'enable' => [
           'title' => t('Enable'),
-          'url' => Url::fromRoute('thunder_print.print_article_type.enable', ['print_article_type' => $entity->id()]),
+          'url' => Url::fromRoute('thunder_print.print_article_type.toggleStatus', ['print_article_type' => $entity->id()]),
           'weight' => 30,
         ],
       ];
