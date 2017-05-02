@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\FieldConfigInterface;
+use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -163,36 +164,57 @@ class MediaEntity extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IDMS $idms, $tag, $field) {
-
-    $xpath = "(//XmlStory//XMLElement[@MarkupTag='$tag'])[last()]/XMLAttribute[@Name='href']";
-    $elements = $idms->getXml()->xpath($xpath)[0];
-
-    if ($elements) {
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
 
 
-      var_dump($elements);
+    foreach ($this->configuration['mapping'] as $field => $tag) {
+
+      $xpath = "(//XmlStory//XMLElement[@MarkupTag='$tag'])[last()]";
+      $xmlElement = $idms->getXml()->xpath($xpath)[0];
+
+      if ($xmlElement) {
+
+        $xmlContentId = (string) $xmlElement['XMLContent'];
+
+        $xpath = "//Image[@Self='$xmlContentId']/Link";
+        $xmlImageLink = $idms->getXml()->xpath($xpath)[0];
+
+        $media = Media::load($fieldItem['target_id']);
+        $fieldValue = $media->get($field)->first();
+
+        if ($fieldValue) {
+          if ($xmlImageLink) {
+
+            /** @var File $file */
+            $file = File::load($fieldValue->target_id);
+
+            $xmlElement['Value'] = 'file://' . drupal_realpath($file->getFileUri());
+            $xmlImageLink['LinkResourceURI'] = $xmlElement['Value'];
+
+          }
+          else {
+            $xpath = "(//Story//XMLElement[@MarkupTag='$tag'])[last()]";
+            $xmlElement = $idms->getXml()->xpath($xpath)[0];
+
+            $errlevel = error_reporting(E_ALL & ~E_WARNING);
+
+            foreach ($xmlElement->children() as $i => $child) {
+              unset($child[0]);
+            }
+            error_reporting($errlevel);
+
+            $xmlElement->Content = trim(strip_tags($fieldValue->value));
+          }
+
+        }
 
 
 
-      var_dump($field);
-
-
-
-      $media = Media::load($field['target_id']);
-      $media_bundle = MediaBundle::load($media->bundle());
-      $configuration = $media_bundle->getTypeConfiguration();
-
-      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image */
-      $image = $media->get($configuration['source_field'])->first();
-
-      /** @var File $file */
-      $file = File::load($image->target_id);
-
-      $elements['Value'] = 'file://' . drupal_realpath($file->getFileUri());
-
+      }
 
     }
+
+
 
     return $idms;
   }

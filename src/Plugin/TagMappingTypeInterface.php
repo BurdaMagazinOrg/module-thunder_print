@@ -92,6 +92,6 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    * @param $field
    * @return mixed
    */
-  public function replacePlaceholder(IDMS $idms, $tag, $field);
+  public function replacePlaceholder(IDMS $idms, $field);
 
 }

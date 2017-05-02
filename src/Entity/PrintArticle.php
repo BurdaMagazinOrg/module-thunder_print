@@ -278,8 +278,7 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       $field = $this->{$tagMapping->id()};
 
       if ($fieldItem = $field->first()) {
-      var_dump($tag . get_class($fieldItem));
-        $idms = $tagMapping->getMappingType()->replacePlaceholder($idms, $tag, $fieldItem->getValue());
+        $idms = $tagMapping->getMappingType()->replacePlaceholder($idms, $fieldItem->getValue());
       }
     }
     return $idms;
