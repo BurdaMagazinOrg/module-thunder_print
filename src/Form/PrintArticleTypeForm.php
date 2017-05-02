@@ -19,6 +19,7 @@ class PrintArticleTypeForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
+    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $print_article_type */
     $print_article_type = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -70,8 +71,8 @@ class PrintArticleTypeForm extends EntityForm {
         '#type' => 'item',
         '#markup' => $this->t('%count %string currently using this @print_article_type.', [
           '%count' => $this->getLinkGenerator()
-            ->generate($this->getEntityCount(), Url::fromRoute('view.print_article.print_article_list')),
-          '%string' => $this->formatPlural($this->getEntityCount(), 'article is', 'articles are'),
+            ->generate($print_article_type->getEntityCount(), Url::fromRoute('view.print_article.print_article_list')),
+          '%string' => $this->formatPlural($print_article_type->getEntityCount(), 'article is', 'articles are'),
           '@print_article_type' => $print_article_type->getEntityType()
             ->getLabel(),
         ]),
@@ -110,28 +111,14 @@ class PrintArticleTypeForm extends EntityForm {
 
     $actions = parent::actions($form, $form_state);
 
+    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $print_article_type */
+    $print_article_type = $this->entity;
+
     if (!empty($actions['delete'])) {
-      $actions['delete']['#access'] = ($this->getEntityCount()) ? FALSE : TRUE;
+      $actions['delete']['#access'] = ($print_article_type->getEntityCount()) ? FALSE : TRUE;
     }
 
     return $actions;
-  }
-
-  /**
-   * Get number of print articles of the current bundle.
-   *
-   * @return int
-   *   Number of articles.
-   */
-  protected function getEntityCount() {
-
-    $entities = $this->entityTypeManager
-      ->getStorage($this->entity->getEntityType()->getBundleOf())
-      ->loadByProperties([
-        'type' => $this->entity->id(),
-      ]);
-
-    return count($entities);
   }
 
 }

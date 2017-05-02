@@ -288,4 +288,18 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     return $tags;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntityCount() {
+
+    $entities = $this->entityTypeManager()
+      ->getStorage($this->getEntityType()->getBundleOf())
+      ->loadByProperties([
+        'type' => $this->id(),
+      ]);
+
+    return count($entities);
+  }
+
 }

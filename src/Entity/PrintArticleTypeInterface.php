@@ -67,4 +67,12 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    */
   public function getTags();
 
+  /**
+   * Get number of print articles of the current bundle.
+   *
+   * @return int
+   *   Number of articles.
+   */
+  public function getEntityCount();
+
 }
