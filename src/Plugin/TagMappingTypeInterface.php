@@ -5,6 +5,7 @@ namespace Drupal\thunder_print\Plugin;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\thunder_print\IDMS;
 
 /**
  * Defines an interface for Tag mapping type plugins.
@@ -85,5 +86,12 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    *   Field definition array.
    */
   public function getFieldConfigDefinition();
+
+  /**
+   * @param \Drupal\thunder_print\IDMS $idms
+   * @param $field
+   * @return mixed
+   */
+  public function replacePlaceholder(IDMS $idms, $tag, $field);
 
 }

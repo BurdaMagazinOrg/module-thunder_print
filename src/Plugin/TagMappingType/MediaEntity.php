@@ -160,4 +160,40 @@ class MediaEntity extends TagMappingTypeBase {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function replacePlaceholder(IDMS $idms, $tag, $field) {
+
+    $xpath = "(//XmlStory//XMLElement[@MarkupTag='$tag'])[last()]/XMLAttribute[@Name='href']";
+    $elements = $idms->getXml()->xpath($xpath)[0];
+
+    if ($elements) {
+
+
+      var_dump($elements);
+
+
+
+      var_dump($field);
+
+
+
+      $media = Media::load($field['target_id']);
+      $media_bundle = MediaBundle::load($media->bundle());
+      $configuration = $media_bundle->getTypeConfiguration();
+
+      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image */
+      $image = $media->get($configuration['source_field'])->first();
+
+      /** @var File $file */
+      $file = File::load($image->target_id);
+
+      $elements['Value'] = 'file://' . drupal_realpath($file->getFileUri());
+
+
+    }
+
+    return $idms;
+  }
 }
