@@ -24,7 +24,8 @@ class PrintArticleTypeController extends ControllerBase implements ContainerInje
       ->getStorage('print_article_type')
       ->load($print_article_type);
 
-    $print_article_type->setStatus(!$print_article_type->status())
+    $print_article_type
+      ->setStatus(!$print_article_type->status())
       ->save();
 
     return $this->redirect('entity.print_article_type.collection');
