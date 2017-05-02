@@ -62,4 +62,9 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    */
   public function createBundleFields();
 
+  /**
+   * Get the intersection of tags from idms and tag mapping.
+   */
+  public function getTags();
+
 }

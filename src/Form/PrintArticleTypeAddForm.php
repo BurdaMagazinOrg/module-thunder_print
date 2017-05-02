@@ -3,7 +3,6 @@
 namespace Drupal\thunder_print\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\thunder_print\IDMS;
 
 /**
  * Class PrintArticleTypeAddForm.
@@ -43,17 +42,19 @@ class PrintArticleTypeAddForm extends PrintArticleTypeForm {
       $file_upload = $all_files['idms'];
 
       $xml = file_get_contents($file_upload->getPathname());
-      $idms = new IDMS($xml);
+      $form_state->setValue('idms', $xml);
+      /** @var \Drupal\thunder_print\Entity\TagMappingInterface $new_entity */
+      $new_entity = $this->buildEntity($form, $form_state);
 
       /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $errors */
-      $errors = $idms->validate();
+      $violations = $new_entity->validate();
+      if ($violations->count()) {
 
-      if ($errors->count()) {
-
-        $form_state->setErrorByName('idms', $this->t('IDMS is not valid.'));
+        /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+        foreach ($violations as $violation) {
+          $form_state->setErrorByName($violation->getPropertyPath(), $violation->getMessage());
+        }
       }
-
-      $form_state->setValue('idms', $xml);
     }
     else {
       $form_state->setErrorByName('idms', $this->t('It was not possible to upload idms file.'));

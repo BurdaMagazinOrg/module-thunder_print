@@ -3,6 +3,7 @@
 namespace Drupal\Tests\thunder_print\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\Tests\thunder_print\Kernel\TagMappingTrait;
 
 /**
  * Tests the mapping creation.
@@ -10,6 +11,8 @@ use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
  * @group thunder_print
  */
 class PrintArticleTypeTest extends JavascriptTestBase {
+
+  use TagMappingTrait;
 
   protected $adminUser;
 
@@ -20,6 +23,8 @@ class PrintArticleTypeTest extends JavascriptTestBase {
    */
   public static $modules = [
     'thunder_print',
+    'media_entity',
+    'entity_browser',
   ];
 
   /**
@@ -39,6 +44,8 @@ class PrintArticleTypeTest extends JavascriptTestBase {
    * Test Creation of a mapping.
    */
   public function testTypeCreation() {
+
+    $this->createTagMappings();
 
     $this->drupalGet('admin/structure/thunder_print/print_article_type/add');
 
@@ -93,14 +100,14 @@ class PrintArticleTypeTest extends JavascriptTestBase {
    */
   public function testDeleteButton() {
 
-    $values = [
+    $this->createTagMappings();
+
+    $this->container->get('entity_type.manager')->getStorage('print_article_type')->create([
       'id' => 'test',
       'label' => 'Test',
       'grid' => 12,
       'idms' => file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms'),
-    ];
-
-    $this->container->get('entity_type.manager')->getStorage('print_article_type')->create($values)->save();
+    ])->save();
 
     $this->drupalGet('admin/structure/thunder_print/print_article_type/test/edit');
     $this->assertTrue($this->getSession()->getPage()->hasLink('edit-delete'));
