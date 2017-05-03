@@ -44,4 +44,19 @@ class PrintArticleAccessControlHandler extends EntityAccessControlHandler {
     return AccessResult::allowedIfHasPermission($account, 'add print article entities');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = [], $return_as_object = FALSE) {
+    $result = parent::createAccess($entity_bundle, $account, $context, $return_as_object);
+
+    /** @var \Drupal\thunder_print\Entity\PrintArticleType $bundle */
+    $bundle = \Drupal::entityTypeManager()
+      ->getStorage($this->entityType->getBundleEntityType())
+      ->load($entity_bundle);
+
+    $result = $result->andIf(AccessResult::allowedIf($bundle->status()));
+    return $return_as_object ? $result : $result->isAllowed();
+  }
+
 }

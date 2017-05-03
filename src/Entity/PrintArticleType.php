@@ -288,4 +288,15 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     return $tags;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntityCount() {
+
+    return \Drupal::entityQuery($this->getEntityType()->getBundleOf())
+      ->condition('type', $this->id())
+      ->count()
+      ->execute();
+  }
+
 }

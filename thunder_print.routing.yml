@@ -5,3 +5,11 @@ thunder_print.manage:
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer site configuration'
+
+thunder_print.print_article_type.toggleStatus:
+  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/toggleStatus'
+  defaults:
+    _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::toggleStatus'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'
