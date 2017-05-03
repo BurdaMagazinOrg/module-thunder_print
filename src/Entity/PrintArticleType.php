@@ -299,4 +299,17 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
       ->execute();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+
+    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
+    foreach ($this->getTags() as $tagMapping) {
+      $dependencies->addDependency('config', $tagMapping->getConfigDependencyName());
+    }
+    return $dependencies;
+  }
+
 }

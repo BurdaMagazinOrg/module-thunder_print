@@ -2,7 +2,6 @@
 
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -32,13 +31,6 @@ class TextFormattedLong extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function optionsForm(array $form, FormStateInterface $form_state) {
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getMainProperty() {
     return 'value';
   }
@@ -58,19 +50,6 @@ class TextFormattedLong extends TagMappingTypeBase {
    */
   public function getFieldConfigDefinition() {
     return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormDisplayDefinition() {
-    return [
-      'type' => 'text_textarea',
-      'settings' => [
-        'rows' => 5,
-        'placeholder' => '',
-      ],
-    ];
   }
 
 }

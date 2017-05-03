@@ -108,12 +108,14 @@ class PrintArticleTypeTest extends KernelTestBase {
     /** @var \Drupal\thunder_print\Entity\TagMapping $tag_xmltag_image */
     $tag_xmltag_image = $storage->create([
       'id' => 'xmltag_image',
-      'mapping_type' => 'media_image',
+      'mapping_type' => 'media_entity',
       'mapping' => [
         'field_image' => 'XMLTag/Image1',
         'field_description' => 'XMLTag/Caption1',
       ],
-      'options' => [],
+      'options' => [
+        'bundle' => 'image',
+      ],
     ]);
     $tag_xmltag_image->validate();
     $tag_xmltag_image->save();

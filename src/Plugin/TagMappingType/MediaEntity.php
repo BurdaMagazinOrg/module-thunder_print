@@ -2,21 +2,54 @@
 
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
- * Provides Tag Mapping for media image reference.
+ * Provides Tag Mapping for media entity reference.
  *
  * @package Drupal\thunder_print\Plugin\TagMappingType
  * @todo Provide generic entity reference handler.
  *
  * @TagMappingType(
- *   id = "media_image",
- *   label = @Translation("Media image"),
+ *   id = "media_entity",
+ *   label = @Translation("Media entity"),
  * )
  */
-class MediaImage extends TagMappingTypeBase {
+class MediaEntity extends TagMappingTypeBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function optionsForm(array $form, FormStateInterface $form_state) {
+    $form = parent::optionsForm($form, $form_state);
+
+    $bundles = $this->entityTypeManager->getStorage('media_bundle')
+      ->loadMultiple();
+
+    $options = [];
+
+    foreach ($bundles as $bundle) {
+      $options[$bundle->id()] = $bundle->label();
+    }
+
+    $wrapper_id = Html::getId('tap-mapping-form-ajax-wrapper');
+
+    $form['bundle'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Bundle'),
+      '#options' => $options,
+      '#default_value' => $this->getOption('bundle'),
+      '#ajax' => [
+        'callback' => '::ajaxCallback',
+        'wrapper' => $wrapper_id,
+      ],
+    ];
+
+    return $form;
+  }
 
   /**
    * {@inheritdoc}
@@ -25,7 +58,7 @@ class MediaImage extends TagMappingTypeBase {
     $return = [];
     /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $entityManager */
     $entityManager = \Drupal::service('entity_field.manager');
-    $fields = $entityManager->getFieldDefinitions('media', 'image');
+    $fields = $entityManager->getFieldDefinitions('media', $this->getOption('bundle'));
     foreach ($fields as $field) {
       if (!$field->getFieldStorageDefinition()->isBaseField()) {
         $return[$field->getName()] = [
@@ -63,8 +96,15 @@ class MediaImage extends TagMappingTypeBase {
    * {@inheritdoc}
    */
   public function getMainProperty() {
-    // @todo: maybe provide this as an option, in case there are multiple required fields.
-    return 'field_image';
+
+    /** @var \Drupal\media_entity\MediaBundleInterface $bundle */
+    $bundle = $this->entityTypeManager->getStorage('media_bundle')
+      ->load($this->getOption('bundle'));
+
+    if ($bundle) {
+      return $bundle->getTypeConfiguration()['source_field'];
+    }
+    return '';
   }
 
   /**
@@ -86,7 +126,7 @@ class MediaImage extends TagMappingTypeBase {
     return [
       'handler' => 'default:media',
       'handler_settings' => [
-        'target_bundles' => ['image'],
+        'target_bundles' => [$this->getOption('bundle')],
         'sort' => [
           'field' => '_none',
         ],
@@ -94,26 +134,6 @@ class MediaImage extends TagMappingTypeBase {
         'auto_create_bundle' => '',
       ],
 
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormDisplayDefinition() {
-    return [
-      'type' => 'entity_browser_entity_reference',
-      'settings' => [
-        'entity_browser' => 'image_browser',
-        'field_widget_display' => 'rendered_entity',
-        'field_widget_edit' => TRUE,
-        'field_widget_remove' => TRUE,
-        'selection_mode' => 'selection_append',
-        'field_widget_display_settings' => [
-          'view_mode' => 'thumbnail',
-        ],
-        'open' => TRUE,
-      ],
     ];
   }
 

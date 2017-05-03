@@ -161,6 +161,21 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
 
   /**
    * {@inheritdoc}
+   */
+  public function save() {
+    $violations = $this->validate();
+    if ($violations->count()) {
+
+      /** @var \Symfony\Component\Validator\ConstraintViolationInterface $violation */
+      foreach ($violations as $violation) {
+        throw new \Exception($violation->getMessage());
+      }
+    }
+    return parent::save();
+  }
+
+  /**
+   * {@inheritdoc}
    *
    * @see \Drupal\Core\Entity\ContentEntityBase::preSave()
    */
@@ -329,7 +344,9 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
     $form_display->setComponent($this->id(),
       [
         'weight' => 1,
-      ] + $this->getMappingType()->getFormDisplayDefinition());
+        'type' => $this->options['widget_type'],
+        'settings' => !empty($this->options['field_settings']) ? $this->options['field_settings'] : [],
+      ]);
     $form_display->save();
 
   }

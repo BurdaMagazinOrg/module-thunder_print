@@ -86,12 +86,4 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    */
   public function getFieldConfigDefinition();
 
-  /**
-   * Returns the form display definitions for field creation.
-   *
-   * @return mixed
-   *   Form display definition array.
-   */
-  public function getFormDisplayDefinition();
-
 }

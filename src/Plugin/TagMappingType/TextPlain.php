@@ -69,17 +69,4 @@ class TextPlain extends TagMappingTypeBase {
     return [];
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormDisplayDefinition() {
-    return [
-      'type' => 'text_textfield',
-      'settings' => [
-        'size' => 60,
-        'placeholder' => '',
-      ],
-    ];
-  }
-
 }
