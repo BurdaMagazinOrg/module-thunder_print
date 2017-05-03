@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_title
+mapping_type: text_plain
+mapping:
+  -
+    property: value
+    tag: XMLTag/Title

@@ -1,0 +1,40 @@
+<?php
+
+namespace Drupal\Tests\thunder_print\Kernel;
+
+use Drupal\KernelTests\KernelTestBase;
+use Drupal\media_entity\Entity\MediaBundle;
+
+/**
+ * Tests the mapping creation.
+ *
+ * @group thunder_print
+ */
+class PrintArticleExportTest extends KernelTestBase {
+
+  protected $adminUser;
+
+  /**
+   * Modules to enable.
+   *
+   * @var array
+   */
+  public static $modules = [
+    'thunder_print',
+    'field',
+    'text',
+    'image',
+    'file',
+    'thunder_print_test',
+    'media_entity',
+    'entity_browser',
+  ];
+
+  /**
+   *
+   */
+  public function testMediaReplacement() {
+    $this->installConfig(['thunder_print_test']);
+  }
+
+}

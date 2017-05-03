@@ -1,0 +1,9 @@
+name: 'Thunder for Print - Testing module'
+description: 'Connects Thunder with an InDesign Server to create IDMS snipptes'
+package: Testing
+type: module
+core: '8.x'
+dependencies:
+  - thunder_print:thunder_print
+  - media_entity:media_entity
+  - entity_browser:entity_browser
