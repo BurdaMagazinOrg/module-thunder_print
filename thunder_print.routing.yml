@@ -12,4 +12,4 @@ thunder_print.print_article_type.toggleStatus:
     _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::toggleStatus'
     _title: 'Thunder for Print'
   requirements:
-    _permission: 'administer site configuration'
+    _permission: 'administer print article entities'

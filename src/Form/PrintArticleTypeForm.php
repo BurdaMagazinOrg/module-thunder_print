@@ -67,14 +67,13 @@ class PrintArticleTypeForm extends EntityForm {
     }
 
     if (!$this->entity->isNew()) {
+
+      $entityCount = $print_article_type->getEntityCount();
       $form['number_articles'] = [
         '#type' => 'item',
-        '#markup' => $this->t('%count %string currently using this @print_article_type.', [
-          '%count' => $this->getLinkGenerator()
-            ->generate($print_article_type->getEntityCount(), Url::fromRoute('view.print_article.print_article_list')),
-          '%string' => $this->formatPlural($print_article_type->getEntityCount(), 'article is', 'articles are'),
-          '@print_article_type' => $print_article_type->getEntityType()
-            ->getLabel(),
+        '#markup' => $this->formatPlural($entityCount, '%count article is currently using this @print_article_type.', '%count articles are currently using this @print_article_type.', [
+          '%count' => $this->getLinkGenerator()->generate($entityCount, Url::fromRoute('view.print_article.print_article_list')),
+          '@print_article_type' => $print_article_type->getEntityType()->getLabel(),
         ]),
       ];
     }
