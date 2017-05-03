@@ -13,3 +13,11 @@ thunder_print.print_article_type.toggleStatus:
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer print article entities'
+
+thunder_print.print_article_type.downloadIdms:
+  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/downloadIdms'
+  defaults:
+    _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::downloadIdms'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'

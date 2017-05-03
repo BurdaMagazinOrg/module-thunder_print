@@ -30,27 +30,29 @@ function thunder_print_help($route_name, RouteMatchInterface $route_match) {
  */
 function thunder_print_entity_operation(EntityInterface $entity) {
 
+  $operations = [];
   if ($entity instanceof PrintArticleTypeInterface) {
     if ($entity->status()) {
-      return [
-        'disable' => [
-          'title' => t('Disable'),
-          'url' => Url::fromRoute('thunder_print.print_article_type.toggleStatus', ['print_article_type' => $entity->id()]),
-          'weight' => 30,
-        ],
+      $operations['disable'] = [
+        'title' => t('Disable'),
+        'url' => Url::fromRoute('thunder_print.print_article_type.toggleStatus', ['print_article_type' => $entity->id()]),
+        'weight' => 40,
       ];
     }
     else {
-      return [
-        'enable' => [
-          'title' => t('Enable'),
-          'url' => Url::fromRoute('thunder_print.print_article_type.toggleStatus', ['print_article_type' => $entity->id()]),
-          'weight' => 30,
-        ],
+      $operations['enable'] = [
+        'title' => t('Enable'),
+        'url' => Url::fromRoute('thunder_print.print_article_type.toggleStatus', ['print_article_type' => $entity->id()]),
+        'weight' => 40,
       ];
     }
+    $operations['download_idms'] = [
+      'title' => t('Download IDMS'),
+      'url' => Url::fromRoute('thunder_print.print_article_type.downloadIdms', ['print_article_type' => $entity->id()]),
+      'weight' => 30,
+    ];
   }
-
+  return $operations;
 }
 
 /**

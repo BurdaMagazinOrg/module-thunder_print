@@ -25,6 +25,10 @@ entity.print_article_type.edit_form:
   title: 'Edit'
   route_name: entity.print_article_type.edit_form
   base_route: entity.print_article_type.edit_form
+entity.print_article_type.download:
+  title: 'Download IDMS file'
+  route_name: thunder_print.print_article_type.downloadIdms
+  base_route: entity.print_article_type.edit_form
 entity.print_article_type.collection:
   title: List
   route_name: entity.print_article_type.collection
