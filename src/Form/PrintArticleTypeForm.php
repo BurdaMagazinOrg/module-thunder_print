@@ -68,12 +68,6 @@ class PrintArticleTypeForm extends EntityForm {
 
     if (!$this->entity->isNew()) {
 
-      $form['download_idms'] = [
-        '#title' => $this->t('Download IDMS file'),
-        '#type' => 'link',
-        '#url' => Url::fromRoute('thunder_print.print_article_type.downloadIdms', ['print_article_type' => $this->entity->id()]),
-      ];
-
       $entityCount = $print_article_type->getEntityCount();
       $form['number_articles'] = [
         '#type' => 'item',
