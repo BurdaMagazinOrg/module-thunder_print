@@ -14,6 +14,9 @@ thunder_print.tag_mapping.*:
       type: sequence
       sequence:
         type: thunder_print.tag_mapping_map
+    options:
+      type: thunder_print.tag_mapping_options.[%parent.mapping_type]
+      label: 'Mapping options'
 
 thunder_print.tag_mapping_map:
   type: mapping
@@ -24,3 +27,15 @@ thunder_print.tag_mapping_map:
     tag:
       type: string
       label: Tag
+
+# We default options to be empty and let each plugin define there own specific
+# schema on their own.
+thunder_print.tag_mapping_options.*:
+  type: ignore
+
+thunder_print.tag_mapping_options.text_plain:
+  type: mapping
+  mapping:
+    title:
+      type: boolean
+      label: 'Can be used as title'
