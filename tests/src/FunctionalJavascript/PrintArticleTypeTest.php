@@ -3,7 +3,6 @@
 namespace Drupal\Tests\thunder_print\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
-use Drupal\Tests\thunder_print\Kernel\MediaTrait;
 use Drupal\Tests\thunder_print\Kernel\TagMappingTrait;
 
 /**
