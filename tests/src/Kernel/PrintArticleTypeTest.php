@@ -64,10 +64,7 @@ class PrintArticleTypeTest extends KernelTestBase {
       'id' => 'xmltag_story',
       'mapping_type' => 'text_formatted_long',
       'mapping' => [
-        [
-          'property' => 'value',
-          'tag' => 'XMLTag/Textabschnitt',
-        ],
+        'value' => 'XMLTag/Textabschnitt',
       ],
       'options' => [],
     ]);
@@ -101,10 +98,7 @@ class PrintArticleTypeTest extends KernelTestBase {
       'id' => 'xmltag_story',
       'mapping_type' => 'text_formatted_long',
       'mapping' => [
-        [
-          'property' => 'value',
-          'tag' => 'XMLTag/Story1',
-        ],
+        'value' => 'XMLTag/Story1',
       ],
       'options' => [],
     ]);
@@ -116,14 +110,8 @@ class PrintArticleTypeTest extends KernelTestBase {
       'id' => 'xmltag_image',
       'mapping_type' => 'media_image',
       'mapping' => [
-        [
-          'property' => 'field_image',
-          'tag' => 'XMLTag/Image1',
-        ],
-        [
-          'property' => 'field_description',
-          'tag' => 'XMLTag/Caption1',
-        ],
+        'field_image' => 'XMLTag/Image1',
+        'field_description' => 'XMLTag/Caption1',
       ],
       'options' => [],
     ]);

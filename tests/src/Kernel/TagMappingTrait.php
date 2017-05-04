@@ -37,10 +37,7 @@ trait TagMappingTrait {
           'id' => 'xmltag_title',
           'mapping_type' => 'text_plain',
           'mapping' => [
-            [
-              'property' => 'value',
-              'tag' => 'XMLTag/Title',
-            ],
+            'value' => 'XMLTag/Title',
           ],
           'options' => [
             'title' => TRUE,
@@ -52,10 +49,7 @@ trait TagMappingTrait {
           'id' => 'xmltag_story',
           'mapping_type' => 'text_formatted_long',
           'mapping' => [
-            [
-              'property' => 'value',
-              'tag' => 'XMLTag/Story',
-            ],
+            'value' => 'XMLTag/Story',
           ],
           'options' => [],
         ],
@@ -65,14 +59,8 @@ trait TagMappingTrait {
           'id' => 'xmltag_image',
           'mapping_type' => 'media_image',
           'mapping' => [
-            [
-              'property' => 'field_image',
-              'tag' => 'XMLTag/Image',
-            ],
-            [
-              'property' => 'field_description',
-              'tag' => 'XMLTag/Caption',
-            ],
+            'field_image' => 'XMLTag/Image',
+            'field_description' => 'XMLTag/Caption',
           ],
           'options' => [],
         ],
