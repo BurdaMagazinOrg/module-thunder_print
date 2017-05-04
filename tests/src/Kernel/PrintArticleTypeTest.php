@@ -3,7 +3,6 @@
 namespace Drupal\Tests\thunder_print\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\media_entity\Entity\MediaBundle;
 
 /**
  * Tests the mapping creation.
@@ -13,6 +12,7 @@ use Drupal\media_entity\Entity\MediaBundle;
 class PrintArticleTypeTest extends KernelTestBase {
 
   use TagMappingTrait;
+  use MediaTrait;
 
   protected $adminUser;
 
@@ -26,7 +26,6 @@ class PrintArticleTypeTest extends KernelTestBase {
     'field',
     'text',
     'media_entity',
-    'media_entity_image',
   ];
 
   /**
@@ -35,15 +34,7 @@ class PrintArticleTypeTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
-    $imageBundle = MediaBundle::create([
-      'id' => 'image',
-      'label' => 'image',
-      'type' => 'image',
-      'type_configuration' => [
-        'source_field' => 'field_image',
-      ],
-    ]);
-    $imageBundle->save();
+    $this->createMediaBundle();
   }
 
   /**

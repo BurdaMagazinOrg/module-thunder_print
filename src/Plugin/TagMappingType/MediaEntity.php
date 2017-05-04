@@ -102,7 +102,25 @@ class MediaEntity extends TagMappingTypeBase {
       ->load($this->getOption('bundle'));
 
     if ($bundle) {
-      return $bundle->getTypeConfiguration()['source_field'];
+      $config = $bundle->getTypeConfiguration();
+      if (!empty($config['source_field'])) {
+        return $bundle->getTypeConfiguration()['source_field'];
+      }
+
+      /** @var \Drupal\Core\Entity\EntityFieldManager $entityManager */
+      $entityManager = \Drupal::service('entity_field.manager');
+
+      $fields = $entityManager->getFieldDefinitions('media', $bundle->id());
+
+      if ($fields) {
+        foreach ($fields as $field) {
+          if ($field->isRequired()) {
+            return $field->getName();
+          }
+        }
+        $field = reset($fields);
+        return $field->getName();
+      }
     }
     return '';
   }
@@ -133,7 +151,6 @@ class MediaEntity extends TagMappingTypeBase {
         'auto_create' => FALSE,
         'auto_create_bundle' => '',
       ],
-
     ];
   }
 

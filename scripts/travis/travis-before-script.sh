@@ -15,4 +15,3 @@ cd "$DRUPAL_TI_MODULES_PATH"
 
 git clone --depth 1 --branch 8.x-1.x http://git.drupal.org/project/entity.git
 git clone --depth 1 --branch 8.x-1.x http://git.drupal.org/project/media_entity.git
-git clone --depth 1 --branch 8.x-1.x http://git.drupal.org/project/media_entity_image.git
