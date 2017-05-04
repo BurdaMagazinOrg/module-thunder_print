@@ -65,6 +65,25 @@ interface TagMappingInterface extends ConfigEntityInterface {
   public function getMappingType();
 
   /**
+   * Retrieve the options for this mapping instance.
+   *
+   * @return array
+   *   List of key value pairs of options.
+   */
+  public function getOptions();
+
+  /**
+   * Retrieve a single option value for this mapping instance.
+   *
+   * @param string $key
+   *   Option key to get value for.
+   *
+   * @return mixed
+   *   Arbitrary value assigned to the option.
+   */
+  public function getOption($key);
+
+  /**
    * Validates the currently set values.
    *
    * @return \Symfony\Component\Validator\ConstraintViolationListInterface

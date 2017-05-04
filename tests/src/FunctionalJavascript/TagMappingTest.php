@@ -3,6 +3,7 @@
 namespace Drupal\Tests\thunder_print\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\thunder_print\Entity\TagMapping;
 
 /**
  * Tests interface for tag mapping creation.
@@ -33,7 +34,6 @@ class TagMappingTest extends JavascriptTestBase {
 
     $this->adminUser = $this->drupalCreateUser([
       'administer site configuration',
-
     ]);
     $this->drupalLogin($this->adminUser);
   }
@@ -56,10 +56,18 @@ class TagMappingTest extends JavascriptTestBase {
     $value_tag = 'XMLTag/TestTag';
 
     $page->fillField('mapping[0][tag]', $value_tag);
-
+    $page->checkField('options[title]');
     $page->pressButton('Save');
+
+    // Checks if page is redirected after save and mapping with the given name
+    // exists.
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->addressEquals('admin/structure/thunder_print/tag_mapping');
     $this->assertSession()->pageTextContains('XMLTag/TestTag');
+
+    // Make mapping is saved and title option is set.
+    $mapping = TagMapping::loadMappingForTag($value_tag);
+    $this->assertNotNull($mapping, sprintf('Mapping with tag %s exists.', $value_tag));
+    $this->assertSame($mapping->getOption('title'), TRUE, 'Title option is set for created mapping.');
   }
 }

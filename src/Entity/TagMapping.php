@@ -116,6 +116,22 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
   /**
    * {@inheritdoc}
    */
+  public function getOptions() {
+    return $this->options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOption($key) {
+    if (isset($this->options[$key])) {
+      return $this->options[$key];
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getTags() {
     return array_unique(array_values($this->getMapping()));
   }
