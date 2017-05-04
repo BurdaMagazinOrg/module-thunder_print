@@ -5,6 +5,7 @@ namespace Drupal\thunder_print\Plugin\TagMappingType;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\field\FieldConfigInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -110,9 +111,14 @@ class MediaEntity extends TagMappingTypeBase {
       /** @var \Drupal\Core\Entity\EntityFieldManager $entityManager */
       $entityManager = \Drupal::service('entity_field.manager');
 
-      $fields = $entityManager->getFieldDefinitions('media', $bundle->id());
+      $fields = array_filter(
+        $entityManager->getFieldDefinitions('media', $bundle->id()), function ($field_definition) {
+          return $field_definition instanceof FieldConfigInterface;
+        }
+      );
 
       if ($fields) {
+        /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
         foreach ($fields as $field) {
           if ($field->isRequired()) {
             return $field->getName();
