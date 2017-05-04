@@ -4,6 +4,7 @@ namespace Drupal\Tests\thunder_print\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
 use Drupal\media_entity\Entity\MediaBundle;
+use Drupal\Tests\thunder_print\Kernel\MediaTrait;
 use Drupal\Tests\thunder_print\Kernel\TagMappingTrait;
 
 /**
@@ -14,6 +15,7 @@ use Drupal\Tests\thunder_print\Kernel\TagMappingTrait;
 class PrintArticleTypeTest extends JavascriptTestBase {
 
   use TagMappingTrait;
+  use MediaTrait;
 
   protected $adminUser;
 
@@ -25,7 +27,6 @@ class PrintArticleTypeTest extends JavascriptTestBase {
   public static $modules = [
     'thunder_print',
     'media_entity',
-    'media_entity_image',
   ];
 
   /**
@@ -40,23 +41,14 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     ]);
     $this->drupalLogin($this->adminUser);
 
-    $imageBundle = MediaBundle::create([
-      'id' => 'image',
-      'label' => 'image',
-      'type' => 'image',
-      'type_configuration' => [
-        'source_field' => 'field_image',
-      ],
-    ]);
-    $imageBundle->save();
+    $this->createTagMappings();
+    $this->createMediaBundle();
   }
 
   /**
    * Test Creation of a mapping.
    */
   public function testTypeCreation() {
-
-    $this->createTagMappings();
 
     $this->drupalGet('admin/structure/thunder_print/print_article_type/add');
 
