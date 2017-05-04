@@ -14,7 +14,6 @@ use Drupal\Tests\thunder_print\Kernel\TagMappingTrait;
 class PrintArticleTypeTest extends JavascriptTestBase {
 
   use TagMappingTrait;
-  use MediaTrait;
 
   protected $adminUser;
 
@@ -40,7 +39,6 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     ]);
     $this->drupalLogin($this->adminUser);
 
-    $this->createMediaBundle();
     $this->createTagMappings();
   }
 

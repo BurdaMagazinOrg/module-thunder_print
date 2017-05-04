@@ -7,10 +7,14 @@ namespace Drupal\Tests\thunder_print\Kernel;
  */
 trait TagMappingTrait {
 
+  use MediaTrait;
+
   /**
    * Create tag mappings.
    */
   protected function createTagMappings() {
+
+    $this->createMediaBundle();
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('thunder_print_tag_mapping');

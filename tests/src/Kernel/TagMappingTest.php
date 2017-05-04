@@ -12,7 +12,6 @@ use Drupal\KernelTests\KernelTestBase;
 class TagMappingTest extends KernelTestBase {
 
   use TagMappingTrait;
-  use MediaTrait;
 
   /**
    * Modules to enable.

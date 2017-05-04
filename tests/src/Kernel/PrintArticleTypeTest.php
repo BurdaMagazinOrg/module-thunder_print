@@ -12,7 +12,6 @@ use Drupal\KernelTests\KernelTestBase;
 class PrintArticleTypeTest extends KernelTestBase {
 
   use TagMappingTrait;
-  use MediaTrait;
 
   protected $adminUser;
 
@@ -27,15 +26,6 @@ class PrintArticleTypeTest extends KernelTestBase {
     'text',
     'media_entity',
   ];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-
-    $this->createMediaBundle();
-  }
 
   /**
    * Test the proper saving of the print article type.
@@ -96,6 +86,8 @@ class PrintArticleTypeTest extends KernelTestBase {
   public function testNotMatchingTagsException() {
 
     $this->setExpectedException('Exception', "IDMS doesn't contain defined tags from the tag-mapping.");
+
+    $this->createMediaBundle();
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('thunder_print_tag_mapping');
