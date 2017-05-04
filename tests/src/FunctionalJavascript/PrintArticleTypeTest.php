@@ -24,7 +24,6 @@ class PrintArticleTypeTest extends JavascriptTestBase {
   public static $modules = [
     'thunder_print',
     'media_entity',
-    'entity_browser',
   ];
 
   /**
@@ -38,14 +37,14 @@ class PrintArticleTypeTest extends JavascriptTestBase {
 
     ]);
     $this->drupalLogin($this->adminUser);
+
+    $this->createTagMappings();
   }
 
   /**
    * Test Creation of a mapping.
    */
   public function testTypeCreation() {
-
-    $this->createTagMappings();
 
     $this->drupalGet('admin/structure/thunder_print/print_article_type/add');
 
@@ -99,8 +98,6 @@ class PrintArticleTypeTest extends JavascriptTestBase {
    * Test that delete button disappears if an article exists.
    */
   public function testDeleteButton() {
-
-    $this->createTagMappings();
 
     $this->container->get('entity_type.manager')->getStorage('print_article_type')->create([
       'id' => 'test',

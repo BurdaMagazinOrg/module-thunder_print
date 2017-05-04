@@ -20,7 +20,9 @@ class TagMappingTest extends KernelTestBase {
    */
   public static $modules = [
     'thunder_print',
+    'field',
     'text',
+    'media_entity',
   ];
 
   /**
@@ -29,6 +31,8 @@ class TagMappingTest extends KernelTestBase {
    * @dataProvider tagMappingProvider
    */
   public function testTagMappingCreation($data) {
+
+    $this->createMediaBundle();
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('thunder_print_tag_mapping');

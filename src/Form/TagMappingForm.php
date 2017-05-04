@@ -87,6 +87,16 @@ class TagMappingForm extends EntityForm {
 
     if ($plugin) {
 
+      $options_form = $plugin->optionsForm([], $form_state);
+
+      if (!empty($options_form)) {
+        $form['configuration']['options'] = [
+          '#tree' => TRUE,
+          '#type' => 'fieldset',
+          '#title' => $this->t('Options'),
+        ] + $options_form;
+      }
+
       $properties = $plugin->getPropertyDefinitions();
       $form['configuration']['mapping'] = [
         '#tree' => TRUE,
@@ -103,15 +113,6 @@ class TagMappingForm extends EntityForm {
         ];
       }
 
-      $options_form = $plugin->optionsForm([], $form_state);
-
-      if (!empty($options_form)) {
-        $form['configuration']['options'] = [
-          '#tree' => TRUE,
-          '#type' => 'fieldset',
-          '#title' => $this->t('Options'),
-        ] + $options_form;
-      }
     };
 
     return $form;

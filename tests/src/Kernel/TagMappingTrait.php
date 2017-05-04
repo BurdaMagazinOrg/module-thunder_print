@@ -7,10 +7,14 @@ namespace Drupal\Tests\thunder_print\Kernel;
  */
 trait TagMappingTrait {
 
+  use MediaTrait;
+
   /**
    * Create tag mappings.
    */
   protected function createTagMappings() {
+
+    $this->createMediaBundle();
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('thunder_print_tag_mapping');
@@ -41,6 +45,7 @@ trait TagMappingTrait {
           ],
           'options' => [
             'title' => TRUE,
+            'widget_type' => 'string_textfield',
           ],
         ],
       ],
@@ -51,18 +56,28 @@ trait TagMappingTrait {
           'mapping' => [
             'value' => 'XMLTag/Story',
           ],
-          'options' => [],
+          'options' => [
+            'widget_type' => 'text_textarea',
+          ],
         ],
       ],
       'image' => [
         [
           'id' => 'xmltag_image',
-          'mapping_type' => 'media_image',
+          'mapping_type' => 'media_entity',
           'mapping' => [
             'field_image' => 'XMLTag/Image',
             'field_description' => 'XMLTag/Caption',
           ],
-          'options' => [],
+          'options' => [
+            'widget_type' => 'entity_reference_autocomplete',
+            'field_settings' => [
+              'match_operator' => 'CONTAINS',
+              'size' => '60',
+              'placeholder' => '',
+            ],
+            'bundle' => 'image',
+          ],
         ],
       ],
     ];

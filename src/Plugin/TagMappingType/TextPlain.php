@@ -33,6 +33,8 @@ class TextPlain extends TagMappingTypeBase {
    * {@inheritdoc}
    */
   public function optionsForm(array $form, FormStateInterface $form_state) {
+    $form = parent::optionsForm($form, $form_state);
+
     $form['title'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Can be used as title'),
@@ -67,19 +69,6 @@ class TextPlain extends TagMappingTypeBase {
    */
   public function getFieldConfigDefinition() {
     return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormDisplayDefinition() {
-    return [
-      'type' => 'text_textfield',
-      'settings' => [
-        'size' => 60,
-        'placeholder' => '',
-      ],
-    ];
   }
 
 }

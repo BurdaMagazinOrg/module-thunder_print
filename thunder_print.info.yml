@@ -10,3 +10,4 @@ dependencies:
   - drupal:text
   - drupal:views
   - entity:entity
+  - media_entity:media_entity
