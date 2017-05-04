@@ -81,6 +81,7 @@ class MachineNameGeneratorTest extends KernelTestBase {
    *   Array of test data
    *   - Human readable name
    *   - machine name / expected result.
+   *   - optionally a machine name / expected result for unique generator
    */
   public function nameProvider() {
     return [
