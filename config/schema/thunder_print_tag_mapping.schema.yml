@@ -12,15 +12,23 @@ thunder_print.tag_mapping.*:
       label: 'Mapping type'
     mapping:
       type: sequence
+      label: 'Mapping of tags'
       sequence:
-        type: thunder_print.tag_mapping_map
+        type: string
+        # For >= 8.4
+        orderby: key
+    options:
+      type: thunder_print.tag_mapping_options.[%parent.mapping_type]
+      label: 'Mapping options'
 
-thunder_print.tag_mapping_map:
+# We default options to be empty and let each plugin define there own specific
+# schema on their own.
+thunder_print.tag_mapping_options.*:
+  type: ignore
+
+thunder_print.tag_mapping_options.text_plain:
   type: mapping
   mapping:
-    property:
-      type: string
-      label: Property
-    tag:
-      type: string
-      label: Tag
+    title:
+      type: boolean
+      label: 'Can be used as title'

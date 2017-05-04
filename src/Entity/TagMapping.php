@@ -65,8 +65,10 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
   protected $mapping_type_manager;
 
   /**
-   * Holds mapping of tags to mapping properties.
+   * Holds mapping of tags to mapping properties in a key value store.
    *
+   * - key: property name
+   * - value: xml Tag name
    * Each item consists of 'property' and 'tag'. It is defined by the schema
    * defintion `thunder_print.tag_mapping_map`.
    *
@@ -106,11 +108,23 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
    * {@inheritdoc}
    */
   public function getMapping() {
-    $return = [];
-    foreach ($this->mapping as $spec) {
-      $return[$spec['property']] = $spec['tag'];
+    return $this->mapping;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOptions() {
+    return $this->options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getOption($key) {
+    if (isset($this->options[$key])) {
+      return $this->options[$key];
     }
-    return $return;
   }
 
   /**

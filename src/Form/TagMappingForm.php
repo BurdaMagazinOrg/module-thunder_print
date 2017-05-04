@@ -95,17 +95,11 @@ class TagMappingForm extends EntityForm {
       ];
 
       foreach ($properties as $property => $spec) {
-        $form['configuration']['mapping'][] = [
-          'property' => [
-            '#type' => 'value',
-            '#value' => $property,
-          ],
-          'tag' => [
-            '#type' => 'textfield',
-            '#title' => $spec['name'],
-            '#required' => !empty($spec['required']),
-            '#default_value' => $this->entity->getTag($property),
-          ],
+        $form['configuration']['mapping'][$property] = [
+          '#type' => 'textfield',
+          '#title' => $spec['name'],
+          '#required' => !empty($spec['required']),
+          '#default_value' => $this->entity->getTag($property),
         ];
       }
 
