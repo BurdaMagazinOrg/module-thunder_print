@@ -39,5 +39,4 @@ class TagMappingTest extends KernelTestBase {
     $tag_xmltag_story->save();
   }
 
-
 }

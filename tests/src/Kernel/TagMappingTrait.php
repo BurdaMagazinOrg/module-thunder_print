@@ -28,6 +28,7 @@ trait TagMappingTrait {
    * Data provider for tag mapping config data.
    *
    * @return array
+   *   Different tag mappings for testing.
    */
   public function tagMappingProvider() {
     return [
@@ -44,7 +45,7 @@ trait TagMappingTrait {
           'options' => [
             'title' => TRUE,
           ],
-        ]
+        ],
       ],
       'long_text' => [
         [
@@ -57,7 +58,7 @@ trait TagMappingTrait {
             ],
           ],
           'options' => [],
-        ]
+        ],
       ],
       'image' => [
         [
@@ -74,8 +75,8 @@ trait TagMappingTrait {
             ],
           ],
           'options' => [],
-        ]
-      ]
+        ],
+      ],
     ];
   }
 

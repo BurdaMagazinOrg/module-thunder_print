@@ -13,6 +13,8 @@ use Drupal\thunder_print\Entity\TagMapping;
 class TagMappingTest extends JavascriptTestBase {
 
   /**
+   * Admin user.
+   *
    * @var \Drupal\user\Entity\User
    */
   protected $adminUser;
@@ -37,7 +39,6 @@ class TagMappingTest extends JavascriptTestBase {
     ]);
     $this->drupalLogin($this->adminUser);
   }
-
 
   /**
    * Test Creation of a mapping.
@@ -71,4 +72,5 @@ class TagMappingTest extends JavascriptTestBase {
     $this->assertSame($mapping->getOption('title'), TRUE, 'Title option is set for created mapping.');
     $this->assertSame($mapping->getTag('value'), $value_tag);
   }
+
 }
