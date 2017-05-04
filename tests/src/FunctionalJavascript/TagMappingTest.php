@@ -96,4 +96,24 @@ class TagMappingTest extends JavascriptTestBase {
     $this->assertSame($mapping->getOption('title'), FALSE, 'Title option has been unchecked.');
   }
 
+  /**
+   * Test edit form of a tag mapping.
+   *
+   * @dataProvider tagMappingProvider
+   */
+  public function testTagMappingDeleteForm($data) {
+    $this->createTagMappings();
+
+    $id = $data['id'];
+
+    $this->drupalGet('admin/structure/thunder_print/tag_mapping/' . $id . '/delete');
+    $page = $this->getSession()->getPage();
+    $page->pressButton('Delete');
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->addressEquals('admin/structure/thunder_print/tag_mapping');
+
+    $mapping = TagMapping::load($id);
+    $this->assertNull($mapping, sprintf('Mapping %s was deleted.', $id));
+  }
 }
