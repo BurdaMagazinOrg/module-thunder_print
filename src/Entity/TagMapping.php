@@ -131,7 +131,7 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
    * {@inheritdoc}
    */
   public function getTags() {
-    return array_unique(array_values($this->getMapping()));
+    return array_unique(array_values(array_filter($this->getMapping())));
   }
 
   /**
@@ -165,6 +165,9 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
    * @see \Drupal\Core\Entity\ContentEntityBase::preSave()
    */
   public function preSave(EntityStorageInterface $storage) {
+    // Make sure we do not store any empty tag associations.
+    $this->mapping = array_filter($this->mapping);
+
     // The entity should not be saved, unless it was validated succesfully.
     if (!$this->validated) {
       throw new \LogicException('Entity validation was skipped.');
