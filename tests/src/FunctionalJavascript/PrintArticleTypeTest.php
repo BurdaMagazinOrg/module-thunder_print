@@ -40,8 +40,8 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     ]);
     $this->drupalLogin($this->adminUser);
 
-    $this->createTagMappings();
     $this->createMediaBundle();
+    $this->createTagMappings();
   }
 
   /**
@@ -101,8 +101,6 @@ class PrintArticleTypeTest extends JavascriptTestBase {
    * Test that delete button disappears if an article exists.
    */
   public function testDeleteButton() {
-
-    $this->createTagMappings();
 
     $this->container->get('entity_type.manager')->getStorage('print_article_type')->create([
       'id' => 'test',
