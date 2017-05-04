@@ -3,6 +3,7 @@
 namespace Drupal\Tests\thunder_print\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
+use Drupal\Tests\thunder_print\Kernel\TagMappingTrait;
 use Drupal\thunder_print\Entity\TagMapping;
 
 /**
@@ -11,6 +12,8 @@ use Drupal\thunder_print\Entity\TagMapping;
  * @group thunder_print
  */
 class TagMappingTest extends JavascriptTestBase {
+
+  use TagMappingTrait;
 
   /**
    * Admin user.
@@ -71,6 +74,47 @@ class TagMappingTest extends JavascriptTestBase {
     $this->assertNotNull($mapping, sprintf('Mapping with tag %s exists.', $value_tag));
     $this->assertSame($mapping->getOption('title'), TRUE, 'Title option is set for created mapping.');
     $this->assertSame($mapping->getTag('value'), $value_tag);
+  }
+
+  /**
+   * Test edit form of a tag mapping.
+   */
+  public function testTagMappingEditForm() {
+    $this->createTagMappings();
+
+    $this->drupalGet('admin/structure/thunder_print/tag_mapping/xmltag_title/edit');
+    $page = $this->getSession()->getPage();
+    $page->uncheckField('options[title]');
+    $page->pressButton('Save');
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->addressEquals('admin/structure/thunder_print/tag_mapping');
+
+    $value_tag = 'XMLTag/Title';
+    $mapping = TagMapping::loadMappingForTag($value_tag);
+    $this->assertNotNull($mapping, sprintf('Mapping with tag %s exists.', $value_tag));
+    $this->assertSame($mapping->getOption('title'), FALSE, 'Title option has been unchecked.');
+  }
+
+  /**
+   * Test edit form of a tag mapping.
+   *
+   * @dataProvider tagMappingProvider
+   */
+  public function testTagMappingDeleteForm($data) {
+    $this->createTagMappings();
+
+    $id = $data['id'];
+
+    $this->drupalGet('admin/structure/thunder_print/tag_mapping/' . $id . '/delete');
+    $page = $this->getSession()->getPage();
+    $page->pressButton('Delete');
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->addressEquals('admin/structure/thunder_print/tag_mapping');
+
+    $mapping = TagMapping::load($id);
+    $this->assertNull($mapping, sprintf('Mapping %s was deleted.', $id));
   }
 
 }
