@@ -3,7 +3,6 @@
 namespace Drupal\Tests\thunder_print\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\media_entity\Entity\MediaBundle;
 
 /**
  * Tests the mapping creation.
@@ -27,11 +26,10 @@ class PrintArticleExportTest extends KernelTestBase {
     'file',
     'thunder_print_test',
     'media_entity',
-    'entity_browser',
   ];
 
   /**
-   *
+   * Test placeholder replacement for media entity.
    */
   public function testMediaReplacement() {
     $this->installConfig(['thunder_print_test']);

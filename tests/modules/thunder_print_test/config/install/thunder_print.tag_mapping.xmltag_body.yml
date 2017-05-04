@@ -4,6 +4,6 @@ dependencies: {  }
 id: xmltag_body
 mapping_type: text_formatted_long
 mapping:
-  -
-    property: value
-    tag: XMLTag/Body
+  value: XMLTag/Body
+options:
+  widget_type: text_textarea

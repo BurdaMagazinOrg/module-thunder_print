@@ -270,9 +270,8 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
 
     $idms = new IDMS($bundle->getIdms());
 
-
     /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
-    foreach ($bundle->getTags() as $tag => $tagMapping) {
+    foreach ($bundle->getTags() as $tagMapping) {
 
       /** @var \Drupal\Core\Field\FieldItemList $field */
       $field = $this->{$tagMapping->id()};

@@ -114,8 +114,8 @@ class MediaEntity extends TagMappingTypeBase {
 
       $fields = array_filter(
         $entityManager->getFieldDefinitions('media', $bundle->id()), function ($field_definition) {
-          return $field_definition instanceof FieldConfigInterface;
-        }
+        return $field_definition instanceof FieldConfigInterface;
+      }
       );
 
       if ($fields) {
@@ -164,8 +164,22 @@ class MediaEntity extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IDMS $idms, $fieldItem) {
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
 
+    /** @var \Drupal\media_entity\MediaBundleInterface $bundle */
+    $bundle = $this->entityTypeManager->getStorage('media_bundle')
+      ->load($this->getOption('bundle'));
+
+    $dependencies->addDependency('config', $bundle->getConfigDependencyName());
+
+    return $dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
 
     foreach ($this->configuration['mapping'] as $field => $tag) {
 
@@ -179,16 +193,24 @@ class MediaEntity extends TagMappingTypeBase {
         $xpath = "//Image[@Self='$xmlContentId']/Link";
         $xmlImageLink = $idms->getXml()->xpath($xpath)[0];
 
-        $media = Media::load($fieldItem['target_id']);
+        $media = $this->entityTypeManager
+          ->getStorage('media')
+          ->load($fieldItem['target_id']);
+
         $fieldValue = $media->get($field)->first();
 
         if ($fieldValue) {
           if ($xmlImageLink) {
 
-            /** @var File $file */
-            $file = File::load($fieldValue->target_id);
+            /** @var \Drupal\file\Entity\File $file */
+            $file = $this->entityTypeManager
+              ->getStorage('media')
+              ->load($fieldValue->target_id);
 
-            $xmlElement['Value'] = 'file://' . drupal_realpath($file->getFileUri());
+            $realpath = \Drupal::service('file_system')
+              ->realpath($file->getFileUri());
+
+            $xmlElement['Value'] = 'file://' . $realpath;
             $xmlImageLink['LinkResourceURI'] = $xmlElement['Value'];
 
           }
@@ -198,24 +220,18 @@ class MediaEntity extends TagMappingTypeBase {
 
             $errlevel = error_reporting(E_ALL & ~E_WARNING);
 
-            foreach ($xmlElement->children() as $i => $child) {
+            foreach ($xmlElement->children() as $child) {
               unset($child[0]);
             }
             error_reporting($errlevel);
 
             $xmlElement->Content = trim(strip_tags($fieldValue->value));
           }
-
         }
-
-
-
       }
-
     }
-
-
 
     return $idms;
   }
+
 }

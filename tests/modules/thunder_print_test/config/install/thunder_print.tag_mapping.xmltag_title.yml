@@ -4,6 +4,7 @@ dependencies: {  }
 id: xmltag_title
 mapping_type: text_plain
 mapping:
-  -
-    property: value
-    tag: XMLTag/Title
+  value: XMLTag/Title
+options:
+  title: TRUE
+  widget_type: string_textfield

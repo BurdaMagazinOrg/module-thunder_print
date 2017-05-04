@@ -88,9 +88,15 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
   public function getFieldConfigDefinition();
 
   /**
+   * Replace placeholder from IDMS with real content.
+   *
    * @param \Drupal\thunder_print\IDMS $idms
-   * @param $field
-   * @return mixed
+   *   The IDMS with placeholders.
+   * @param mixed $field
+   *   Field value to replace.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   *   New idms with replaced placeholders.
    */
   public function replacePlaceholder(IDMS $idms, $field);
 

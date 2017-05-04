@@ -6,4 +6,3 @@ core: '8.x'
 dependencies:
   - thunder_print:thunder_print
   - media_entity:media_entity
-  - entity_browser:entity_browser

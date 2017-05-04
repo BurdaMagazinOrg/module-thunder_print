@@ -93,14 +93,4 @@ class IDMS {
     ];
   }
 
-  public function getContent($tagName) {
-
-    $xpath = "(//Story//XMLElement[@MarkupTag='$tagName'])[last()]/Content";
-    $elements = $this->xml->xpath($xpath)[0]->asXML();
-
-  #  var_dump(trim($elements));
-
-    return $elements;
-  }
-
 }
