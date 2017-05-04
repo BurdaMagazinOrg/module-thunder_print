@@ -3,6 +3,7 @@
 namespace Drupal\Tests\thunder_print\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\media_entity\Entity\MediaBundle;
 
 /**
  * Tests TagMapping storage basics.
@@ -21,7 +22,26 @@ class TagMappingTest extends KernelTestBase {
   public static $modules = [
     'thunder_print',
     'text',
+    'media_entity',
+    'media_entity_image',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+
+    $imageBundle = MediaBundle::create([
+      'id' => 'image',
+      'label' => 'image',
+      'type' => 'image',
+      'type_configuration' => [
+        'source_field' => 'field_image',
+      ],
+    ]);
+    $imageBundle->save();
+  }
 
   /**
    * Test saving of a tag mapping.

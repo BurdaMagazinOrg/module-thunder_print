@@ -26,8 +26,17 @@ thunder_print.tag_mapping.*:
 thunder_print.tag_mapping_options.*:
   type: ignore
 
-thunder_print.tag_mapping_options.text_plain:
+thunder_print.tag_mapping_options:
   type: mapping
+  mapping:
+    widget_type:
+      type: string
+      label: 'Widget type'
+    field_settings:
+      type: field.widget.settings.[%parent.widget_type]
+
+thunder_print.tag_mapping_options.text_plain:
+  type: thunder_print.tag_mapping_options
   mapping:
     title:
       type: boolean

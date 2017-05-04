@@ -3,6 +3,7 @@
 namespace Drupal\Tests\thunder_print\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\media_entity\Entity\MediaBundle;
 
 /**
  * Tests the mapping creation.
@@ -25,8 +26,25 @@ class PrintArticleTypeTest extends KernelTestBase {
     'field',
     'text',
     'media_entity',
-    'entity_browser',
+    'media_entity_image',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+
+    $imageBundle = MediaBundle::create([
+      'id' => 'image',
+      'label' => 'image',
+      'type' => 'image',
+      'type_configuration' => [
+        'source_field' => 'field_image',
+      ],
+    ]);
+    $imageBundle->save();
+  }
 
   /**
    * Test the proper saving of the print article type.
@@ -35,16 +53,14 @@ class PrintArticleTypeTest extends KernelTestBase {
 
     $this->createTagMappings();
 
-    $values = [
-      'id' => $this->randomMachineName(),
-      'label' => 'Test',
-      'grid' => 12,
-      'idms' => file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms'),
-    ];
-
     $bundle = $this->container->get('entity_type.manager')
       ->getStorage('print_article_type')
-      ->create($values);
+      ->create([
+        'id' => $this->randomMachineName(),
+        'label' => 'Test',
+        'grid' => 12,
+        'idms' => file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms'),
+      ]);
 
     $bundle->save();
   }
@@ -100,7 +116,9 @@ class PrintArticleTypeTest extends KernelTestBase {
       'mapping' => [
         'value' => 'XMLTag/Story1',
       ],
-      'options' => [],
+      'options' => [
+        'widget_type' => 'text_textarea',
+      ],
     ]);
     $tag_xmltag_story->validate();
     $tag_xmltag_story->save();
@@ -115,6 +133,12 @@ class PrintArticleTypeTest extends KernelTestBase {
       ],
       'options' => [
         'bundle' => 'image',
+        'widget_type' => 'entity_reference_autocomplete',
+        'field_settings' => [
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'placeholder' => '',
+        ],
       ],
     ]);
     $tag_xmltag_image->validate();
@@ -176,7 +200,8 @@ class PrintArticleTypeTest extends KernelTestBase {
         ->load("print_article.$bundle_name.$fieldName");
 
       $this->assertNotNull($field);
-      $this->assertSame($fieldType, $field->getFieldStorageDefinition()->getType());
+      $this->assertSame($fieldType, $field->getFieldStorageDefinition()
+        ->getType());
     }
 
   }
