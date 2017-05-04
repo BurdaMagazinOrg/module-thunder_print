@@ -59,43 +59,16 @@ class MachineNameGenerator implements MachineNameGeneratorInterface {
   /**
    * {@inheritdoc}
    */
-  public function generateUniqueMachineName($input) {
-    if (!$this->hasExistsCallback()) {
-      throw new \Exception('No existsCallback set for generating a unique machine name.');
-    }
-
+  public function generateUniqueMachineName($input, callable $callback) {
     $output = $this->generateMachineName($input);
     $appendcount = 0;
 
     do {
       $unique = ($appendcount) ? $output . '_' . $appendcount : $output;
-      $return = call_user_func($this->existsCallback, $unique);
+      $return = call_user_func($callback, $unique);
       $appendcount++;
     } while (!empty($return));
 
     return $unique;
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setExistsCallback(callable $callback) {
-    $this->existsCallback = $callback;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function unsetExistsCallback() {
-    unset($this->existsCallback);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function hasExistsCallback() {
-    return isset($this->existsCallback);
-  }
-
 }

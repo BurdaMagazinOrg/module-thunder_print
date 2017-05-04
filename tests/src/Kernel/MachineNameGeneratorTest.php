@@ -63,8 +63,7 @@ class MachineNameGeneratorTest extends KernelTestBase {
    * @dataProvider nameProvider
    */
   public function testUniqueGenerateMachineName($input, $expected, $expected_unique = NULL) {
-    $this->generator->setExistsCallback('\Drupal\Tests\thunder_print\Kernel\MachineNameGeneratorTest::machineNameExists');
-    $this->assertSame($this->generator->generateUniqueMachineName($input), isset($expected_unique) ? $expected_unique : $expected);
+    $this->assertSame($this->generator->generateUniqueMachineName($input, '\Drupal\Tests\thunder_print\Kernel\MachineNameGeneratorTest::machineNameExists'), isset($expected_unique) ? $expected_unique : $expected);
   }
 
   /**

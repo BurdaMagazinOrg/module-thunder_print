@@ -179,8 +179,7 @@ class TagMappingForm extends EntityForm {
   protected function buildEntityId() {
     // We generate the machine name from the main tag in case the entity is new.
     if ($this->entity->isNew()) {
-      $this->machineNameGenerator->setExistsCallback('\Drupal\thunder_print\Entity\TagMapping::load');
-      $this->entity->set('id', $this->machineNameGenerator->generateUniqueMachineName($this->entity->getMainTag()));
+      $this->entity->set('id', $this->machineNameGenerator->generateUniqueMachineName($this->entity->getMainTag(), '\Drupal\thunder_print\Entity\TagMapping::load'));
     }
   }
 
