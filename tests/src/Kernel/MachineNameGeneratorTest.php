@@ -12,6 +12,8 @@ use Drupal\KernelTests\KernelTestBase;
 class MachineNameGeneratorTest extends KernelTestBase {
 
   /**
+   * Holds the machine name generator service.
+   *
    * @var \Drupal\thunder_print\MachineNameGeneratorInterface
    */
   protected $generator;
@@ -35,7 +37,7 @@ class MachineNameGeneratorTest extends KernelTestBase {
   ];
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
@@ -46,7 +48,9 @@ class MachineNameGeneratorTest extends KernelTestBase {
    * Test the machine name generation.
    *
    * @param string $input
+   *   Original value to convert.
    * @param string $expected
+   *   Expected machine_name value.
    *
    * @dataProvider nameProvider
    */
@@ -58,7 +62,11 @@ class MachineNameGeneratorTest extends KernelTestBase {
    * Test the machine name generation for uniques.
    *
    * @param string $input
+   *   Original value to convert.
    * @param string $expected
+   *   Provides expected machine_name value when $expected_unique is not given.
+   * @param string $expected_unique
+   *   Optionally provides expected result for unique machine name.
    *
    * @dataProvider nameProvider
    */
@@ -84,7 +92,7 @@ class MachineNameGeneratorTest extends KernelTestBase {
         'Machine Name Exists',
         'machine_name_exists',
         'machine_name_exists_1',
-      ]
+      ],
     ];
   }
 
@@ -92,8 +100,10 @@ class MachineNameGeneratorTest extends KernelTestBase {
    * Machine name exists callback for the tests.
    *
    * @param string $input
+   *   Provides input string to be checked for existance.
    *
    * @return bool
+   *   TRUE if machine name exists in static preset list.
    */
   public static function machineNameExists($input) {
     return in_array($input, static::$existingMachineNames);

@@ -116,4 +116,5 @@ class TagMappingTest extends JavascriptTestBase {
     $mapping = TagMapping::load($id);
     $this->assertNull($mapping, sprintf('Mapping %s was deleted.', $id));
   }
+
 }

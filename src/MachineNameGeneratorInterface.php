@@ -34,4 +34,5 @@ interface MachineNameGeneratorInterface {
    * @throws \Exception
    */
   public function generateUniqueMachineName($input, callable $callback);
+
 }

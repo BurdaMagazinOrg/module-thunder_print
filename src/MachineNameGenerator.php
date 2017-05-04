@@ -71,4 +71,5 @@ class MachineNameGenerator implements MachineNameGeneratorInterface {
 
     return $unique;
   }
+
 }
