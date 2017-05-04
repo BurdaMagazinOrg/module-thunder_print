@@ -51,11 +51,11 @@ class TagMappingTest extends JavascriptTestBase {
     $page->selectFieldOption('mapping_type', 'text_plain');
     $this->assertSession()->assertWaitOnAjaxRequest();
     // Check for mapping value existance.
-    $this->assertSession()->elementExists('css', 'input[name="mapping[0][tag]"]');
+    $this->assertSession()->elementExists('css', 'input[name="mapping[value]"]');
 
     $value_tag = 'XMLTag/TestTag';
 
-    $page->fillField('mapping[0][tag]', $value_tag);
+    $page->fillField('mapping[value]', $value_tag);
     $page->checkField('options[title]');
     $page->pressButton('Save');
 
@@ -69,5 +69,6 @@ class TagMappingTest extends JavascriptTestBase {
     $mapping = TagMapping::loadMappingForTag($value_tag);
     $this->assertNotNull($mapping, sprintf('Mapping with tag %s exists.', $value_tag));
     $this->assertSame($mapping->getOption('title'), TRUE, 'Title option is set for created mapping.');
+    $this->assertSame($mapping->getTag('value'), $value_tag);
   }
 }
