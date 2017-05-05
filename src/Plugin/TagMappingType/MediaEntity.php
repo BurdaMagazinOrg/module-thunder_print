@@ -112,11 +112,10 @@ class MediaEntity extends TagMappingTypeBase {
       /** @var \Drupal\Core\Entity\EntityFieldManager $entityManager */
       $entityManager = \Drupal::service('entity_field.manager');
 
-      $fields = array_filter(
-        $entityManager->getFieldDefinitions('media', $bundle->id()), function ($field_definition) {
+      $fieldDefinitions = $entityManager->getFieldDefinitions('media', $bundle->id());
+      $fields = array_filter($fieldDefinitions, function ($field_definition) {
         return $field_definition instanceof FieldConfigInterface;
-      }
-      );
+      });
 
       if ($fields) {
         /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
@@ -191,27 +190,29 @@ class MediaEntity extends TagMappingTypeBase {
         $xmlContentId = (string) $xmlElement['XMLContent'];
 
         $xpath = "//Image[@Self='$xmlContentId']/Link";
-        $xmlImageLink = $idms->getXml()->xpath($xpath)[0];
+        $xmlImageLink = $idms->getXml()->xpath($xpath);
 
+        /** @var \Drupal\media_entity\Entity\Media $media */
         $media = $this->entityTypeManager
           ->getStorage('media')
           ->load($fieldItem['target_id']);
 
-        $fieldValue = $media->get($field)->first();
-
-        if ($fieldValue) {
+        if (
+          $media->hasField($field) &&
+          ($fieldValue = $media->get($field)->first())
+        ) {
           if ($xmlImageLink) {
 
             /** @var \Drupal\file\Entity\File $file */
             $file = $this->entityTypeManager
-              ->getStorage('media')
+              ->getStorage('file')
               ->load($fieldValue->target_id);
 
             $realpath = \Drupal::service('file_system')
               ->realpath($file->getFileUri());
 
             $xmlElement['Value'] = 'file://' . $realpath;
-            $xmlImageLink['LinkResourceURI'] = $xmlElement['Value'];
+            $xmlImageLink[0]['LinkResourceURI'] = $xmlElement['Value'];
 
           }
           else {

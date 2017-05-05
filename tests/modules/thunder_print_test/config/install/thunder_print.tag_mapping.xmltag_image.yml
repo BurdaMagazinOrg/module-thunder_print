@@ -6,7 +6,7 @@ dependencies:
 id: xmltag_image
 mapping_type: media_entity
 mapping:
-  field_description: XMLTag/Caption
+  field_copyright: XMLTag/Caption
   field_image: XMLTag/Image
 options:
   widget_type: entity_reference_autocomplete

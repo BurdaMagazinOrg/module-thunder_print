@@ -61,4 +61,12 @@ interface PrintArticleInterface extends RevisionableInterface, RevisionLogInterf
    */
   public function setCreatedTime($timestamp);
 
+  /**
+   * Use snippet template from bundle and replaces the placholder with content.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   *   New IDMS with replaced content.
+   */
+  public function replaceText();
+
 }
