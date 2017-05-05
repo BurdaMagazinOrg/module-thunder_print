@@ -216,17 +216,7 @@ class MediaEntity extends TagMappingTypeBase {
 
           }
           else {
-            $xpath = "(//Story//XMLElement[@MarkupTag='$tag'])[last()]";
-            $xmlElement = $idms->getXml()->xpath($xpath)[0];
-
-            $errlevel = error_reporting(E_ALL & ~E_WARNING);
-
-            foreach ($xmlElement->children() as $child) {
-              unset($child[0]);
-            }
-            error_reporting($errlevel);
-
-            $xmlElement->Content = trim(strip_tags($fieldValue->value));
+            $idms = $this->replacePlain($idms, $tag, $fieldValue->value);
           }
         }
       }

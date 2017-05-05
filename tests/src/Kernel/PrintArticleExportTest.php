@@ -47,9 +47,9 @@ class PrintArticleExportTest extends KernelTestBase {
   }
 
   /**
-   * Test placeholder replacement for media entity.
+   * Test placeholder replacement.
    */
-  public function testMediaReplacement() {
+  public function testReplacement() {
     $this->installConfig(['thunder_print_test', 'system']);
 
     $path = "public://druplicon.png";
@@ -70,6 +70,7 @@ class PrintArticleExportTest extends KernelTestBase {
       'name' => 'Zeitung1 article',
       'type' => 'zeitung1',
       'xmltag_image' => $media->id(),
+      'xmltag_title' => 'Such a nice article',
     ]);
     $printArticle->save();
 
@@ -87,7 +88,7 @@ class PrintArticleExportTest extends KernelTestBase {
     $this->assertContains('files/druplicon.png', (string) $xmlElement['Value']);
 
     // Test copyright replacement.
-    $xpath = "(//Story//XMLElement[@MarkupTag='XMLTag/Caption'])[last()]/Content";
+    $xpath = "//Story//XMLElement[@MarkupTag='XMLTag/Caption']//Content";
     $xmlElement = $idms->getXml()->xpath($xpath)[0];
 
     $this->assertSame('This is Druplicons image', (string) $xmlElement);

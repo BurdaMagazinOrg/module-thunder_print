@@ -92,12 +92,12 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    *
    * @param \Drupal\thunder_print\IDMS $idms
    *   The IDMS with placeholders.
-   * @param mixed $field
+   * @param mixed $fieldItem
    *   Field value to replace.
    *
    * @return \Drupal\thunder_print\IDMS
    *   New idms with replaced placeholders.
    */
-  public function replacePlaceholder(IDMS $idms, $field);
+  public function replacePlaceholder(IDMS $idms, $fieldItem);
 
 }

@@ -56,7 +56,7 @@ class TextFormattedLong extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IDMS $idms, $field) {
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
     return $idms;
   }
 

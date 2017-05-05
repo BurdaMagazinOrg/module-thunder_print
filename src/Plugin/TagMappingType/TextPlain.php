@@ -75,8 +75,10 @@ class TextPlain extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IDMS $idms, $field) {
-    return $idms;
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
+    foreach ($this->configuration['mapping'] as $field => $tag) {
+      return $this->replacePlain($idms, $tag, $fieldItem[$field]);
+    }
   }
 
 }
