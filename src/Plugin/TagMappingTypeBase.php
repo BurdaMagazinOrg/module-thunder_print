@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\thunder_print\IDMS;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -193,6 +194,30 @@ abstract class TagMappingTypeBase extends PluginBase implements TagMappingTypeIn
       $applicable_options[$option] = $label;
     }
     return $applicable_options;
+  }
+
+  /**
+   * Replace one content tag.
+   *
+   * @param \Drupal\thunder_print\IDMS $idms
+   *   The idms template.
+   * @param string $tag
+   *   The tag within content should be replaced.
+   * @param string $value
+   *   The new value.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   *   New idms with replaced content.
+   */
+  protected function replacePlain(IDMS $idms, $tag, $value) {
+
+    $xpath = "//Story//XMLElement[@MarkupTag='$tag']//Content";
+    /** @var \SimpleXMLElement $xmlElement */
+    $xmlElement = $idms->getXml()->xpath($xpath);
+    if ($xmlElement) {
+      $xmlElement[0][0] = trim(strip_tags($value));
+    }
+    return $idms;
   }
 
 }

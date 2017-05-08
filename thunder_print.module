@@ -8,6 +8,7 @@
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
+use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Entity\PrintArticleTypeInterface;
 
 /**
@@ -52,6 +53,14 @@ function thunder_print_entity_operation(EntityInterface $entity) {
       'weight' => 30,
     ];
   }
+  elseif ($entity instanceof PrintArticleInterface) {
+    $operations['download_idms'] = [
+      'title' => t('Download IDMS'),
+      'url' => Url::fromRoute('thunder_print.print_article.downloadIdms', ['print_article' => $entity->id()]),
+      'weight' => 30,
+    ];
+  }
+
   return $operations;
 }
 

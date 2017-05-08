@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\FieldConfigInterface;
+use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -111,11 +112,10 @@ class MediaEntity extends TagMappingTypeBase {
       /** @var \Drupal\Core\Entity\EntityFieldManager $entityManager */
       $entityManager = \Drupal::service('entity_field.manager');
 
-      $fields = array_filter(
-        $entityManager->getFieldDefinitions('media', $bundle->id()), function ($field_definition) {
-          return $field_definition instanceof FieldConfigInterface;
-        }
-      );
+      $fieldDefinitions = $entityManager->getFieldDefinitions('media', $bundle->id());
+      $fields = array_filter($fieldDefinitions, function ($field_definition) {
+        return $field_definition instanceof FieldConfigInterface;
+      });
 
       if ($fields) {
         /** @var \Drupal\Core\Field\FieldDefinitionInterface $field */
@@ -158,6 +158,71 @@ class MediaEntity extends TagMappingTypeBase {
         'auto_create_bundle' => '',
       ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+
+    /** @var \Drupal\media_entity\MediaBundleInterface $bundle */
+    $bundle = $this->entityTypeManager->getStorage('media_bundle')
+      ->load($this->getOption('bundle'));
+
+    $dependencies->addDependency('config', $bundle->getConfigDependencyName());
+
+    return $dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
+
+    foreach ($this->configuration['mapping'] as $field => $tag) {
+
+      $xpath = "(//XmlStory//XMLElement[@MarkupTag='$tag'])[last()]";
+      $xmlElement = $idms->getXml()->xpath($xpath)[0];
+
+      if ($xmlElement) {
+
+        $xmlContentId = (string) $xmlElement['XMLContent'];
+
+        $xpath = "//Image[@Self='$xmlContentId']/Link";
+        $xmlImageLink = $idms->getXml()->xpath($xpath);
+
+        /** @var \Drupal\media_entity\Entity\Media $media */
+        $media = $this->entityTypeManager
+          ->getStorage('media')
+          ->load($fieldItem['target_id']);
+
+        if (
+          $media->hasField($field) &&
+          ($fieldValue = $media->get($field)->first())
+        ) {
+          if ($xmlImageLink) {
+
+            /** @var \Drupal\file\Entity\File $file */
+            $file = $this->entityTypeManager
+              ->getStorage('file')
+              ->load($fieldValue->target_id);
+
+            $realpath = \Drupal::service('file_system')
+              ->realpath($file->getFileUri());
+
+            $xmlElement['Value'] = 'file://' . $realpath;
+            $xmlImageLink[0]['LinkResourceURI'] = $xmlElement['Value'];
+
+          }
+          else {
+            $idms = $this->replacePlain($idms, $tag, $fieldValue->value);
+          }
+        }
+      }
+    }
+
+    return $idms;
   }
 
 }

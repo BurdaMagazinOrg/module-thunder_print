@@ -10,6 +10,9 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Class PrintArticleController.
@@ -129,7 +132,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
         ];
 
         // Use revision link to link to revisions that are not active.
-        $date = $this->dateFormatter->format($revision->revision_timestamp->value, 'short');
+        $date = $this->dateFormatter->format($revision->revision_created->value, 'short');
         if ($vid != $print_article->getRevisionId()) {
           $link = $this->l($date, new Url('entity.print_article.revision', [
             'print_article' => $print_article->id(),
@@ -215,6 +218,41 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     ];
 
     return $build;
+  }
+
+  /**
+   * Downloads the original idms file.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   * @param string $print_article
+   *   The id of the print article.
+   *
+   * @return \Symfony\Component\HttpFoundation\StreamedResponse
+   *   The download.
+   */
+  public function downloadIdms(Request $request, $print_article) {
+
+    /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $print_article */
+    $print_article = $this->entityTypeManager()
+      ->getStorage('print_article')
+      ->load($print_article);
+
+    $replacedIdms = $print_article->replaceText();
+    $response = new StreamedResponse(
+      function () use ($replacedIdms) {
+        echo $replacedIdms->getXml()->asXml();
+      });
+
+    $response->headers->set('Content-Type', 'application/xml');
+    $response->headers->set('Cache-Control', '');
+    $response->headers->set('Content-Length', strlen($replacedIdms->getXml()->asXml()));
+    $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
+    $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $print_article->label() . '.idms');
+    $response->headers->set('Content-Disposition', $contentDisposition);
+    $response->prepare($request);
+
+    return $response;
   }
 
 }

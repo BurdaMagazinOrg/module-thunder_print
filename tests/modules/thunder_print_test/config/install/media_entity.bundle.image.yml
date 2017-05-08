@@ -1,0 +1,12 @@
+langcode: en
+status: true
+dependencies: {  }
+third_party_settings: {  }
+id: image
+label: Image
+description: ''
+type: generic
+queue_thumbnail_downloads: false
+new_revision: false
+type_configuration: {  }
+field_map: {  }

@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - media_entity.bundle.image
+id: xmltag_image
+mapping_type: media_entity
+mapping:
+  field_copyright: XMLTag/Caption
+  field_image: XMLTag/Image
+options:
+  widget_type: entity_reference_autocomplete
+  field_settings:
+    match_operator: CONTAINS
+    size: 60
+    placeholder: ''
+  bundle: image

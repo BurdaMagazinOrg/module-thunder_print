@@ -21,3 +21,11 @@ thunder_print.print_article_type.downloadIdms:
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer print article entities'
+
+thunder_print.print_article.downloadIdms:
+  path: '/print-article/{print_article}/downloadIdms'
+  defaults:
+    _controller: '\Drupal\thunder_print\Controller\PrintArticleController::downloadIdms'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'

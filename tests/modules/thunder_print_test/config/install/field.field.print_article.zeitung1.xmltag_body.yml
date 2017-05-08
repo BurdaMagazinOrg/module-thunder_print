@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.print_article.xmltag_body
+    - thunder_print.print_article_type.zeitung1
+  module:
+    - text
+id: print_article.zeitung1.xmltag_body
+field_name: xmltag_body
+entity_type: print_article
+bundle: zeitung1
+label: XMLTag/Body
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

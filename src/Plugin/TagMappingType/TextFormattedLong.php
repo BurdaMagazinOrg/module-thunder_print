@@ -2,6 +2,7 @@
 
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
+use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -50,6 +51,13 @@ class TextFormattedLong extends TagMappingTypeBase {
    */
   public function getFieldConfigDefinition() {
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
+    return $idms;
   }
 
 }
