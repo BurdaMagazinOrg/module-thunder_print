@@ -132,7 +132,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
         ];
 
         // Use revision link to link to revisions that are not active.
-        $date = $this->dateFormatter->format($revision->revision_timestamp->value, 'short');
+        $date = $this->dateFormatter->format($revision->revision_created->value, 'short');
         if ($vid != $print_article->getRevisionId()) {
           $link = $this->l($date, new Url('entity.print_article.revision', [
             'print_article' => $print_article->id(),
