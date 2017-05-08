@@ -27,6 +27,7 @@ class IDMSStyles extends CKEditorPluginBase {
    */
   public function getLibraries(Editor $editor) {
     return [
+      'core/drupalSettings',
     ];
   }
 

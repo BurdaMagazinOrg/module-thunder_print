@@ -1,4 +1,4 @@
-(function (CKEDITOR) {
+(function (CKEDITOR, drupalSettings) {
   'use strict';
 
   CKEDITOR.plugins.add('thunder_print_idmsstyle', {
@@ -6,11 +6,21 @@
 
     init: function (editor) {
 
-      var config = editor.config;
-      console.log('thunder_print_idmsstyle init');
+      // Do nothing in case we do not have idmsstyle settings at all.
+      if (typeof drupalSettings.thunder_print === 'undefined' || typeof drupalSettings.thunder_print.idmsstyle === 'undefined') {
+        return;
+      }
 
+      var config = editor.config;
       var $el = editor.element.$;
-      console.log($el.id);
+
+      // Do also nothing if we have no settings for the given field/element.
+      if (typeof drupalSettings.thunder_print.idmsstyle[$el.id] === 'undefined') {
+        return;
+      }
+
+      var fieldSettings = drupalSettings.thunder_print.idmsstyle[$el.id];
+      console.log('thunder_print_idmsstyle init', [$el.id, editor, fieldSettings]);
 
       editor.ui.addRichCombo('thunder_print_idmsstyle',
         {
@@ -22,8 +32,8 @@
           panel: {
             css: [CKEDITOR.skin.getPath('editor')].concat(config.contentsCss),
           },
-          init: function () {
-            console.log('Richcombo init');
+          init: function (e) {
+            console.log($el.id + ': Richcombo init', e);
             //start group in the dropdown
             this.startGroup('Group 1');
             //VALUE - The value we get when the row is clicked
@@ -43,27 +53,27 @@
             // Default value on first click
             // this.setValue("444", "No HTML Here");
           },
-          onClick: function( value ) {
-            console.log('onClick', value);
+          onClick: function( value, e ) {
+            console.log($el.id + ': onClick', value, e);
           },
 
-          onRender: function() {
-            console.log('onRender');
+          onRender: function(e) {
+            console.log($el.id + ': onRender', e);
 
             editor.on( 'selectionChange', function( ev ) {
-              console.log('selectionChange');
+              console.log($el.id + ': selectionChange', ev);
             }, this );
           },
           onOpen: function() {
-            console.log('onOpen');
+            console.log($el.id + ': onOpen');
           },
           refresh: function() {
-            console.log('refresh');
+            console.log($el.id + ': refresh');
           },
           reset: function() {
-            console.log('reset');
+            console.log($el.id + ': reset');
           }
         });
     }
   });
-})(CKEDITOR);
+})(CKEDITOR, drupalSettings);

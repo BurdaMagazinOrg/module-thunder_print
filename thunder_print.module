@@ -77,3 +77,45 @@ function thunder_print_entity_operation_alter(array &$operations, EntityInterfac
     }
   }
 }
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function thunder_print_field_widget_text_textarea_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Field\FieldItemListInterface $items */
+  $items = $context['items'];
+  $field_name = $items->getFieldDefinition()->getName();
+  $bundle = $items->getFieldDefinition()->getTargetBundle();
+  $type = $items->getFieldDefinition()->getTargetEntityTypeId();
+
+  $element['#thunder_print'] = [
+    'field' => $field_name,
+    'bundle' => $bundle,
+    'type' => $type,
+  ];
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function thunder_print_element_info_alter(&$types) {
+  $types['text_format']['#pre_render'][] = 'thunder_print_pre_render_text_format';
+}
+
+/**
+ * Pre render callback for text format elements to add IDMSStyle information.
+ *
+ * @param array $element
+ *   Form element to adjust.
+ * @return array
+ *   Altered element.
+ */
+function thunder_print_pre_render_text_format(array $element) {
+  if (empty($element['#thunder_print'])) {
+    return $element;
+  }
+
+  $field_id = $element['value']['#id'];
+  $element['#attached']['drupalSettings']['thunder_print']['idmsstyle'][$field_id] = $element['#thunder_print'];
+  return $element;
+}
