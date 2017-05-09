@@ -75,4 +75,12 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    */
   public function getEntityCount();
 
+  /**
+   * Get all bundles to that could be switched.
+   *
+   * @return array
+   *   Array of bundles.
+   */
+  public function getSwitchableBundles();
+
 }

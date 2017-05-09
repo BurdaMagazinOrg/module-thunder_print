@@ -2,7 +2,6 @@
 
 namespace Drupal\thunder_print\Form;
 
-use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,25 +23,14 @@ class PrintArticleSwitchTypeForm extends FormBase {
    */
   protected $entityTypeManager;
 
-
-  /**
-   * The entity field manager service.
-   *
-   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
-   */
-  protected $entityFieldManager;
-
   /**
    * PrintArticleSwitchTypeForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
-   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entityFieldManager
-   *   The entity field manager service.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, EntityFieldManagerInterface $entityFieldManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
-    $this->entityFieldManager = $entityFieldManager;
   }
 
   /**
@@ -65,28 +53,6 @@ class PrintArticleSwitchTypeForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-
-    $new_print_type = $form_state->getValue('new_print_type');
-
-    $print_article = $this->entityTypeManager->getStorage('print_article')
-      ->load($form_state->getValue('print_article'));
-
-    $new_print_type = $this->entityTypeManager->getStorage('print_article_type')
-      ->load($new_print_type);
-
-    if ($print_article && $new_print_type) {
-      $print_article->type = $new_print_type->id();
-      $print_article->save();
-
-      $form_state->setRedirectUrl($print_article->toUrl('edit-form'));
-    }
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function buildForm(array $form, FormStateInterface $form_state, $print_article = NULL) {
 
     $print_article = $this->entityTypeManager->getStorage('print_article')
@@ -94,23 +60,14 @@ class PrintArticleSwitchTypeForm extends FormBase {
 
     if ($print_article) {
 
-      $fieldDefinitions = $this->entityFieldManager->getFieldDefinitions('print_article', $print_article->bundle());
-      $fieldDefinitions = array_keys($fieldDefinitions);
-      sort($fieldDefinitions);
-
-      $all_print_article_types = $this->entityTypeManager->getStorage('print_article_type')
-        ->loadMultiple();
+      /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $print_article_type */
+      $print_article_type = $this->entityTypeManager->getStorage('print_article_type')
+        ->load($print_article->bundle());
 
       $options = [];
       /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $entity */
-      foreach ($all_print_article_types as $entity) {
-        $bundleFieldDefinitions = $this->entityFieldManager->getFieldDefinitions('print_article', $entity->id());
-        $bundleFieldDefinitions = array_keys($bundleFieldDefinitions);
-        sort($bundleFieldDefinitions);
-
-        if ($entity->id() != $print_article->bundle() && empty(array_diff($fieldDefinitions, $bundleFieldDefinitions))) {
-          $options[$entity->id()] = $entity->label();
-        }
+      foreach ($print_article_type->getSwitchableBundles() as $entity) {
+        $options[$entity->id()] = $entity->label();
       }
 
       if ($options) {
@@ -140,6 +97,46 @@ class PrintArticleSwitchTypeForm extends FormBase {
     }
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+
+    $new_print_type = $form_state->getValue('new_print_type');
+
+    $print_article = $this->entityTypeManager->getStorage('print_article')
+      ->load($form_state->getValue('print_article'));
+
+    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $print_type */
+    $print_type = $this->entityTypeManager->getStorage('print_article_type')
+      ->load($print_article->bundle());
+
+    $possibleBundles = array_keys($print_type->getSwitchableBundles());
+
+    if (!in_array($new_print_type, $possibleBundles) || !$print_article) {
+      $form_state->setErrorByName('new_print_type', 'not valie');
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+
+    $new_print_type = $form_state->getValue('new_print_type');
+
+    $print_article = $this->entityTypeManager->getStorage('print_article')
+      ->load($form_state->getValue('print_article'));
+
+    if ($print_article && $new_print_type) {
+      $print_article->type = $new_print_type;
+      $print_article->save();
+
+      $form_state->setRedirectUrl($print_article->toUrl('edit-form'));
+    }
   }
 
 }
