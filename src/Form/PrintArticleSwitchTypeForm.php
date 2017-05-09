@@ -38,8 +38,7 @@ class PrintArticleSwitchTypeForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager'),
-      $container->get('entity_field.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -117,7 +116,7 @@ class PrintArticleSwitchTypeForm extends FormBase {
     $possibleBundles = array_keys($print_type->getSwitchableBundles());
 
     if (!in_array($new_print_type, $possibleBundles) || !$print_article) {
-      $form_state->setErrorByName('new_print_type', 'not valie');
+      $form_state->setErrorByName('new_print_type', $this->t('Not a valid print article type.'));
     }
   }
 

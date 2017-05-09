@@ -339,7 +339,6 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     }
 
     return $options;
-
   }
 
 }
