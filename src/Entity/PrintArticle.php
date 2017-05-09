@@ -57,6 +57,7 @@ use Drupal\user\UserInterface;
  *   },
  *   links = {
  *     "canonical" = "/print-article/{print_article}",
+ *     "collection" = "/admin/content/print-articles",
  *     "add-page" = "/print-article/add",
  *     "add-form" = "/print-article/add/{print_article_type}",
  *     "edit-form" = "/print-article/{print_article}/edit",

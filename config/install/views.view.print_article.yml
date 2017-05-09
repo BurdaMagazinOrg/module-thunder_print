@@ -727,7 +727,7 @@ display:
       display_extenders: {  }
       path: admin/content/print-articles
       menu:
-        type: tab
+        type: none
         title: 'Print articles'
         description: ''
         expanded: false

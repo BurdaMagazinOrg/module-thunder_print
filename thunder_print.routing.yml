@@ -29,3 +29,13 @@ thunder_print.print_article.downloadIdms:
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer print article entities'
+
+thunder_print.print_article.switchType:
+  path: '/print-article/{print_article}/switchType'
+  defaults:
+    _form: '\Drupal\thunder_print\Form\PrintArticleSwitchTypeForm'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'
+  options:
+    _admin_route: TRUE
