@@ -92,6 +92,20 @@ function thunder_print_field_widget_text_textarea_form_alter(&$element, \Drupal\
     'field' => $field_name,
     'bundle' => $bundle,
     'type' => $type,
+    'styles' => [
+      'idms-span1' => [
+        'element' => 'span',
+        'attributes' => ['class' => 'idms-span1', 'style' => 'color: red'],
+      ],
+      'idms-block1' => [
+        'element' => 'p',
+        'attributes' => ['class' => 'idms-block1', 'style' => 'background: yellow'],
+      ],
+      'idms-block2' => [
+        'element' => 'p',
+        'attributes' => ['class' => 'idms-block2'],
+      ],
+    ]
   ];
 }
 
@@ -116,6 +130,6 @@ function thunder_print_pre_render_text_format(array $element) {
   }
 
   $field_id = $element['value']['#id'];
-  $element['#attached']['drupalSettings']['thunder_print']['idmsstyle'][$field_id] = $element['#thunder_print'];
+  $element['#attached']['drupalSettings']['thunder_print']['idmsstyle'][$field_id] = $element['#thunder_print']['styles'];
   return $element;
 }
