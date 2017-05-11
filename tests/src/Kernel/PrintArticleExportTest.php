@@ -74,7 +74,12 @@ class PrintArticleExportTest extends KernelTestBase {
     ]);
     $printArticle->save();
 
-    $idms = $printArticle->replaceText();
+    /** @var \Drupal\thunder_print\Plugin\IdmsBuilderManager $builder */
+    $builderManager = \Drupal::service('plugin.manager.thunder_print_idms_builder');
+    /** @var \Drupal\thunder_print\Plugin\IdmsBuilder\LocalBuilder $builder */
+    $builder = $builderManager->createInstance('local', ['print_article' => $printArticle]);
+
+    $idms = $builder->replaceSnippetPlaceholders();
 
     // Test image replacement.
     $xpath = "(//XmlStory//XMLElement[@MarkupTag='XMLTag/Image'])[last()]";
@@ -84,8 +89,8 @@ class PrintArticleExportTest extends KernelTestBase {
     $xpath = "//Image[@Self='$xmlContentId']/Link";
     $xmlImageLink = (string) $idms->getXml()->xpath($xpath)[0]['LinkResourceURI'];
 
-    $this->assertContains('files/druplicon.png', $xmlImageLink);
-    $this->assertContains('files/druplicon.png', (string) $xmlElement['Value']);
+    $this->assertContains('file:/druplicon.png', $xmlImageLink);
+    $this->assertContains('file:/druplicon.png', (string) $xmlElement['Value']);
 
     // Test copyright replacement.
     $xpath = "//Story//XMLElement[@MarkupTag='XMLTag/Caption']//Content";

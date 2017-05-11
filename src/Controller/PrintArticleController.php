@@ -9,10 +9,9 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
+use Drupal\thunder_print\Plugin\IdmsBuilderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Class PrintArticleController.
@@ -27,6 +26,8 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
 
   protected $renderer;
 
+  protected $idmsBuilderManager;
+
   /**
    * PrintArticleController constructor.
    *
@@ -34,10 +35,13 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *   Data formatter service.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   Renderer service.
+   * @param \Drupal\thunder_print\Plugin\IdmsBuilderManager $idmsBuilderManager
+   *   IDMS Builder manager service.
    */
-  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer) {
+  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager) {
     $this->dateFormatter = $dateFormatter;
     $this->renderer = $renderer;
+    $this->idmsBuilderManager = $idmsBuilderManager;
   }
 
   /**
@@ -46,7 +50,8 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('date.formatter'),
-      $container->get('renderer')
+      $container->get('renderer'),
+      $container->get('plugin.manager.thunder_print_idms_builder')
     );
   }
 
@@ -238,18 +243,10 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
       ->getStorage('print_article')
       ->load($print_article);
 
-    $replacedIdms = $print_article->replaceText();
-    $response = new StreamedResponse(
-      function () use ($replacedIdms) {
-        echo $replacedIdms->getXml()->asXml();
-      });
+    $builder = $this->idmsBuilderManager->createInstance('remote', ['print_article' => $print_article]);
 
-    $response->headers->set('Content-Type', 'application/xml');
-    $response->headers->set('Cache-Control', '');
-    $response->headers->set('Content-Length', strlen($replacedIdms->getXml()->asXml()));
-    $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
-    $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $print_article->label() . '.idms');
-    $response->headers->set('Content-Disposition', $contentDisposition);
+    $response = $builder->getResponse();
+
     $response->prepare($request);
 
     return $response;

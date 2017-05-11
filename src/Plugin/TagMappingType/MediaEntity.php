@@ -7,6 +7,9 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\FieldConfigInterface;
 use Drupal\thunder_print\IDMS;
+use Drupal\thunder_print\Plugin\IdmsBuilder\LocalBuilder;
+use Drupal\thunder_print\Plugin\IdmsBuilder\RemoteBuilder;
+use Drupal\thunder_print\Plugin\IdmsBuilderInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -178,7 +181,7 @@ class MediaEntity extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IDMS $idms, $fieldItem) {
+  public function replacePlaceholder(IdmsBuilderInterface $builder, IDMS $idms, $fieldItem) {
 
     foreach ($this->configuration['mapping'] as $field => $tag) {
 
@@ -189,8 +192,8 @@ class MediaEntity extends TagMappingTypeBase {
 
         $xmlContentId = (string) $xmlElement['XMLContent'];
 
-        $xpath = "//Image[@Self='$xmlContentId']/Link";
-        $xmlImageLink = $idms->getXml()->xpath($xpath);
+        $xpath = "//Image[@Self='$xmlContentId']";
+        $xmlImage = $idms->getXml()->xpath($xpath);
 
         /** @var \Drupal\media_entity\Entity\Media $media */
         $media = $this->entityTypeManager
@@ -201,19 +204,25 @@ class MediaEntity extends TagMappingTypeBase {
           $media->hasField($field) &&
           ($fieldValue = $media->get($field)->first())
         ) {
-          if ($xmlImageLink) {
+          if ($xmlImage) {
 
             /** @var \Drupal\file\Entity\File $file */
             $file = $this->entityTypeManager
               ->getStorage('file')
               ->load($fieldValue->target_id);
 
-            $realpath = \Drupal::service('file_system')
-              ->realpath($file->getFileUri());
+            $filename = pathinfo($file->getFileUri())['basename'];
 
-            $xmlElement['Value'] = 'file://' . $realpath;
-            $xmlImageLink[0]['LinkResourceURI'] = $xmlElement['Value'];
+            $xmlElement['Value'] = 'file:/' . $filename;
+            $xmlImage[0]->Link['LinkResourceURI'] = $xmlElement['Value'];
 
+            if ($builder instanceof LocalBuilder) {
+              $xmlImage[0]->Link['StoredState'] = 'Embedded';
+              $xmlImage[0]->Properties->Contents = base64_encode(file_get_contents($file->getFileUri()));
+            }
+            elseif ($builder instanceof RemoteBuilder) {
+              $xmlImage[0]->Link['StoredState'] = 'Normal';
+            }
           }
           else {
             $idms = $this->replacePlain($idms, $tag, $fieldValue->value);
@@ -223,6 +232,30 @@ class MediaEntity extends TagMappingTypeBase {
     }
 
     return $idms;
+  }
+
+  /**
+   * Gets the connected file item.
+   */
+  public function getFile($mediaId) {
+
+    /** @var \Drupal\media_entity\Entity\Media $media */
+    $media = $this->entityTypeManager
+      ->getStorage('media')
+      ->load($mediaId);
+
+    $field = $this->getMainProperty();
+
+    if (
+      $media->hasField($field) &&
+      ($fieldValue = $media->get($field)->first()) &&
+      isset($fieldValue->target_id)
+    ) {
+      return $this->entityTypeManager
+        ->getStorage('file')
+        ->load($fieldValue->target_id);
+    }
+    return NULL;
   }
 
 }
