@@ -2,7 +2,9 @@
 
 namespace Drupal\thunder_print\Plugin\CKeditorPlugin;
 
-use Drupal\ckeditor\CKEditorPluginBase;
+use Drupal\ckeditor\CKEditorPluginContextualInterface;
+use Drupal\ckeditor\CKEditorPluginInterface;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\editor\Entity\Editor;
 
 /**
@@ -13,7 +15,28 @@ use Drupal\editor\Entity\Editor;
  *   label = @Translation("IDMS style")
  * )
  */
-class IDMSStyles extends CKEditorPluginBase {
+class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditorPluginContextualInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isInternal() {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isEnabled(Editor $editor) {
+    return ($editor->getEditor() == 'ckeditor');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDependencies(Editor $editor) {
+    return [];
+  }
 
   /**
    * {@inheritdoc}
