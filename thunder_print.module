@@ -93,17 +93,20 @@ function thunder_print_field_widget_text_textarea_form_alter(&$element, \Drupal\
     'bundle' => $bundle,
     'type' => $type,
     'styles' => [
-      'idms-span1' => [
+      [
         'element' => 'span',
         'attributes' => ['class' => 'idms-span1', 'style' => 'color: red'],
+        'name' => 'IDMS Span1',
       ],
-      'idms-block1' => [
+      [
         'element' => 'p',
         'attributes' => ['class' => 'idms-block1', 'style' => 'background: yellow'],
+        'name' => 'IDMS Block1',
       ],
-      'idms-block2' => [
+      [
         'element' => 'p',
         'attributes' => ['class' => 'idms-block2'],
+        'name' => 'IDMS Block2',
       ],
     ]
   ];
