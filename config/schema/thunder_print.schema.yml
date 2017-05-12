@@ -1,0 +1,11 @@
+thunder_print.settings:
+  type: config_object
+  label: 'Settings'
+  mapping:
+    general_settings:
+      type: mapping
+      label: 'General Settings'
+      mapping:
+        api_url:
+          type: string
+          label: 'API Url'

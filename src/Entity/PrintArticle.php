@@ -211,12 +211,12 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
         'max_length' => 50,
         'text_processing' => 0,
       ])
+      ->setRequired(TRUE)
       ->setDefaultValue('')
       ->setDisplayOptions('form', [
         'type' => 'string_textfield',
         'weight' => -4,
-      ])
-      ->setDisplayConfigurable('form', TRUE);
+      ]);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
@@ -247,6 +247,10 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
         'file_directory' => 'print-article',
         'alt_field_required' => FALSE,
         'file_extensions' => 'png jpg jpeg',
+      ])
+      ->setDisplayOptions('view', [
+        'type' => 'image',
+        'weight' => -4,
       ]);
 
     $fields['indesign_info'] = BaseFieldDefinition::create('string')
