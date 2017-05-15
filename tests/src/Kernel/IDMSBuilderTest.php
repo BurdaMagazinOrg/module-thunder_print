@@ -8,7 +8,7 @@ use Drupal\media_entity\Entity\Media;
 use Drupal\thunder_print\Entity\PrintArticle;
 
 /**
- * Tests the mapping creation.
+ * Tests the idms builder.
  *
  * @group thunder_print
  */
@@ -85,7 +85,32 @@ class IDMSBuilderTest extends KernelTestBase {
     $xml = simplexml_load_string($builder->getContent($this->printArticle));
     $this->assertNotNull($xml);
     $this->assertSame('Zeitung1 article.idms', $builder->getFilename($this->printArticle));
+  }
 
+  /**
+   * Test the zip builder.
+   */
+  public function testZipArchiveBuilder() {
+
+    /** @var \Drupal\thunder_print\Plugin\IdmsBuilderManager $builder */
+    $builderManager = \Drupal::service('plugin.manager.thunder_print_idms_builder');
+    /** @var \Drupal\thunder_print\Plugin\IdmsBuilder\EmbeddedBuilder $builder */
+    $builder = $builderManager->createInstance('zip_archived');
+
+    file_put_contents(file_directory_temp() . '/foo.zip', $builder->getContent($this->printArticle));
+
+    $zip = new \ZipArchive();
+    $zip->open(file_directory_temp() . '/foo.zip');
+    $image = $zip->getFromName('druplicon.png');
+    // Check is binary.
+    $this->assertTrue(preg_match('~[^\x20-\x7E\t\r\n]~', $image) > 0);
+
+    $idms = $zip->getFromName('Zeitung1 article.idms');
+
+    $xml = simplexml_load_string($idms);
+    $this->assertNotNull($xml);
+
+    $this->assertSame('Zeitung1 article.zip', $builder->getFilename($this->printArticle));
   }
 
 }

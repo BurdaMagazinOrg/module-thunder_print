@@ -6,7 +6,7 @@ use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Plugin\IdmsBuilderBase;
 
 /**
- * Provides Tag Mapping for media entity reference.
+ * Provides an embedded idms builder.
  *
  * @IdmsBuilder(
  *   id = "embedded",

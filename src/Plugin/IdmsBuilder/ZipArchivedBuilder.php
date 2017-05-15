@@ -2,13 +2,14 @@
 
 namespace Drupal\thunder_print\Plugin\IdmsBuilder;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Plugin\AdditionalFilesInterface;
 use Drupal\thunder_print\Plugin\IdmsBuilderBase;
 
 /**
- * Provides Tag Mapping for media entity reference.
+ * Provides zip archive builder.
  *
  * @IdmsBuilder(
  *   id = "zip_archived",
@@ -18,27 +19,26 @@ use Drupal\thunder_print\Plugin\IdmsBuilderBase;
  */
 class ZipArchivedBuilder extends IdmsBuilderBase {
 
+  use StringTranslationTrait;
+
   /**
    * {@inheritdoc}
    */
   public function getContent(PrintArticleInterface $printArticle) {
 
-    $replacedIdms = $this->replaceSnippetPlaceholders($printArticle);
-    $files = $this->getAdditionalFiles($printArticle);
-
     $zip = new \ZipArchive();
-    $zipFilename = tempnam("tmp", "zip");
+    $zipFilename = tempnam(file_directory_temp(), "zip");
 
     if ($zip->open($zipFilename, \ZipArchive::CREATE) !== TRUE) {
-      return FALSE;
+      throw new \Exception($this->t('Not possible to create zip archive'));
     }
     else {
-      foreach ($files as $filename => $file) {
+      foreach ($this->getAdditionalFiles($printArticle) as $filename => $file) {
         $zip->addFromString($filename, file_get_contents($file));
       }
+      $replacedIdms = $this->replaceSnippetPlaceholders($printArticle);
       $zip->addFromString($printArticle->label() . '.idms', $replacedIdms->getXml()->asXml());
       $zip->close();
-
     }
 
     $content = file_get_contents($zipFilename);
@@ -56,6 +56,9 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
   /**
    * Discovers additional files that are part of the idms.
    *
+   * @param \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle
+   *   The print article.
+   *
    * @return \Drupal\file\FileInterface[]
    *   Array of file items.
    */
@@ -64,9 +67,7 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
     $files = [];
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
-    $bundle = $this->entityTypeManager->getStorage($printArticle->getEntityType()
-      ->getBundleEntityType())
-      ->load($printArticle->bundle());
+    $bundle = $printArticle->type->entity;
 
     $idms = new IDMS($bundle->getIdms());
 

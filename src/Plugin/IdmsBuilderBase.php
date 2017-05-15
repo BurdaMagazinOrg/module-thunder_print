@@ -64,9 +64,7 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
   protected function replaceSnippetPlaceholders(PrintArticleInterface $printArticle) {
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
-    $bundle = $this->entityTypeManager->getStorage($printArticle->getEntityType()
-      ->getBundleEntityType())
-      ->load($printArticle->bundle());
+    $bundle = $printArticle->type->entity;
 
     $idms = new IDMS($bundle->getIdms());
 
