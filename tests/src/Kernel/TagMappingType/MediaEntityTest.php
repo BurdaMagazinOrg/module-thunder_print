@@ -148,4 +148,5 @@ class MediaEntityTest extends KernelTestBase {
 
     $this->assertSame('This is Druplicons image', (string) $xmlElement);
   }
+
 }
