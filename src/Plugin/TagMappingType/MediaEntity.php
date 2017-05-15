@@ -6,10 +6,9 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\FieldConfigInterface;
+use Drupal\file\FileInterface;
 use Drupal\thunder_print\IDMS;
-use Drupal\thunder_print\Plugin\IdmsBuilder\LocalBuilder;
-use Drupal\thunder_print\Plugin\IdmsBuilder\RemoteBuilder;
-use Drupal\thunder_print\Plugin\IdmsBuilderInterface;
+use Drupal\thunder_print\Plugin\AdditionalFilesInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -23,7 +22,7 @@ use Drupal\thunder_print\Plugin\TagMappingTypeBase;
  *   label = @Translation("Media entity"),
  * )
  */
-class MediaEntity extends TagMappingTypeBase {
+class MediaEntity extends TagMappingTypeBase implements AdditionalFilesInterface {
 
   /**
    * {@inheritdoc}
@@ -181,7 +180,36 @@ class MediaEntity extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IdmsBuilderInterface $builder, IDMS $idms, $fieldItem) {
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
+
+    return $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) {
+      $xmlImage->Link['StoredState'] = 'Embedded';
+      $xmlImage->Properties->Contents = base64_encode(file_get_contents($file->getFileUri()));
+    }, $idms, $fieldItem);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replacePlaceholderWithAdditionalFiles(IDMS $idms, $fieldItem) {
+
+    return $this->iterateMapping(function () {}, $idms, $fieldItem);
+  }
+
+  /**
+   * Iterates offer the mappings and replaces the placeholders with content.
+   *
+   * @param callable $callback
+   *   Function to alter xml object.
+   * @param \Drupal\thunder_print\IDMS $idms
+   *   The IDMS with placeholders.
+   * @param mixed $fieldItem
+   *   Field value to replace.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   *   Adjusted IDMS object.
+   */
+  protected function iterateMapping(callable $callback, IDMS $idms, $fieldItem) {
 
     foreach ($this->configuration['mapping'] as $field => $tag) {
 
@@ -215,13 +243,10 @@ class MediaEntity extends TagMappingTypeBase {
 
             $xmlElement['Value'] = 'file:/' . $filename;
             $xmlImage[0]->Link['LinkResourceURI'] = $xmlElement['Value'];
+            $xmlImage[0]->Link['StoredState'] = 'Normal';
 
-            if ($builder instanceof LocalBuilder) {
-              $xmlImage[0]->Link['StoredState'] = 'Embedded';
-              $xmlImage[0]->Properties->Contents = base64_encode(file_get_contents($file->getFileUri()));
-            }
-            elseif ($builder instanceof RemoteBuilder) {
-              $xmlImage[0]->Link['StoredState'] = 'Normal';
+            if (is_callable($callback)) {
+              $callback($xmlImage[0], $file);
             }
           }
           else {
@@ -230,32 +255,21 @@ class MediaEntity extends TagMappingTypeBase {
         }
       }
     }
-
     return $idms;
   }
 
   /**
    * Gets the connected file item.
    */
-  public function getFile($mediaId) {
+  public function getAdditionalFiles(IDMS $idms, $fieldItem) {
 
-    /** @var \Drupal\media_entity\Entity\Media $media */
-    $media = $this->entityTypeManager
-      ->getStorage('media')
-      ->load($mediaId);
+    $files = [];
 
-    $field = $this->getMainProperty();
+    $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) use (&$files) {
+      $files[] = $file;
+    }, $idms, $fieldItem);
 
-    if (
-      $media->hasField($field) &&
-      ($fieldValue = $media->get($field)->first()) &&
-      isset($fieldValue->target_id)
-    ) {
-      return $this->entityTypeManager
-        ->getStorage('file')
-        ->load($fieldValue->target_id);
-    }
-    return NULL;
+    return $files;
   }
 
 }

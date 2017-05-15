@@ -14,6 +14,8 @@ use Drupal\Component\Annotation\Plugin;
  */
 class IdmsBuilder extends Plugin {
 
+  const BUILDMODE_MULTIFILE = 0;
+  const BUILDMODE_SINGLEFILE = 1;
 
   /**
    * The plugin ID.
@@ -30,5 +32,12 @@ class IdmsBuilder extends Plugin {
    * @ingroup plugin_translatable
    */
   public $label;
+
+  /**
+   * Indicates multi or single file.
+   *
+   * @var int
+   */
+  public $buildMode;
 
 }

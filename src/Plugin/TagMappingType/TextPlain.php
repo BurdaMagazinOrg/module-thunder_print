@@ -4,7 +4,6 @@ namespace Drupal\thunder_print\Plugin\TagMappingType;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\thunder_print\IDMS;
-use Drupal\thunder_print\Plugin\IdmsBuilderInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -76,7 +75,7 @@ class TextPlain extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IdmsBuilderInterface $builder, IDMS $idms, $fieldItem) {
+  public function replacePlaceholder(IDMS $idms, $fieldItem) {
     foreach ($this->configuration['mapping'] as $field => $tag) {
       return $this->replacePlain($idms, $tag, $fieldItem[$field]);
     }

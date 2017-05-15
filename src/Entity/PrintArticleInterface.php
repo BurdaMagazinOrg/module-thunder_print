@@ -2,6 +2,7 @@
 
 namespace Drupal\thunder_print\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\RevisionableInterface;
@@ -13,7 +14,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup thunder_print
  */
-interface PrintArticleInterface extends RevisionableInterface, RevisionLogInterface, EntityChangedInterface, EntityOwnerInterface, EntityPublishedInterface {
+interface PrintArticleInterface extends EntityInterface, RevisionableInterface, RevisionLogInterface, EntityChangedInterface, EntityOwnerInterface, EntityPublishedInterface {
 
   /**
    * Gets the Print article type.

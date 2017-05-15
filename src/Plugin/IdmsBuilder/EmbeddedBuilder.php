@@ -2,24 +2,26 @@
 
 namespace Drupal\thunder_print\Plugin\IdmsBuilder;
 
+use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Plugin\IdmsBuilderBase;
 
 /**
  * Provides Tag Mapping for media entity reference.
  *
  * @IdmsBuilder(
- *   id = "local",
+ *   id = "embedded",
  *   label = @Translation("Local builder"),
+ *   buildMode = "singlefile"
  * )
  */
-class LocalBuilder extends IdmsBuilderBase {
+class EmbeddedBuilder extends IdmsBuilderBase {
 
   /**
    * {@inheritdoc}
    */
-  protected function getContent() {
+  public function getContent(PrintArticleInterface $printArticle) {
 
-    $replacedIdms = $this->replaceSnippetPlaceholders();
+    $replacedIdms = $this->replaceSnippetPlaceholders($printArticle);
 
     return $replacedIdms->getXml()->asXml();
   }
@@ -27,9 +29,7 @@ class LocalBuilder extends IdmsBuilderBase {
   /**
    * {@inheritdoc}
    */
-  protected function getFilename() {
-    /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle */
-    $printArticle = $this->getPrintArticle();
+  public function getFilename(PrintArticleInterface $printArticle) {
     return $printArticle->label() . '.idms';
   }
 

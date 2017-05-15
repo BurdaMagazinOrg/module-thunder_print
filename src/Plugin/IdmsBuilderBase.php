@@ -7,6 +7,8 @@ use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\ProxyClass\File\MimeType\MimeTypeGuesser;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\thunder_print\Annotation\IdmsBuilder;
+use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IDMS;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\File\MimeType\FileBinaryMimeTypeGuesser;
@@ -18,10 +20,25 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterface, ContainerFactoryPluginInterface {
 
+  /**
+   * Entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected $entityTypeManager;
 
+  /**
+   * MimeTypeGuesser service.
+   *
+   * @var \Drupal\Core\ProxyClass\File\MimeType\MimeTypeGuesser
+   */
   protected $mimeTypeGuesser;
 
+  /**
+   * Transliteration service.
+   *
+   * @var \Drupal\Component\Transliteration\TransliterationInterface
+   */
   protected $transliteration;
 
   /**
@@ -65,24 +82,9 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
   }
 
   /**
-   * Get the print article.
-   *
-   * @return \Drupal\thunder_print\Entity\PrintArticleInterface
-   *   The print article.
+   * {@inheritdoc}
    */
-  protected function getPrintArticle() {
-    return $this->configuration['print_article'];
-  }
-
-  /**
-   * Use snippet template from bundle and replaces the placeholder with content.
-   *
-   * @return \Drupal\thunder_print\IDMS
-   *   New IDMS with replaced content.
-   */
-  public function replaceSnippetPlaceholders() {
-
-    $printArticle = $this->getPrintArticle();
+  public function replaceSnippetPlaceholders(PrintArticleInterface $printArticle) {
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
     $bundle = $this->entityTypeManager->getStorage($printArticle->getEntityType()
@@ -98,7 +100,15 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
       $field = $printArticle->{$tagMapping->id()};
 
       if ($fieldItem = $field->first()) {
-        $idms = $tagMapping->getMappingType()->replacePlaceholder($this, $idms, $fieldItem->getValue());
+        $mappingType = $tagMapping->getMappingType();
+        $idms = $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
+
+        if ($this->pluginDefinition['buildMode'] === IdmsBuilder::BUILDMODE_MULTIFILE && $mappingType instanceof AdditionalFilesInterface) {
+          $idms = $mappingType->replacePlaceholderWithAdditionalFiles($idms, $fieldItem->getValue());
+        }
+        else {
+          $idms = $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
+        }
       }
     }
     return $idms;
@@ -107,10 +117,10 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
   /**
    * {@inheritdoc}
    */
-  public function getResponse() {
+  public function getResponse(PrintArticleInterface $printArticle) {
 
-    $content = $this->getContent();
-    $filename = $this->getFilename();
+    $content = $this->getContent($printArticle);
+    $filename = $this->getFilename($printArticle);
 
     $response = new StreamedResponse(
       function () use ($content) {
@@ -131,21 +141,5 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
 
     return $response;
   }
-
-  /**
-   * Binary content that can be streamed.
-   *
-   * @return string
-   *   The content.
-   */
-  abstract protected function getContent();
-
-  /**
-   * Filename for the returned file.
-   *
-   * @return string
-   *   Filename.
-   */
-  abstract protected function getFilename();
 
 }

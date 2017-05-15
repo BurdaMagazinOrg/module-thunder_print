@@ -90,8 +90,6 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
   /**
    * Replace placeholder from IDMS with real content.
    *
-   * @param \Drupal\thunder_print\Plugin\IdmsBuilderInterface $builder
-   *   Current builder.
    * @param \Drupal\thunder_print\IDMS $idms
    *   The IDMS with placeholders.
    * @param mixed $fieldItem
@@ -100,6 +98,6 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    * @return \Drupal\thunder_print\IDMS
    *   New idms with replaced placeholders.
    */
-  public function replacePlaceholder(IdmsBuilderInterface $builder, IDMS $idms, $fieldItem);
+  public function replacePlaceholder(IDMS $idms, $fieldItem);
 
 }

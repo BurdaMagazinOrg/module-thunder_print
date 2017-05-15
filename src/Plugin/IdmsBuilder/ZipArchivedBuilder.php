@@ -2,29 +2,29 @@
 
 namespace Drupal\thunder_print\Plugin\IdmsBuilder;
 
+use Drupal\thunder_print\Entity\PrintArticleInterface;
+use Drupal\thunder_print\IDMS;
+use Drupal\thunder_print\Plugin\AdditionalFilesInterface;
 use Drupal\thunder_print\Plugin\IdmsBuilderBase;
-use Drupal\thunder_print\Plugin\TagMappingType\MediaEntity;
 
 /**
  * Provides Tag Mapping for media entity reference.
  *
  * @IdmsBuilder(
- *   id = "remote",
+ *   id = "zip_archived",
  *   label = @Translation("Remote builder"),
+ *   buildMode = "multifile"
  * )
  */
-class RemoteBuilder extends IdmsBuilderBase {
+class ZipArchivedBuilder extends IdmsBuilderBase {
 
   /**
    * {@inheritdoc}
    */
-  protected function getContent() {
+  public function getContent(PrintArticleInterface $printArticle) {
 
-    $replacedIdms = $this->replaceSnippetPlaceholders();
-    $files = $this->getAdditionalFiles();
-
-    /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle */
-    $printArticle = $this->getPrintArticle();
+    $replacedIdms = $this->replaceSnippetPlaceholders($printArticle);
+    $files = $this->getAdditionalFiles($printArticle);
 
     $zip = new \ZipArchive();
     $zipFilename = tempnam("tmp", "zip");
@@ -49,9 +49,7 @@ class RemoteBuilder extends IdmsBuilderBase {
   /**
    * {@inheritdoc}
    */
-  protected function getFilename() {
-    /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle */
-    $printArticle = $this->getPrintArticle();
+  public function getFilename(PrintArticleInterface $printArticle) {
     return $printArticle->label() . '.zip';
   }
 
@@ -61,16 +59,16 @@ class RemoteBuilder extends IdmsBuilderBase {
    * @return \Drupal\file\FileInterface[]
    *   Array of file items.
    */
-  protected function getAdditionalFiles() {
+  protected function getAdditionalFiles(PrintArticleInterface $printArticle) {
 
     $files = [];
-
-    $printArticle = $this->getPrintArticle();
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
     $bundle = $this->entityTypeManager->getStorage($printArticle->getEntityType()
       ->getBundleEntityType())
       ->load($printArticle->bundle());
+
+    $idms = new IDMS($bundle->getIdms());
 
     /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
     foreach ($bundle->getTags() as $tagMapping) {
@@ -78,13 +76,14 @@ class RemoteBuilder extends IdmsBuilderBase {
       /** @var \Drupal\Core\Field\FieldItemList $field */
       $field = $printArticle->{$tagMapping->id()};
 
-      if (($fieldItem = $field->first()) && $tagMapping->getMappingType() instanceof MediaEntity) {
+      $mappingType = $tagMapping->getMappingType();
+      if (($fieldItem = $field->first()) && $mappingType instanceof AdditionalFilesInterface) {
 
         /** @var \Drupal\file\FileInterface $file */
-        $file = $tagMapping->getMappingType()->getFile($fieldItem->getValue()['target_id']);
-
-        $filename = pathinfo($file->getFileUri())['basename'];
-        $files[$filename] = $file->getFileUri();
+        foreach ($mappingType->getAdditionalFiles($idms, $fieldItem->getValue()) as $file) {
+          $filename = pathinfo($file->getFileUri())['basename'];
+          $files[$filename] = $file->getFileUri();
+        }
       }
     }
 

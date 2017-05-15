@@ -243,9 +243,9 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
       ->getStorage('print_article')
       ->load($print_article);
 
-    $builder = $this->idmsBuilderManager->createInstance('remote', ['print_article' => $print_article]);
+    $builder = $this->idmsBuilderManager->createInstance('embedded');
 
-    $response = $builder->getResponse();
+    $response = $builder->getResponse($print_article);
 
     $response->prepare($request);
 

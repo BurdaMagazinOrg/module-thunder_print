@@ -76,10 +76,10 @@ class PrintArticleExportTest extends KernelTestBase {
 
     /** @var \Drupal\thunder_print\Plugin\IdmsBuilderManager $builder */
     $builderManager = \Drupal::service('plugin.manager.thunder_print_idms_builder');
-    /** @var \Drupal\thunder_print\Plugin\IdmsBuilder\LocalBuilder $builder */
-    $builder = $builderManager->createInstance('local', ['print_article' => $printArticle]);
+    /** @var \Drupal\thunder_print\Plugin\IdmsBuilder\EmbeddedBuilder $builder */
+    $builder = $builderManager->createInstance('embedded');
 
-    $idms = $builder->replaceSnippetPlaceholders();
+    $idms = $builder->replaceSnippetPlaceholders($printArticle);
 
     // Test image replacement.
     $xpath = "(//XmlStory//XMLElement[@MarkupTag='XMLTag/Image'])[last()]";
