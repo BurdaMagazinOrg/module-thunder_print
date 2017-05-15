@@ -86,22 +86,6 @@ class IDMSBuilderTest extends KernelTestBase {
     $this->assertNotNull($xml);
     $this->assertSame('Zeitung1 article.idms', $builder->getFilename($this->printArticle));
 
-    // Test image replacement.
-    $xpath = "(//XmlStory//XMLElement[@MarkupTag='XMLTag/Image'])[last()]";
-    $xmlElement = $xml->xpath($xpath)[0];
-
-    $xmlContentId = (string) $xmlElement['XMLContent'];
-    $xpath = "//Image[@Self='$xmlContentId']/Link";
-    $xmlImageLink = (string) $xml->xpath($xpath)[0]['LinkResourceURI'];
-
-    $this->assertContains('file:/druplicon.png', $xmlImageLink);
-    $this->assertContains('file:/druplicon.png', (string) $xmlElement['Value']);
-
-    // Test copyright replacement.
-    $xpath = "//Story//XMLElement[@MarkupTag='XMLTag/Caption']//Content";
-    $xmlElement = $xml->xpath($xpath)[0];
-
-    $this->assertSame('This is Druplicons image', (string) $xmlElement);
   }
 
 }
