@@ -12,9 +12,11 @@ use Drupal\thunder_print\Entity\PrintArticle;
  *
  * @group thunder_print
  */
-class PrintArticleExportTest extends KernelTestBase {
+class IDMSBuilderTest extends KernelTestBase {
 
   protected $adminUser;
+
+  protected $printArticle;
 
   /**
    * Modules to enable.
@@ -44,12 +46,7 @@ class PrintArticleExportTest extends KernelTestBase {
     $this->installEntitySchema('user');
     $this->installEntitySchema('media');
     $this->installEntitySchema('print_article');
-  }
 
-  /**
-   * Test placeholder replacement.
-   */
-  public function testReplacement() {
     $this->installConfig(['thunder_print_test', 'system']);
 
     $path = "public://druplicon.png";
@@ -66,38 +63,45 @@ class PrintArticleExportTest extends KernelTestBase {
     ]);
     $media->save();
 
-    $printArticle = PrintArticle::create([
+    $this->printArticle = PrintArticle::create([
       'name' => 'Zeitung1 article',
       'type' => 'zeitung1',
       'xmltag_image' => $media->id(),
       'xmltag_title' => 'Such a nice article',
     ]);
-    $printArticle->save();
+    $this->printArticle->save();
+  }
+
+  /**
+   * Test the embedded builder.
+   */
+  public function testEmbeddedBuilder() {
 
     /** @var \Drupal\thunder_print\Plugin\IdmsBuilderManager $builder */
     $builderManager = \Drupal::service('plugin.manager.thunder_print_idms_builder');
     /** @var \Drupal\thunder_print\Plugin\IdmsBuilder\EmbeddedBuilder $builder */
     $builder = $builderManager->createInstance('embedded');
 
-    $idms = $builder->replaceSnippetPlaceholders($printArticle);
+    $xml = simplexml_load_string($builder->getContent($this->printArticle));
+    $this->assertNotNull($xml);
+    $this->assertSame('Zeitung1 article.idms', $builder->getFilename($this->printArticle));
 
     // Test image replacement.
     $xpath = "(//XmlStory//XMLElement[@MarkupTag='XMLTag/Image'])[last()]";
-    $xmlElement = $idms->getXml()->xpath($xpath)[0];
+    $xmlElement = $xml->xpath($xpath)[0];
 
     $xmlContentId = (string) $xmlElement['XMLContent'];
     $xpath = "//Image[@Self='$xmlContentId']/Link";
-    $xmlImageLink = (string) $idms->getXml()->xpath($xpath)[0]['LinkResourceURI'];
+    $xmlImageLink = (string) $xml->xpath($xpath)[0]['LinkResourceURI'];
 
     $this->assertContains('file:/druplicon.png', $xmlImageLink);
     $this->assertContains('file:/druplicon.png', (string) $xmlElement['Value']);
 
     // Test copyright replacement.
     $xpath = "//Story//XMLElement[@MarkupTag='XMLTag/Caption']//Content";
-    $xmlElement = $idms->getXml()->xpath($xpath)[0];
+    $xmlElement = $xml->xpath($xpath)[0];
 
     $this->assertSame('This is Druplicons image', (string) $xmlElement);
-
   }
 
 }

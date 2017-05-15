@@ -3,17 +3,12 @@
 namespace Drupal\thunder_print\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\ProxyClass\File\MimeType\MimeTypeGuesser;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\thunder_print\Annotation\IdmsBuilder;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IDMS;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\File\MimeType\FileBinaryMimeTypeGuesser;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Base class for Idms builder plugins.
@@ -28,20 +23,6 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
   protected $entityTypeManager;
 
   /**
-   * MimeTypeGuesser service.
-   *
-   * @var \Drupal\Core\ProxyClass\File\MimeType\MimeTypeGuesser
-   */
-  protected $mimeTypeGuesser;
-
-  /**
-   * Transliteration service.
-   *
-   * @var \Drupal\Component\Transliteration\TransliterationInterface
-   */
-  protected $transliteration;
-
-  /**
    * MediaImage constructor.
    *
    * @param array $configuration
@@ -52,19 +33,11 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
-   * @param \Drupal\Core\ProxyClass\File\MimeType\MimeTypeGuesser $mimeTypeGuesser
-   *   The mime type guesser service.
-   * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
-   *   The transliteration service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, MimeTypeGuesser $mimeTypeGuesser, TransliterationInterface $transliteration) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entityTypeManager;
-    $this->mimeTypeGuesser = $mimeTypeGuesser;
-    $this->transliteration = $transliteration;
-
-    $this->mimeTypeGuesser->addGuesser(new FileBinaryMimeTypeGuesser(), 10);
   }
 
   /**
@@ -75,16 +48,20 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('file.mime_type.guesser'),
-      $container->get('transliteration')
+      $container->get('entity_type.manager')
     );
   }
 
   /**
-   * {@inheritdoc}
+   * Use snippet template from bundle and replaces the placeholder with content.
+   *
+   * @param \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle
+   *   The print article.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   *   New IDMS with replaced content.
    */
-  public function replaceSnippetPlaceholders(PrintArticleInterface $printArticle) {
+  protected function replaceSnippetPlaceholders(PrintArticleInterface $printArticle) {
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
     $bundle = $this->entityTypeManager->getStorage($printArticle->getEntityType()
@@ -104,7 +81,7 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
         $idms = $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
 
         if ($this->pluginDefinition['buildMode'] === IdmsBuilder::BUILDMODE_MULTIFILE && $mappingType instanceof AdditionalFilesInterface) {
-          $idms = $mappingType->replacePlaceholderWithAdditionalFiles($idms, $fieldItem->getValue());
+          $idms = $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
         }
         else {
           $idms = $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
@@ -112,34 +89,6 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
       }
     }
     return $idms;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getResponse(PrintArticleInterface $printArticle) {
-
-    $content = $this->getContent($printArticle);
-    $filename = $this->getFilename($printArticle);
-
-    $response = new StreamedResponse(
-      function () use ($content) {
-        echo $content;
-      });
-
-    $tempfile = tempnam("tmp", "");
-    file_put_contents($tempfile, $content);
-    $mimeType = $this->mimeTypeGuesser->guess($tempfile);
-    unlink($tempfile);
-
-    $response->headers->set('Content-Type', $mimeType);
-    $response->headers->set('Cache-Control', '');
-    $response->headers->set('Content-Length', strlen($content));
-    $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
-    $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $this->transliteration->transliterate($filename));
-    $response->headers->set('Content-Disposition', $contentDisposition);
-
-    return $response;
   }
 
 }

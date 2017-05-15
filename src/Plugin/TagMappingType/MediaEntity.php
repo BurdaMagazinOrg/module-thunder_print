@@ -191,7 +191,7 @@ class MediaEntity extends TagMappingTypeBase implements AdditionalFilesInterface
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholderWithAdditionalFiles(IDMS $idms, $fieldItem) {
+  public function replacePlaceholderUseRelativeLinks(IDMS $idms, $fieldItem) {
 
     return $this->iterateMapping(function () {}, $idms, $fieldItem);
   }
@@ -259,7 +259,7 @@ class MediaEntity extends TagMappingTypeBase implements AdditionalFilesInterface
   }
 
   /**
-   * Gets the connected file item.
+   * {@inheritdoc}
    */
   public function getAdditionalFiles(IDMS $idms, $fieldItem) {
 

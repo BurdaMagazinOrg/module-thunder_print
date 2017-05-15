@@ -2,6 +2,7 @@
 
 namespace Drupal\thunder_print\Controller;
 
+use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatter;
@@ -12,6 +13,8 @@ use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Plugin\IdmsBuilderManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Class PrintArticleController.
@@ -29,6 +32,13 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
   protected $idmsBuilderManager;
 
   /**
+   * Transliteration service.
+   *
+   * @var \Drupal\Component\Transliteration\TransliterationInterface
+   */
+  protected $transliteration;
+
+  /**
    * PrintArticleController constructor.
    *
    * @param \Drupal\Core\Datetime\DateFormatter $dateFormatter
@@ -37,11 +47,14 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *   Renderer service.
    * @param \Drupal\thunder_print\Plugin\IdmsBuilderManager $idmsBuilderManager
    *   IDMS Builder manager service.
+   * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
+   *   The transliteration service.
    */
-  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager) {
+  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration) {
     $this->dateFormatter = $dateFormatter;
     $this->renderer = $renderer;
     $this->idmsBuilderManager = $idmsBuilderManager;
+    $this->transliteration = $transliteration;
   }
 
   /**
@@ -51,7 +64,8 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     return new static(
       $container->get('date.formatter'),
       $container->get('renderer'),
-      $container->get('plugin.manager.thunder_print_idms_builder')
+      $container->get('plugin.manager.thunder_print_idms_builder'),
+      $container->get('transliteration')
     );
   }
 
@@ -245,8 +259,20 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
 
     $builder = $this->idmsBuilderManager->createInstance('embedded');
 
-    $response = $builder->getResponse($print_article);
+    $content = $builder->getContent($print_article);
+    $filename = $builder->getFilename($print_article);
 
+    $response = new StreamedResponse(
+      function () use ($content) {
+        echo $content;
+      });
+
+    $response->headers->set('Content-Type', 'application/xml');
+    $response->headers->set('Cache-Control', '');
+    $response->headers->set('Content-Length', strlen($content));
+    $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
+    $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $this->transliteration->transliterate($filename));
+    $response->headers->set('Content-Disposition', $contentDisposition);
     $response->prepare($request);
 
     return $response;

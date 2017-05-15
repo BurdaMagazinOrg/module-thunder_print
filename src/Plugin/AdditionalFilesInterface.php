@@ -10,7 +10,7 @@ use Drupal\thunder_print\IDMS;
 interface AdditionalFilesInterface {
 
   /**
-   * Replaces placeholders and embedded the images in idms.
+   * Replaces placeholders and include images with relative path.
    *
    * @param \Drupal\thunder_print\IDMS $idms
    *   The IDMS with placeholders.
@@ -20,10 +20,10 @@ interface AdditionalFilesInterface {
    * @return \Drupal\thunder_print\IDMS
    *   New idms with replaced placeholders.
    */
-  public function replacePlaceholderWithAdditionalFiles(IDMS $idms, $fieldItem);
+  public function replacePlaceholderUseRelativeLinks(IDMS $idms, $fieldItem);
 
   /**
-   * Get the connected files a type.
+   * Get the files to a tag mapping.
    *
    * @param \Drupal\thunder_print\IDMS $idms
    *   The IDMS with placeholders.
