@@ -312,4 +312,33 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     return $dependencies;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getSwitchableBundles() {
+
+    $fieldManager = \Drupal::service('entity_field.manager');
+
+    $fieldDefinitions = $fieldManager->getFieldDefinitions('print_article', $this->id());
+    $fieldDefinitions = array_keys($fieldDefinitions);
+    sort($fieldDefinitions);
+
+    $all_print_article_types = $this->entityTypeManager()->getStorage('print_article_type')
+      ->loadMultiple();
+
+    $options = [];
+    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $entity */
+    foreach ($all_print_article_types as $entity) {
+      $bundleFieldDefinitions = $fieldManager->getFieldDefinitions('print_article', $entity->id());
+      $bundleFieldDefinitions = array_keys($bundleFieldDefinitions);
+      sort($bundleFieldDefinitions);
+
+      if ($entity->id() != $this->id() && empty(array_diff($fieldDefinitions, $bundleFieldDefinitions))) {
+        $options[$entity->id()] = $entity;
+      }
+    }
+
+    return $options;
+  }
+
 }

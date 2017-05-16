@@ -2,7 +2,7 @@
 # Print article menu items definition
 entity.print_article.collection:
   title: 'Print articles'
-  route_name: view.print_article.print_article_list
+  route_name: entity.print_article.collection
   description: 'List Print article entities'
   parent: system.admin_content
   weight: 100

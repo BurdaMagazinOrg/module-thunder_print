@@ -1,5 +1,9 @@
 # Print article routing definition
 
+entity.print_article.collection:
+  route_name: entity.print_article.collection
+  base_route: system.admin_content
+  title: 'Print articles'
 entity.print_article.canonical:
   route_name: entity.print_article.canonical
   base_route: entity.print_article.canonical
@@ -13,6 +17,11 @@ entity.print_article.download:
   route_name: thunder_print.print_article.downloadIdms
   base_route: entity.print_article.canonical
   weight: 5
+entity.print_article.switch:
+  title: 'Switch template'
+  route_name: thunder_print.print_article.switchType
+  base_route: entity.print_article.canonical
+  weight: 6
 entity.print_article.delete_form:
   route_name:  entity.print_article.delete_form
   base_route:  entity.print_article.canonical

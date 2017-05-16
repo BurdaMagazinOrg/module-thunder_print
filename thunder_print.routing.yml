@@ -7,7 +7,7 @@ thunder_print.manage:
     _permission: 'administer site configuration'
 
 thunder_print.print_article_type.toggleStatus:
-  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/toggleStatus'
+  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/toggle-status'
   defaults:
     _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::toggleStatus'
     _title: 'Thunder for Print'
@@ -15,7 +15,7 @@ thunder_print.print_article_type.toggleStatus:
     _permission: 'administer print article entities'
 
 thunder_print.print_article_type.downloadIdms:
-  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/downloadIdms'
+  path: '/admin/structure/thunder_print/print_article_type/{print_article_type}/download-idms'
   defaults:
     _controller: '\Drupal\thunder_print\Controller\PrintArticleTypeController::downloadIdms'
     _title: 'Thunder for Print'
@@ -23,9 +23,19 @@ thunder_print.print_article_type.downloadIdms:
     _permission: 'administer print article entities'
 
 thunder_print.print_article.downloadIdms:
-  path: '/print-article/{print_article}/downloadIdms'
+  path: '/print-article/{print_article}/download-idms'
   defaults:
     _controller: '\Drupal\thunder_print\Controller\PrintArticleController::downloadIdms'
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer print article entities'
+
+thunder_print.print_article.switchType:
+  path: '/print-article/{print_article}/switch-type'
+  defaults:
+    _form: '\Drupal\thunder_print\Form\PrintArticleSwitchTypeForm'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'
+  options:
+    _admin_route: TRUE
