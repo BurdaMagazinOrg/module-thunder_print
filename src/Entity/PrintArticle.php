@@ -8,7 +8,6 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\thunder_print\IDMS;
 use Drupal\user\UserInterface;
 
 /**
@@ -256,31 +255,6 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       ->setDefaultValue('');
 
     return $fields;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function replaceText() {
-
-    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
-    $bundle = $this->entityTypeManager()->getStorage($this->getEntityType()
-      ->getBundleEntityType())
-      ->load($this->bundle());
-
-    $idms = new IDMS($bundle->getIdms());
-
-    /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
-    foreach ($bundle->getTags() as $tagMapping) {
-
-      /** @var \Drupal\Core\Field\FieldItemList $field */
-      $field = $this->{$tagMapping->id()};
-
-      if ($fieldItem = $field->first()) {
-        $idms = $tagMapping->getMappingType()->replacePlaceholder($idms, $fieldItem->getValue());
-      }
-    }
-    return $idms;
   }
 
 }

@@ -5,3 +5,6 @@ services:
   thunder_print.machine_name:
     class: Drupal\thunder_print\MachineNameGenerator
     arguments: ['@transliteration', '@language_manager']
+  plugin.manager.thunder_print_idms_builder:
+    class: Drupal\thunder_print\Plugin\IdmsBuilderManager
+    parent: default_plugin_manager

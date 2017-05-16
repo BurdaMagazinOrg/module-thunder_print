@@ -2,6 +2,7 @@
 
 namespace Drupal\thunder_print\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\RevisionableInterface;
@@ -13,7 +14,7 @@ use Drupal\user\EntityOwnerInterface;
  *
  * @ingroup thunder_print
  */
-interface PrintArticleInterface extends RevisionableInterface, RevisionLogInterface, EntityChangedInterface, EntityOwnerInterface, EntityPublishedInterface {
+interface PrintArticleInterface extends EntityInterface, RevisionableInterface, RevisionLogInterface, EntityChangedInterface, EntityOwnerInterface, EntityPublishedInterface {
 
   /**
    * Gets the Print article type.
@@ -60,13 +61,5 @@ interface PrintArticleInterface extends RevisionableInterface, RevisionLogInterf
    *   The called Print article entity.
    */
   public function setCreatedTime($timestamp);
-
-  /**
-   * Use snippet template from bundle and replaces the placholder with content.
-   *
-   * @return \Drupal\thunder_print\IDMS
-   *   New IDMS with replaced content.
-   */
-  public function replaceText();
 
 }

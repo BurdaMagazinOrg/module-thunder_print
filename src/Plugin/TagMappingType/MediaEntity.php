@@ -6,7 +6,9 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\FieldConfigInterface;
+use Drupal\file\FileInterface;
 use Drupal\thunder_print\IDMS;
+use Drupal\thunder_print\Plugin\AdditionalFilesInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
@@ -20,7 +22,7 @@ use Drupal\thunder_print\Plugin\TagMappingTypeBase;
  *   label = @Translation("Media entity"),
  * )
  */
-class MediaEntity extends TagMappingTypeBase {
+class MediaEntity extends TagMappingTypeBase implements AdditionalFilesInterface {
 
   /**
    * {@inheritdoc}
@@ -180,6 +182,35 @@ class MediaEntity extends TagMappingTypeBase {
    */
   public function replacePlaceholder(IDMS $idms, $fieldItem) {
 
+    return $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) {
+      $xmlImage->Link['StoredState'] = 'Embedded';
+      $xmlImage->Properties->Contents = base64_encode(file_get_contents($file->getFileUri()));
+    }, $idms, $fieldItem);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function replacePlaceholderUseRelativeLinks(IDMS $idms, $fieldItem) {
+
+    return $this->iterateMapping(function () {}, $idms, $fieldItem);
+  }
+
+  /**
+   * Iterates offer the mappings and replaces the placeholders with content.
+   *
+   * @param callable $callback
+   *   Function to alter xml object.
+   * @param \Drupal\thunder_print\IDMS $idms
+   *   The IDMS with placeholders.
+   * @param mixed $fieldItem
+   *   Field value to replace.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   *   Adjusted IDMS object.
+   */
+  protected function iterateMapping(callable $callback, IDMS $idms, $fieldItem) {
+
     foreach ($this->configuration['mapping'] as $field => $tag) {
 
       $xpath = "(//XmlStory//XMLElement[@MarkupTag='$tag'])[last()]";
@@ -189,8 +220,8 @@ class MediaEntity extends TagMappingTypeBase {
 
         $xmlContentId = (string) $xmlElement['XMLContent'];
 
-        $xpath = "//Image[@Self='$xmlContentId']/Link";
-        $xmlImageLink = $idms->getXml()->xpath($xpath);
+        $xpath = "//Image[@Self='$xmlContentId']";
+        $xmlImage = $idms->getXml()->xpath($xpath);
 
         /** @var \Drupal\media_entity\Entity\Media $media */
         $media = $this->entityTypeManager
@@ -201,19 +232,22 @@ class MediaEntity extends TagMappingTypeBase {
           $media->hasField($field) &&
           ($fieldValue = $media->get($field)->first())
         ) {
-          if ($xmlImageLink) {
+          if ($xmlImage) {
 
             /** @var \Drupal\file\Entity\File $file */
             $file = $this->entityTypeManager
               ->getStorage('file')
               ->load($fieldValue->target_id);
 
-            $realpath = \Drupal::service('file_system')
-              ->realpath($file->getFileUri());
+            $filename = pathinfo($file->getFileUri())['basename'];
 
-            $xmlElement['Value'] = 'file://' . $realpath;
-            $xmlImageLink[0]['LinkResourceURI'] = $xmlElement['Value'];
+            $xmlElement['Value'] = 'file:/' . $filename;
+            $xmlImage[0]->Link['LinkResourceURI'] = $xmlElement['Value'];
+            $xmlImage[0]->Link['StoredState'] = 'Normal';
 
+            if (is_callable($callback)) {
+              $callback($xmlImage[0], $file);
+            }
           }
           else {
             $idms = $this->replacePlain($idms, $tag, $fieldValue->value);
@@ -221,8 +255,21 @@ class MediaEntity extends TagMappingTypeBase {
         }
       }
     }
-
     return $idms;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdditionalFiles(IDMS $idms, $fieldItem) {
+
+    $files = [];
+
+    $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) use (&$files) {
+      $files[] = $file;
+    }, $idms, $fieldItem);
+
+    return $files;
   }
 
 }
