@@ -20,7 +20,7 @@ class EmbeddedBuilder extends IdmsBuilderBase {
    */
   public function getContent(PrintArticleInterface $printArticle) {
 
-    $replacedIdms = $this->replaceSnippetPlaceholders($printArticle);
+    $replacedIdms = $this->replace($printArticle);
 
     return $replacedIdms->getXml()->asXml();
   }

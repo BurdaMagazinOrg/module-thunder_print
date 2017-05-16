@@ -36,7 +36,7 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
       foreach ($this->getAdditionalFiles($printArticle) as $filename => $file) {
         $zip->addFromString($filename, file_get_contents($file));
       }
-      $replacedIdms = $this->replaceSnippetPlaceholders($printArticle);
+      $replacedIdms = $this->replace($printArticle);
       $zip->addFromString($printArticle->label() . '.idms', $replacedIdms->getXml()->asXml());
       $zip->close();
     }
@@ -91,13 +91,16 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
     return $files;
   }
 
-  protected function replace(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
+  /**
+   * {@inheritdoc}
+   */
+  protected function replaceItem(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
 
     if ($mappingType instanceof AdditionalFilesInterface) {
       return $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
     }
     else {
-      return parent::replace($idms, $fieldItem, $mappingType);
+      return parent::replaceItem($idms, $fieldItem, $mappingType);
     }
   }
 

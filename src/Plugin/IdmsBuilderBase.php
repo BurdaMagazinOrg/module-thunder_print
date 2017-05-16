@@ -5,7 +5,6 @@ namespace Drupal\thunder_print\Plugin;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\thunder_print\Annotation\IdmsBuilder;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IDMS;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -61,7 +60,7 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
    * @return \Drupal\thunder_print\IDMS
    *   New IDMS with replaced content.
    */
-  protected function replaceSnippetPlaceholders(PrintArticleInterface $printArticle) {
+  protected function replace(PrintArticleInterface $printArticle) {
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
     $bundle = $printArticle->type->entity;
@@ -77,13 +76,27 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
       if ($fieldItem = $field->first()) {
         $mappingType = $tagMapping->getMappingType();
 
-        $idms = $this->replace($idms, $fieldItem, $mappingType);
+        $idms = $this->replaceItem($idms, $fieldItem, $mappingType);
       }
     }
     return $idms;
   }
 
-  protected function replace(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
+  /**
+   * Replaces one field item.
+   *
+   * @param \Drupal\thunder_print\IDMS $idms
+   *   The idms object.
+   * @param mixed $fieldItem
+   *   Field value.
+   * @param \Drupal\thunder_print\Plugin\TagMappingTypeInterface $mappingType
+   *   Current mapping type.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   *   IDMS with replaced content.
+   */
+  protected function replaceItem(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
     return $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
   }
+
 }
