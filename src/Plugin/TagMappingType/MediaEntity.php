@@ -190,20 +190,9 @@ class MediaEntity extends Image {
         $media->hasField($field) &&
         ($fieldValue = $media->get($field)->first())
       ) {
-        if ($xmlImage = $this->getXmlImageObject($tag, $idms)) {
-
-          /** @var \Drupal\file\Entity\File $file */
-          $file = $this->entityTypeManager
-            ->getStorage('file')
-            ->load($fieldValue->target_id);
-
-          $this->setFileToXmlObject($xmlImage, $file, $callback);
-
-        }
-        else {
+        if (!$this->setFileToXmlObject($fieldValue->target_id, $tag, $idms, $callback)) {
           $idms = $this->replacePlain($idms, $tag, $fieldValue->value);
         }
-
       }
     }
     return $idms;

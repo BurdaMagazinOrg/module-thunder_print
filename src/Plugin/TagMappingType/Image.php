@@ -82,16 +82,7 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
   protected function iterateMapping(callable $callback, IDMS $idms, $fieldItem) {
 
     foreach ($this->configuration['mapping'] as $field => $tag) {
-
-      $xmlImage = $this->getXmlImageObject($tag, $idms);
-
-      $fileId = $fieldItem[$field];
-      /** @var \Drupal\file\Entity\File $file */
-      $file = $this->entityTypeManager
-        ->getStorage('file')
-        ->load($fileId);
-
-      $this->setFileToXmlObject($xmlImage, $file, $callback);
+      $this->setFileToXmlObject($fieldItem[$field], $tag, $idms, $callback);
     }
 
     return $idms;
@@ -120,17 +111,21 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
   }
 
   /**
-   * Discover a SimpleXml object from an idms xmlTag.
+   * Sets file information to the xml object.
    *
+   * @param int $fileId
+   *   The file that should be placed in the xml.
    * @param string $tag
-   *   Tagname.
+   *   The xml tag.
    * @param \Drupal\thunder_print\IDMS $idms
    *   The IDMS with placeholders.
+   * @param callable $callback
+   *   Function to alter xml object.
    *
-   * @return \SimpleXMLElement|null
-   *   An xml object.
+   * @return \SimpleXMLElement
+   *   The modified xml object.
    */
-  protected function getXmlImageObject($tag, IDMS $idms) {
+  protected function setFileToXmlObject($fileId, $tag, IDMS $idms, callable $callback) {
 
     $xpath = "(//XmlStory//XMLElement[@MarkupTag='$tag'])[last()]";
     $xmlElement = $idms->getXml()->xpath($xpath)[0];
@@ -141,38 +136,24 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
       $xpath = "//Image[@Self='$xmlContentId']";
 
       if ($xmlElement = $idms->getXml()->xpath($xpath)) {
-        return $xmlElement[0];
+        $xmlElement = $xmlElement[0];
+        /** @var \Drupal\file\Entity\File $file */
+        $file = $this->entityTypeManager
+          ->getStorage('file')
+          ->load($fileId);
+
+        $filename = pathinfo($file->getFileUri())['basename'];
+
+        $xmlElement->Link['LinkResourceURI'] = 'file:/' . $filename;
+        $xmlElement->Link['StoredState'] = 'Normal';
+
+        if (is_callable($callback)) {
+          $callback($xmlElement, $file);
+        }
+        return $xmlElement;
+
       }
     }
-
-    return NULL;
-  }
-
-  /**
-   * Sets file information to the xml object.
-   *
-   * @param \SimpleXMLElement $xmlElement
-   *   The xml object.
-   * @param \Drupal\file\FileInterface $file
-   *   The file that should be placed in the xml.
-   * @param callable $callback
-   *   Function to alter xml object.
-   *
-   * @return \SimpleXMLElement
-   *   The modified xml object.
-   */
-  protected function setFileToXmlObject(\SimpleXMLElement $xmlElement, FileInterface $file, callable $callback) {
-
-    $filename = pathinfo($file->getFileUri())['basename'];
-
-    $xmlElement->Link['LinkResourceURI'] = 'file:/' . $filename;
-    $xmlElement->Link['StoredState'] = 'Normal';
-
-    if (is_callable($callback)) {
-      $callback($xmlElement, $file);
-    }
-
-    return $xmlElement;
   }
 
 }
