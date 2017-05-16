@@ -84,9 +84,7 @@ function thunder_print_entity_operation_alter(array &$operations, EntityInterfac
  */
 function thunder_print_preprocess_views_view_field(&$variables) {
 
-  /** @var \Drupal\views\ViewExecutable $view */
-  $view = $variables['view'];
-  if ($view->id() == 'thunder_print_snippet_templates') {
+  if (!empty($variables['row']->entity) && $variables['row']->entity instanceof PrintArticleTypeInterface) {
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $entity */
     $entity = $variables['row']->entity;
     if ($variables['field']->field_alias == 'thumbnail_uuid') {
