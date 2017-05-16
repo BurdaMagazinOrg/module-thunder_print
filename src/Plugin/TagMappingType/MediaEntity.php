@@ -8,8 +8,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\field\FieldConfigInterface;
 use Drupal\file\FileInterface;
 use Drupal\thunder_print\IDMS;
-use Drupal\thunder_print\Plugin\AdditionalFilesInterface;
-use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
 /**
  * Provides Tag Mapping for media entity reference.
@@ -22,7 +20,7 @@ use Drupal\thunder_print\Plugin\TagMappingTypeBase;
  *   label = @Translation("Media entity"),
  * )
  */
-class MediaEntity extends TagMappingTypeBase implements AdditionalFilesInterface {
+class MediaEntity extends Image {
 
   /**
    * {@inheritdoc}
@@ -178,25 +176,6 @@ class MediaEntity extends TagMappingTypeBase implements AdditionalFilesInterface
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function replacePlaceholder(IDMS $idms, $fieldItem) {
-
-    return $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) {
-      $xmlImage->Link['StoredState'] = 'Embedded';
-      $xmlImage->Properties->Contents = base64_encode(file_get_contents($file->getFileUri()));
-    }, $idms, $fieldItem);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function replacePlaceholderUseRelativeLinks(IDMS $idms, $fieldItem) {
-
-    return $this->iterateMapping(function () {}, $idms, $fieldItem);
-  }
-
-  /**
    * Iterates offer the mappings and replaces the placeholders with content.
    *
    * @param callable $callback
@@ -213,63 +192,32 @@ class MediaEntity extends TagMappingTypeBase implements AdditionalFilesInterface
 
     foreach ($this->configuration['mapping'] as $field => $tag) {
 
-      $xpath = "(//XmlStory//XMLElement[@MarkupTag='$tag'])[last()]";
-      $xmlElement = $idms->getXml()->xpath($xpath)[0];
+      /** @var \Drupal\media_entity\Entity\Media $media */
+      $media = $this->entityTypeManager
+        ->getStorage('media')
+        ->load($fieldItem['target_id']);
 
-      if ($xmlElement) {
+      if (
+        $media->hasField($field) &&
+        ($fieldValue = $media->get($field)->first())
+      ) {
+        if ($xmlImage = $this->getXmlImageObject($tag, $idms)) {
 
-        $xmlContentId = (string) $xmlElement['XMLContent'];
+          /** @var \Drupal\file\Entity\File $file */
+          $file = $this->entityTypeManager
+            ->getStorage('file')
+            ->load($fieldValue->target_id);
 
-        $xpath = "//Image[@Self='$xmlContentId']";
-        $xmlImage = $idms->getXml()->xpath($xpath);
+          $this->setFileToXmlObject($xmlImage, $file, $callback);
 
-        /** @var \Drupal\media_entity\Entity\Media $media */
-        $media = $this->entityTypeManager
-          ->getStorage('media')
-          ->load($fieldItem['target_id']);
-
-        if (
-          $media->hasField($field) &&
-          ($fieldValue = $media->get($field)->first())
-        ) {
-          if ($xmlImage) {
-
-            /** @var \Drupal\file\Entity\File $file */
-            $file = $this->entityTypeManager
-              ->getStorage('file')
-              ->load($fieldValue->target_id);
-
-            $filename = pathinfo($file->getFileUri())['basename'];
-
-            $xmlElement['Value'] = 'file:/' . $filename;
-            $xmlImage[0]->Link['LinkResourceURI'] = $xmlElement['Value'];
-            $xmlImage[0]->Link['StoredState'] = 'Normal';
-
-            if (is_callable($callback)) {
-              $callback($xmlImage[0], $file);
-            }
-          }
-          else {
-            $idms = $this->replacePlain($idms, $tag, $fieldValue->value);
-          }
         }
+        else {
+          $idms = $this->replacePlain($idms, $tag, $fieldValue->value);
+        }
+
       }
     }
     return $idms;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAdditionalFiles(IDMS $idms, $fieldItem) {
-
-    $files = [];
-
-    $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) use (&$files) {
-      $files[] = $file;
-    }, $idms, $fieldItem);
-
-    return $files;
   }
 
 }
