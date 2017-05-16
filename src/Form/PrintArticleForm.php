@@ -178,21 +178,27 @@ class PrintArticleForm extends ContentEntityForm {
     $config = $this->config('thunder_print.settings');
 
     if (!($url = $config->get('general_settings.api_url'))) {
-      drupal_set_message($this->t('No url.'), 'warning');
+      drupal_set_message($this->t('No url defined for indesign api.'), 'warning');
       return;
     }
 
-    $builder = $this->idmsBuilderManager->createInstance('remote', ['print_article' => $this->entity]);
+    /** @var \Drupal\thunder_print\Plugin\IdmsBuilderInterface $builder */
+    $builder = $this->idmsBuilderManager->createInstance('zip_archived');
 
     $response = $this->httpClient->request('POST', $url . '/quickpreview', [
       'multipart' => [
         [
           'name' => 'snippetzip',
-          'contents' => $builder->getContent(),
-          'filename' => $builder->getFilename(),
+          'contents' => $builder->getContent($this->entity),
+          'filename' => $builder->getFilename($this->entity),
         ],
       ],
     ]);
+
+    if ($response->getStatusCode() != 200) {
+      drupal_set_message($this->t('There was a problem for downloading a preview.'), 'warning');
+      return;
+    }
 
     $zip = new \ZipArchive();
     $zipFilename = tempnam("tmp", "zip");
