@@ -7,14 +7,14 @@ use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Plugin\AdditionalFilesInterface;
 use Drupal\thunder_print\Plugin\IdmsBuilderBase;
+use Drupal\thunder_print\Plugin\TagMappingTypeInterface;
 
 /**
  * Provides zip archive builder.
  *
  * @IdmsBuilder(
  *   id = "zip_archived",
- *   label = @Translation("Remote builder"),
- *   buildMode = "multifile"
+ *   label = @Translation("Remote builder")
  * )
  */
 class ZipArchivedBuilder extends IdmsBuilderBase {
@@ -89,6 +89,16 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
     }
 
     return $files;
+  }
+
+  protected function replace(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
+
+    if ($mappingType instanceof AdditionalFilesInterface) {
+      return $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
+    }
+    else {
+      return parent::replace($idms, $fieldItem, $mappingType);
+    }
   }
 
 }

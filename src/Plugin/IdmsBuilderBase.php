@@ -76,17 +76,14 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
 
       if ($fieldItem = $field->first()) {
         $mappingType = $tagMapping->getMappingType();
-        $idms = $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
 
-        if ($this->pluginDefinition['buildMode'] === IdmsBuilder::BUILDMODE_MULTIFILE && $mappingType instanceof AdditionalFilesInterface) {
-          $idms = $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
-        }
-        else {
-          $idms = $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
-        }
+        $idms = $this->replace($idms, $fieldItem, $mappingType);
       }
     }
     return $idms;
   }
 
+  protected function replace(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
+    return $mappingType->replacePlaceholder($idms, $fieldItem->getValue());
+  }
 }

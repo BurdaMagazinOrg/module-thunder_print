@@ -10,8 +10,7 @@ use Drupal\thunder_print\Plugin\IdmsBuilderBase;
  *
  * @IdmsBuilder(
  *   id = "embedded",
- *   label = @Translation("Local builder"),
- *   buildMode = "singlefile"
+ *   label = @Translation("Local builder")
  * )
  */
 class EmbeddedBuilder extends IdmsBuilderBase {
