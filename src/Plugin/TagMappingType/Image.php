@@ -51,13 +51,6 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFieldConfigDefinition() {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function replacePlaceholder(IDMS $idms, $fieldItem) {
 
     return $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) {
