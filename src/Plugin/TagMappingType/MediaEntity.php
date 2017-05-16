@@ -175,17 +175,7 @@ class MediaEntity extends Image {
   }
 
   /**
-   * Iterates offer the mappings and replaces the placeholders with content.
-   *
-   * @param callable $callback
-   *   Function to alter xml object.
-   * @param \Drupal\thunder_print\IDMS $idms
-   *   The IDMS with placeholders.
-   * @param mixed $fieldItem
-   *   Field value to replace.
-   *
-   * @return \Drupal\thunder_print\IDMS
-   *   Adjusted IDMS object.
+   * {@inheritdoc}
    */
   protected function iterateMapping(callable $callback, IDMS $idms, $fieldItem) {
 
