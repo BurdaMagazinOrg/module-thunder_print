@@ -127,11 +127,19 @@ class PrintArticleSwitchTypeForm extends FormBase {
 
     $new_print_type = $form_state->getValue('new_print_type');
 
+    /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $print_article */
     $print_article = $this->entityTypeManager->getStorage('print_article')
       ->load($form_state->getValue('print_article'));
 
     if ($print_article && $new_print_type) {
       $print_article->type = $new_print_type;
+
+      $print_article->setNewRevision();
+
+      // If a new revision is created, save the current user as revision author.
+      $print_article->setRevisionCreationTime(REQUEST_TIME);
+      $print_article->setRevisionUserId($this->currentUser()->id());
+
       $print_article->save();
 
       $form_state->setRedirectUrl($print_article->toUrl('edit-form'));
