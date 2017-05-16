@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - text
+    - thunder_print
+id: print_article.xmltag_body
+field_name: xmltag_body
+entity_type: print_article
+type: text_long
+settings: {  }
+module: text
+locked: true
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
