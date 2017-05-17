@@ -8,9 +8,11 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Plugin\IdmsBuilderManager;
+use Drupal\user\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -24,6 +26,20 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  * @package Drupal\thunder_print\Controller
  */
 class PrintArticleController extends ControllerBase implements ContainerInjectionInterface {
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The tempstore.
+   *
+   * @var \Drupal\user\SharedTempStore
+   */
+  protected $tempStore;
 
   protected $dateFormatter;
 
@@ -49,12 +65,18 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *   IDMS Builder manager service.
    * @param \Drupal\Component\Transliteration\TransliterationInterface $transliteration
    *   The transliteration service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
+   *   The tempstore factory.
    */
-  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration) {
+  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration, AccountInterface $current_user, PrivateTempStoreFactory $temp_store_factory) {
     $this->dateFormatter = $dateFormatter;
     $this->renderer = $renderer;
     $this->idmsBuilderManager = $idmsBuilderManager;
     $this->transliteration = $transliteration;
+    $this->tempStore = $temp_store_factory->get('entity_delete_multiple_confirm');
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -65,7 +87,9 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
       $container->get('date.formatter'),
       $container->get('renderer'),
       $container->get('plugin.manager.thunder_print_idms_builder'),
-      $container->get('transliteration')
+      $container->get('transliteration'),
+      $container->get('current_user'),
+      $container->get('user.private_tempstore')
     );
   }
 
@@ -272,6 +296,65 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     $response->headers->set('Content-Length', strlen($content));
     $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
     $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $this->transliteration->transliterate($filename));
+    $response->headers->set('Content-Disposition', $contentDisposition);
+    $response->prepare($request);
+
+    return $response;
+  }
+
+  /**
+   * Downloads a bunch of idms zipped.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   *
+   * @return \Symfony\Component\HttpFoundation\StreamedResponse
+   *   The download.
+   *
+   * @throws \Exception
+   */
+  public function downloadMultipleIdms(Request $request) {
+
+    $selection = $this->tempStore->get($this->currentUser->id());
+
+    $builder = $this->idmsBuilderManager->createInstance('embedded');
+
+    $zip = new \ZipArchive();
+    $zipFilename = tempnam(file_directory_temp(), "zip");
+
+    if ($zip->open($zipFilename, \ZipArchive::CREATE) !== TRUE) {
+      throw new \Exception($this->t('Not possible to create zip archive'));
+    }
+    else {
+      foreach ($selection as $id => $langcodes) {
+        /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $print_article */
+        $print_article = $this->entityTypeManager()
+          ->getStorage('print_article')
+          ->load($id);
+
+        $content = $builder->getContent($print_article);
+        $filename = $builder->getFilename($print_article);
+
+        $dir = $id . ' - ' . $print_article->label();
+        $zip->addEmptyDir($dir);
+        $zip->addFromString($dir . DIRECTORY_SEPARATOR . $filename, $content);
+      }
+    }
+
+    $zip->close();
+    $content = file_get_contents($zipFilename);
+    unlink($zipFilename);
+
+    $response = new StreamedResponse(
+      function () use ($content) {
+        echo $content;
+      });
+
+    $response->headers->set('Content-Type', 'application/zip');
+    $response->headers->set('Cache-Control', '');
+    $response->headers->set('Content-Length', strlen($content));
+    $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
+    $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'foo.zip');
     $response->headers->set('Content-Disposition', $contentDisposition);
     $response->prepare($request);
 

@@ -30,6 +30,14 @@ thunder_print.print_article.downloadIdms:
   requirements:
     _permission: 'administer print article entities'
 
+thunder_print.print_article.downloadMultipleIdms:
+  path: '/print-article/download-multiple-idms'
+  defaults:
+    _controller: '\Drupal\thunder_print\Controller\PrintArticleController::downloadMultipleIdms'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'
+
 thunder_print.print_article.switchType:
   path: '/print-article/{print_article}/switch-type'
   defaults:
