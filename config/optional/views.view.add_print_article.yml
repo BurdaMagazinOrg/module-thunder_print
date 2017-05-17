@@ -5,8 +5,8 @@ dependencies:
     - config_views
     - thunder_print
     - user
-id: thunder_print_snippet_templates
-label: 'Snippet Templates'
+id: add_print_article
+label: 'Add print article'
 module: views
 description: ''
 tag: ''
@@ -129,6 +129,56 @@ display:
           hide_empty: false
           default_field_elements: true
       fields:
+        id:
+          id: id
+          table: config_thunder_print_print_article_type
+          field: id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          entity_type: print_article_type
+          plugin_id: standard
         rendered_thumbnail:
           id: rendered_thumbnail
           table: config_thunder_print_print_article_type
@@ -141,8 +191,8 @@ display:
           alter:
             alter_text: false
             text: ''
-            make_link: false
-            path: ''
+            make_link: true
+            path: 'print-article/add/{{ id }}'
             absolute: false
             external: false
             replace_spaces: false
@@ -191,8 +241,8 @@ display:
           alter:
             alter_text: false
             text: ''
-            make_link: false
-            path: ''
+            make_link: true
+            path: 'print-article/add/{{ id }}'
             absolute: false
             external: false
             replace_spaces: false
@@ -215,9 +265,9 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
+          element_type: h4
           element_class: ''
-          element_label_type: ''
+          element_label_type: div
           element_label_class: ''
           element_label_colon: true
           element_wrapper_type: ''
@@ -229,164 +279,6 @@ display:
           hide_alter_empty: true
           entity_type: print_article_type
           plugin_id: standard
-        grid:
-          id: grid
-          table: config_thunder_print_print_article_type
-          field: grid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Grid
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          set_precision: false
-          precision: 0
-          decimal: .
-          separator: ','
-          format_plural: false
-          format_plural_string: "1\x03@count"
-          prefix: ''
-          suffix: ''
-          entity_type: print_article_type
-          plugin_id: numeric
-        translated_status:
-          id: translated_status
-          table: config_thunder_print_print_article_type
-          field: translated_status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Status
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          entity_type: print_article_type
-          plugin_id: print_article_type_status
-        operation:
-          id: operation
-          table: config_thunder_print_print_article_type
-          field: operation
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Operations
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          entity_type: print_article_type
-          plugin_id: config_entity_operations
       filters:
         label:
           id: label
@@ -490,7 +382,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
-      title: 'Snippet Template'
+      title: 'Add print article'
     cache_metadata:
       max-age: 0
       contexts:
@@ -506,7 +398,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: admin/structure/thunder_print/print_article_type
+      path: print-article/add
       menu:
         type: none
         title: dd
