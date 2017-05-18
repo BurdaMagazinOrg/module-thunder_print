@@ -33,3 +33,7 @@ action.configuration.print_article_publish_action:
 action.configuration.print_article_unpublish_action:
   type: action_configuration_default
   label: 'Unpublish print article'
+
+action.configuration.print_article_download_action:
+  type: action_configuration_default
+  label: 'Download print article'
