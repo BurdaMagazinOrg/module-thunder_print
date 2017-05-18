@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - thunder_print
+id: print_article_type_delete_action
+label: 'Delete print article type'
+type: print_article_type
+plugin: 'entity_delete_action:print_article_type'
+configuration: {  }

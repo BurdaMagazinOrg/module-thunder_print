@@ -14,6 +14,8 @@ function thunder_print_uninstall() {
     'system.action.print_article_delete_action',
     'system.action.print_article_publish_action',
     'system.action.print_article_unpublish_action',
+    'system.action.print_article_type_enable_action',
+    'system.action.print_article_type_disable_action',
     'views.view.print_article',
     'views.view.thunder_print_snippet_templates',
   ];

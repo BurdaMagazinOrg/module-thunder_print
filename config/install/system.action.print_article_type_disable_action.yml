@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - thunder_print
+id: print_article_type_disable_action
+label: 'Disable print article type'
+type: print_article_type
+plugin: print_article_type_disable_action
+configuration: {  }

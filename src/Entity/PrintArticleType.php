@@ -25,6 +25,7 @@ use Symfony\Component\Validator\Validation;
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\thunder_print\PrintArticleTypeHtmlRouteProvider",
+ *       "delete-multiple" = "\Drupal\entity\Routing\DeleteMultipleRouteProvider",
  *     },
  *   },
  *   config_prefix = "print_article_type",
@@ -49,6 +50,7 @@ use Symfony\Component\Validator\Validation;
  *     "add-form" = "/admin/structure/thunder_print/print_article_type/add",
  *     "edit-form" = "/admin/structure/thunder_print/print_article_type/{print_article_type}/edit",
  *     "delete-form" = "/admin/structure/thunder_print/print_article_type/{print_article_type}/delete",
+ *     "delete-multiple-form" = "/print-article-type/delete",
  *     "collection" = "/admin/structure/thunder_print/print_article_type"
  *   }
  * )
