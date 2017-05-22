@@ -220,4 +220,11 @@ abstract class TagMappingTypeBase extends PluginBase implements TagMappingTypeIn
     return $idms;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldConfigDefinition() {
+    return [];
+  }
+
 }
