@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_quote1
+mapping_type: text_plain
+mapping:
+  value: XMLTag/Quote1
+options:
+  widget_type: string_textfield
+  title: false

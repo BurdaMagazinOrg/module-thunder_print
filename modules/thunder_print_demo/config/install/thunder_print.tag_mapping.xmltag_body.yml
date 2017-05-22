@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_body
+mapping_type: text_formatted_long
+mapping:
+  value: XMLTag/Body
+options:
+  widget_type: text_textarea

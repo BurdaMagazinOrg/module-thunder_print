@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_lead
+mapping_type: text_plain
+mapping:
+  value: XMLTag/Lead
+options:
+  widget_type: string_textfield
+  title: false
