@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - file
+    - image
+    - thunder_print
+id: print_article.xmltag_portrait
+field_name: xmltag_portrait
+entity_type: print_article
+type: image
+settings:
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: image
+locked: true
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
