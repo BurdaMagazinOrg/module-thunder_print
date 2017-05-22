@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.print_article.xmltag_captionmainimage
+    - thunder_print.print_article_type.magazine
+id: print_article.magazine.xmltag_captionmainimage
+field_name: xmltag_captionmainimage
+entity_type: print_article
+bundle: magazine
+label: XMLTag/CaptionMainImage
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
