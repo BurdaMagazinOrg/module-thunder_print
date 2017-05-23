@@ -63,7 +63,17 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
   public function createBundleFields();
 
   /**
+   * Get tag mappings associated to this bundle's idms.
+   *
+   * @return \Drupal\thunder_print\Entity\TagMappingInterface[]
+   */
+  public function getMappings();
+
+  /**
    * Get the intersection of tags from idms and tag mapping.
+   *
+   * @return \Drupal\thunder_print\Entity\TagMappingInterface[]
+   *   Each mapping is keyed by the tag.
    */
   public function getTags();
 

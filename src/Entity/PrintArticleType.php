@@ -266,9 +266,21 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
 
     $entity_type_id = $this->getEntityType()->getBundleOf();
 
-    foreach ($this->getTags() as $tagMapping) {
+    foreach ($this->getMappings() as $tagMapping) {
       $tagMapping->createField($entity_type_id, $this->id());
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMappings() {
+    $tags = $this->getTags();
+    $mappings = [];
+    foreach ($tags as $mapping) {
+      $mappings[$mapping->id()] = $mapping;
+    }
+    return $mappings;
   }
 
   /**
@@ -306,7 +318,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     $dependencies = parent::calculateDependencies();
 
     /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
-    foreach ($this->getTags() as $tagMapping) {
+    foreach ($this->getMappings() as $tagMapping) {
       $dependencies->addDependency('config', $tagMapping->getConfigDependencyName());
     }
     return $dependencies;
