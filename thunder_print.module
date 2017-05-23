@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Entity\PrintArticleTypeInterface;
-use Drupal\views\Render\ViewsRenderPipelineMarkup;
 
 /**
  * Implements hook_help().
@@ -77,33 +76,4 @@ function thunder_print_entity_operation_alter(array &$operations, EntityInterfac
       unset($operations['delete']);
     }
   }
-}
-
-/**
- * Implements hook_preprocess_views_view_field().
- */
-function thunder_print_preprocess_views_view_field(&$variables) {
-
-  if (!empty($variables['row']->entity) && $variables['row']->entity instanceof PrintArticleTypeInterface) {
-    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $entity */
-    $entity = $variables['row']->entity;
-    if ($variables['field']->field_alias == 'thumbnail_uuid') {
-      if ($thumbnail_url = $entity->getThumbnailUrl()) {
-        $variables['output'] = [
-          '#theme' => 'image',
-          '#uri' => $thumbnail_url,
-          '#height' => 50,
-        ];
-      }
-    }
-    elseif ($variables['field']->field_alias == 'status') {
-      if ($entity->status()) {
-        $variables['output'] = ViewsRenderPipelineMarkup::create('Enabled');
-      }
-      else {
-        $variables['output'] = ViewsRenderPipelineMarkup::create('Disabled');
-      }
-    }
-  }
-
 }

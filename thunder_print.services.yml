@@ -8,3 +8,8 @@ services:
   plugin.manager.thunder_print_idms_builder:
     class: Drupal\thunder_print\Plugin\IdmsBuilderManager
     parent: default_plugin_manager
+  thunder_print.route_subscriber:
+    class: Drupal\thunder_print\Routing\RouteSubscriber
+    arguments: ['@module_handler']
+    tags:
+      - { name: event_subscriber }
