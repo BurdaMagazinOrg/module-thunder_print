@@ -23,7 +23,7 @@ class IDMSTest extends UnitTestCase {
 
     $idms = new IDMS(file_get_contents($filename));
 
-    $this->assertArrayEquals($tags, $idms->getTags());
+    $this->assertArrayEquals($tags, $idms->getTagNames());
   }
 
   /**

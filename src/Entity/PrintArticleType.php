@@ -291,7 +291,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     $idms = new IDMS($this->idms);
 
     $tags = [];
-    foreach ($idms->getTags() as $tag) {
+    foreach ($idms->getTagNames() as $tag) {
       if ($tagMapping = TagMapping::loadMappingForTag($tag)) {
         $tags[$tag] = $tagMapping;
       }
