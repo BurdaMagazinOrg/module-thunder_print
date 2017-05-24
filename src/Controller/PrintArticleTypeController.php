@@ -60,12 +60,12 @@ class PrintArticleTypeController extends ControllerBase implements ContainerInje
 
     $response = new StreamedResponse(
       function () use ($print_article_type) {
-        echo $print_article_type->getIdms();
+        echo $print_article_type->getOriginalIdms();
       });
 
     $response->headers->set('Content-Type', 'application/xml');
     $response->headers->set('Cache-Control', '');
-    $response->headers->set('Content-Length', strlen($print_article_type->getIdms()));
+    $response->headers->set('Content-Length', strlen($print_article_type->getOriginalIdms()));
     $response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s'));
     $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $print_article_type->label() . '.idms');
     $response->headers->set('Content-Disposition', $contentDisposition);

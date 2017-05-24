@@ -31,7 +31,14 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    * @return string
    *   Xml of the idms.
    */
-  public function getIdms();
+  public function getOriginalIdms();
+
+  /**
+   * Provides new IDMS object based on the original IDMs.
+   *
+   * @return \Drupal\thunder_print\IDMS
+   */
+  public function getNewIdms();
 
   /**
    * Returns the thumbnail file entity.

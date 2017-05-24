@@ -121,8 +121,15 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   /**
    * {@inheritdoc}
    */
-  public function getIdms() {
+  public function getOriginalIdms() {
     return $this->idms;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getNewIdms() {
+    return new IDMS($this->idms);
   }
 
   /**
@@ -161,7 +168,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
       return FALSE;
     }
 
-    $idms = new IDMS($this->idms);
+    $idms = $this->getNewIdms();
 
     list ($data, $extension) = $idms->extractThumbnail();
 
@@ -222,7 +229,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   public function validate() {
     $this->validated = TRUE;
 
-    $idms = new IDMS($this->idms);
+    $idms = $this->getNewIdms();
 
     // Validate IDMS.
     $idmsViolations = $idms->validate();
@@ -288,7 +295,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
    */
   public function getTags() {
 
-    $idms = new IDMS($this->idms);
+    $idms = $this->getNewIdms();
 
     $tags = [];
     foreach ($idms->getTagNames() as $tag) {

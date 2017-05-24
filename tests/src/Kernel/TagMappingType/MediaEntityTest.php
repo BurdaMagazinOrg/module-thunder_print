@@ -87,7 +87,7 @@ class MediaEntityTest extends KernelTestBase {
 
     $printArticleType = PrintArticleType::load('zeitung1');
 
-    $idms = new IDMS($printArticleType->getIdms());
+    $idms = $printArticleType->getNewIdms();
     $xml = $mappingType->replacePlaceholder($idms, ['target_id' => $this->media->id()])->getXml();
 
     // Test image replacement.
@@ -122,7 +122,7 @@ class MediaEntityTest extends KernelTestBase {
 
     $printArticleType = PrintArticleType::load('zeitung1');
 
-    $idms = new IDMS($printArticleType->getIdms());
+    $idms = $printArticleType->getNewIdms();
     $xml = $mappingType->replacePlaceholderUseRelativeLinks($idms, ['target_id' => $this->media->id()])->getXml();
 
     // Test image replacement.

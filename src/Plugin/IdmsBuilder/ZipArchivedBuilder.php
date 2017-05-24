@@ -69,7 +69,7 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
     $bundle = $printArticle->type->entity;
 
-    $idms = new IDMS($bundle->getIdms());
+    $idms = $bundle->getNewIdms();
 
     /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
     foreach ($bundle->getMappings() as $tagMapping) {
