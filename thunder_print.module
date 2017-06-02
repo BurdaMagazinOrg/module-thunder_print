@@ -12,6 +12,7 @@ use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Entity\PrintArticleTypeInterface;
 use Drupal\thunder_print\Entity\PrintArticleType;
+use Drupal\Core\Access\AccessResult;
 
 /**
  * Implements hook_help().
@@ -67,17 +68,10 @@ function thunder_print_entity_operation(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_entity_operation_alter().
+ * Implements hook_ENTITY_TYPE_access().
  */
-function thunder_print_entity_operation_alter(array &$operations, EntityInterface $entity) {
-
-  if ($entity instanceof PrintArticleTypeInterface) {
-
-    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $entity */
-    if ($entity->getEntityCount()) {
-      unset($operations['delete']);
-    }
-  }
+function thunder_print_print_article_type_access(PrintArticleTypeInterface $entity, $operation) {
+  return AccessResult::forbiddenIf($entity->getEntityCount() && $operation == 'delete');
 }
 
 /**
