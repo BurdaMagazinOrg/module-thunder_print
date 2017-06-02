@@ -262,4 +262,27 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
     return $fields;
   }
 
+  /**
+   * Returns print article metadata.
+   *
+   * @return array
+   *   Metadata array
+   */
+  public function getMetadata() {
+
+    /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
+    $bundle = $this->type->entity;
+
+    $dateFormatter = \Drupal::service('date.formatter');
+    $currentUser = \Drupal::service('current_user');
+    return [
+      'print_article_id' => $this->id(),
+      'print_article_type' => $this->bundle(),
+      'baseline_grid' => $bundle->getGrid(),
+      'name' => $this->label(),
+      'date' => $dateFormatter->format(time(), 'long'),
+      'user' => $currentUser->getDisplayName(),
+    ];
+  }
+
 }

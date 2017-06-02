@@ -7,7 +7,7 @@ use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\thunder_print\Plugin\IdmsBuilderManager;
+use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,7 +20,7 @@ class PrintArticleForm extends ContentEntityForm {
 
   protected $httpClient;
 
-  protected $idmsBuilderManager;
+  protected $indesignServer;
 
   /**
    * Constructs a ContentEntityForm object.
@@ -33,15 +33,15 @@ class PrintArticleForm extends ContentEntityForm {
    *   The time service.
    * @param \GuzzleHttp\ClientInterface $httpClient
    *   The request service.
-   * @param \Drupal\thunder_print\Plugin\IdmsBuilderManager $idmsBuilderManager
-   *   The idms builder manager.
+   * @param \Drupal\thunder_print\IndesignServer $indesignServer
+   *   The indesign server service.
    */
-  public function __construct(EntityManagerInterface $entity_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL, ClientInterface $httpClient, IdmsBuilderManager $idmsBuilderManager) {
+  public function __construct(EntityManagerInterface $entity_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL, ClientInterface $httpClient, IndesignServer $indesignServer) {
 
     parent::__construct($entity_manager, $entity_type_bundle_info, $time);
 
     $this->httpClient = $httpClient;
-    $this->idmsBuilderManager = $idmsBuilderManager;
+    $this->indesignServer = $indesignServer;
   }
 
   /**
@@ -53,7 +53,7 @@ class PrintArticleForm extends ContentEntityForm {
       $container->get('entity_type.bundle.info'),
       $container->get('datetime.time'),
       $container->get('http_client'),
-      $container->get('plugin.manager.thunder_print_idms_builder')
+      $container->get('thunder_print.indesign_server')
     );
   }
 
@@ -175,46 +175,24 @@ class PrintArticleForm extends ContentEntityForm {
    */
   public function quickPreview(array &$form, FormStateInterface $form_state) {
 
-    $config = $this->config('thunder_print.settings');
+    try {
+      $jobId = $this->indesignServer->createJob($this->entity);
 
-    if (!($url = $config->get('general_settings.api_url'))) {
-      drupal_set_message($this->t('No url defined for indesign api.'), 'warning');
-      return;
+      /** @var \Drupal\Core\Queue\QueueFactory $queue_factory */
+      $queue_factory = \Drupal::service('queue');
+      /** @var \Drupal\Core\Queue\QueueInterface $queue */
+      $queue = $queue_factory->get('thunder_print_idms_fetching');
+      $item = [
+        'job_id' => $jobId,
+        'print_article_id' => $this->entity->id(),
+      ];
+
+      $queue->createItem($item);
+
+    } catch (\Exception $e) {
+
     }
 
-    /** @var \Drupal\thunder_print\Plugin\IdmsBuilderInterface $builder */
-    $builder = $this->idmsBuilderManager->createInstance('zip_archived');
-
-    $response = $this->httpClient->request('POST', $url . '/quickpreview', [
-      'multipart' => [
-        [
-          'name' => 'snippetzip',
-          'contents' => $builder->getContent($this->entity),
-          'filename' => $builder->getFilename($this->entity),
-        ],
-      ],
-    ]);
-
-    if ($response->getStatusCode() != 200) {
-      drupal_set_message($this->t('There was a problem for downloading a preview.'), 'warning');
-      return;
-    }
-
-    $zip = new \ZipArchive();
-    $zipFilename = tempnam("tmp", "zip");
-
-    file_put_contents($zipFilename, $response->getBody());
-
-    $zip->open($zipFilename);
-
-    $dir = 'public://print-article/';
-    file_prepare_directory($dir, FILE_CREATE_DIRECTORY);
-    $thumbnail = file_save_data($zip->getFromName('preview.jpg'), 'public://print-article/' . $this->entity->label() . '-preview.jpg', FILE_EXISTS_REPLACE);
-
-    $this->entity->set('image', $thumbnail);
-
-    $zip->close();
-    unlink($zipFilename);
   }
 
 }

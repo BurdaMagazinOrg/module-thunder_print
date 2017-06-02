@@ -37,7 +37,8 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
         $zip->addFromString($filename, file_get_contents($file));
       }
       $replacedIdms = $this->replace($printArticle);
-      $zip->addFromString($printArticle->label() . '.idms', $replacedIdms->getXml()->asXml());
+      $zip->addFromString('export.idms', $replacedIdms->getXml()->asXml());
+      $zip->addFromString('metadata.json', json_encode($printArticle->getMetadata()));
       $zip->close();
     }
 
