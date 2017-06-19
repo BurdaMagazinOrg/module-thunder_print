@@ -7,6 +7,7 @@ use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,6 +23,8 @@ class PrintArticleForm extends ContentEntityForm {
 
   protected $indesignServer;
 
+  protected $queueFactory;
+
   /**
    * Constructs a ContentEntityForm object.
    *
@@ -35,13 +38,16 @@ class PrintArticleForm extends ContentEntityForm {
    *   The request service.
    * @param \Drupal\thunder_print\IndesignServer $indesignServer
    *   The indesign server service.
+   * @param \Drupal\Core\Queue\QueueFactory $queueFactory
+   *   Queue service.
    */
-  public function __construct(EntityManagerInterface $entity_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL, ClientInterface $httpClient, IndesignServer $indesignServer) {
+  public function __construct(EntityManagerInterface $entity_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL, ClientInterface $httpClient, IndesignServer $indesignServer, QueueFactory $queueFactory) {
 
     parent::__construct($entity_manager, $entity_type_bundle_info, $time);
 
     $this->httpClient = $httpClient;
     $this->indesignServer = $indesignServer;
+    $this->queueFactory = $queueFactory;
   }
 
   /**
@@ -53,7 +59,8 @@ class PrintArticleForm extends ContentEntityForm {
       $container->get('entity_type.bundle.info'),
       $container->get('datetime.time'),
       $container->get('http_client'),
-      $container->get('thunder_print.indesign_server')
+      $container->get('thunder_print.indesign_server'),
+      $container->get('queue')
     );
   }
 
@@ -178,10 +185,8 @@ class PrintArticleForm extends ContentEntityForm {
     try {
       $jobId = $this->indesignServer->createJob($this->entity);
 
-      /** @var \Drupal\Core\Queue\QueueFactory $queue_factory */
-      $queue_factory = \Drupal::service('queue');
       /** @var \Drupal\Core\Queue\QueueInterface $queue */
-      $queue = $queue_factory->get('thunder_print_idms_fetching');
+      $queue = $this->queueFactory->get('thunder_print_idms_fetching');
       $item = [
         'job_id' => $jobId,
         'print_article_id' => $this->entity->id(),
@@ -189,8 +194,9 @@ class PrintArticleForm extends ContentEntityForm {
 
       $queue->createItem($item);
 
-    } catch (\Exception $e) {
-
+    }
+    catch (\Exception $e) {
+      drupal_set_message($this->t('Error during generating preview.'), 'error');
     }
 
   }
