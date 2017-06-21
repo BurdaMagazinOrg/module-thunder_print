@@ -49,7 +49,7 @@ thunder_print.print_article.switchType:
     _admin_route: TRUE
 
 thunder_print.print_article.jobFinished:
-  path: '/print-article/jobFinished/{job_id}'
+  path: '/print-article/jobFinished/{print_article_id}/{job_id}'
   defaults:
     _controller: '\Drupal\thunder_print\Controller\PrintArticleController::jobFinished'
     _title: 'Thunder for Print'

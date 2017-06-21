@@ -12,6 +12,13 @@ use Drupal\Core\Ajax\CommandInterface;
 class InitQueueWatcherCommand implements CommandInterface {
 
   /**
+   * Id of print article.
+   *
+   * @var string
+   */
+  protected $printArticleId;
+
+  /**
    * Job id of the current running job.
    *
    * @var string
@@ -21,10 +28,13 @@ class InitQueueWatcherCommand implements CommandInterface {
   /**
    * Constructs a InitQueueWatcherCommand object.
    *
+   * @param string $printArticleId
+   *   Id of print article.
    * @param string $jobId
    *   Job id of the current running job.
    */
-  public function __construct($jobId) {
+  public function __construct($printArticleId, $jobId) {
+    $this->printArticleId = $printArticleId;
     $this->jobId = $jobId;
   }
 
@@ -34,6 +44,7 @@ class InitQueueWatcherCommand implements CommandInterface {
   public function render() {
     return [
       'command' => 'initQueueWatcher',
+      'print_article_id' => $this->printArticleId,
       'job_id' => $this->jobId,
     ];
   }

@@ -371,22 +371,30 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The current request.
+   * @param string $print_article_id
+   *   Id of the print article.
    * @param string $job_id
    *   Job id of the current running job.
    *
    * @return \Symfony\Component\HttpFoundation\Response
    *   The download.
    */
-  public function jobFinished(Request $request, $job_id) {
+  public function jobFinished(Request $request, $print_article_id, $job_id) {
 
-    $response = new Response();
+    $response = new Response('', 204);
 
     $query = $this
       ->database
       ->query("SELECT * FROM {queue} q WHERE q.data LIKE '%$job_id%'");
     $query->execute();
 
-    $response->setContent(count($query->fetchAll()), 1);
+    if (!count($query->fetchAll())) {
+      $response->setStatusCode(200);
+      $print_article = $this->entityTypeManager()
+        ->getStorage('print_article')
+        ->load($print_article_id);
+      $response->setContent(file_create_url($print_article->get('image')->entity->uri->value));
+    }
 
     return $response;
   }

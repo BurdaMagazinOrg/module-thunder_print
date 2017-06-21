@@ -19,17 +19,20 @@
    */
   Drupal.AjaxCommands.prototype.initQueueWatcher = function (ajax, response, status) {
 
-    var prevNowPlaying = setInterval(function (jobId) {
+    var watcher = setInterval(function (jobId, print_article_id) {
 
-      $.get('/print-article/jobFinished/' + jobId, function (data) {
-
-        if (!parseInt(data)) {
-          clearInterval(prevNowPlaying);
-          var image = $('#preview-image')[0];
-          image.src = image.src + '?' + new Date().getTime();
+      $.ajax('/print-article/jobFinished/' + print_article_id + '/' + jobId, {
+        type: 'GET',
+        statusCode: {
+          200: function (data) {
+            clearInterval(watcher);
+            $('#preview-image')[0].src = data + '?' + new Date().getTime();
+          }
         }
       });
-    }, 2000, response.job_id);
+
+
+    }, 2000, response.job_id, response.print_article_id);
 
   };
 

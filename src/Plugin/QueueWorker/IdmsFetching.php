@@ -100,7 +100,7 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
 
       $dir = 'public://print-article/';
       file_prepare_directory($dir, FILE_CREATE_DIRECTORY);
-      $thumbnail = file_save_data($zip->getFromName('preview.jpg'), 'public://print-article/' . $printArticle->label() . '-preview.jpg', FILE_EXISTS_REPLACE);
+      $thumbnail = file_save_data($zip->getFromName('preview.jpg'), 'public://print-article/' . $printArticle->id() . '-preview.jpg', FILE_EXISTS_REPLACE);
 
       $imageStyles = ImageStyle::loadMultiple();
       /** @var \Drupal\image\Entity\ImageStyle $imageStyle */

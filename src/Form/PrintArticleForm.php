@@ -99,7 +99,7 @@ class PrintArticleForm extends ContentEntityForm {
       '#optional' => TRUE,
     ];
 
-    if ($this->entity->get('image')->count()) {
+    if (!$this->entity->isNew()) {
       // Fieldset for print article preview.
       $form['thunder_print_container'] = [
         '#type' => 'fieldset',
@@ -108,12 +108,16 @@ class PrintArticleForm extends ContentEntityForm {
         '#weight' => 90,
       ];
 
+      $url = ($this->entity->get('image')->entity) ? $this->entity->get('image')->entity->uri->value : '';
+
       $form['thunder_print_container']['preview'] = [
         '#theme' => 'image',
-        '#uri' => $this->entity->get('image')->first()->entity->uri->value,
-        '#width' => 400,
+        '#uri' => $url,
         '#group' => 'thunder_print_preview',
-        '#attributes' => ['id' => 'preview-image'],
+        '#attributes' => [
+          'id' => 'preview-image',
+          'style' => 'max-width: 100%',
+        ],
       ];
     }
 
@@ -172,6 +176,20 @@ class PrintArticleForm extends ContentEntityForm {
 
     $status = parent::save($form, $form_state);
 
+    // Schedule a job to generate preview.
+    $jobId = $this->indesignServer->createJob($entity);
+
+    /** @var \Drupal\Core\Queue\QueueInterface $queue */
+    $queue = $this->queueFactory->get('thunder_print_idms_fetching');
+    $item = [
+      'job_id' => $jobId,
+      'print_article_id' => $this->entity->id(),
+    ];
+
+    $queue->createItem($item);
+
+    $form_state->set('thunder_print_job_id', $jobId);
+
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Print article.', [
@@ -223,19 +241,9 @@ class PrintArticleForm extends ContentEntityForm {
     drupal_get_messages();
 
     try {
-      $jobId = $this->indesignServer->createJob($this->entity);
-
-      /** @var \Drupal\Core\Queue\QueueInterface $queue */
-      $queue = $this->queueFactory->get('thunder_print_idms_fetching');
-      $item = [
-        'job_id' => $jobId,
-        'print_article_id' => $this->entity->id(),
-      ];
-
-      $queue->createItem($item);
 
       $response = new AjaxResponse();
-      $response->addCommand(new InitQueueWatcherCommand($jobId));
+      $response->addCommand(new InitQueueWatcherCommand($this->entity->id(), $form_state->get('thunder_print_job_id')));
 
       return $response;
     }
