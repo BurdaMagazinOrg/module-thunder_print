@@ -3,11 +3,13 @@
 namespace Drupal\thunder_print\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\thunder_print\Ajax\InitQueueWatcherCommand;
 use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -70,7 +72,19 @@ class PrintArticleForm extends ContentEntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    // Node author information for administrators.
+    // Create sidebar group.
+    $form['advanced'] = [
+      '#type' => 'container',
+      '#attributes' => ['class' => ['entity-meta']],
+      '#weight' => 99,
+    ];
+
+    // Use the same form like node edit.
+    $form['#theme'] = ['node_edit_form'];
+    $form['#attached']['library'][] = 'thunder_print/thunder_print.ajax';
+    $form['#attached']['library'][] = 'seven/node-form';
+
+    // Print article author information for administrators.
     $form['author'] = [
       '#type' => 'details',
       '#title' => $this->t('Authoring information'),
@@ -84,6 +98,24 @@ class PrintArticleForm extends ContentEntityForm {
       '#weight' => 90,
       '#optional' => TRUE,
     ];
+
+    if ($this->entity->get('image')->count()) {
+      // Fieldset for print article preview.
+      $form['thunder_print_container'] = [
+        '#type' => 'fieldset',
+        '#title' => $this->t('Thunder for print'),
+        '#group' => 'advanced',
+        '#weight' => 90,
+      ];
+
+      $form['thunder_print_container']['preview'] = [
+        '#theme' => 'image',
+        '#uri' => $this->entity->get('image')->first()->entity->uri->value,
+        '#width' => 400,
+        '#group' => 'thunder_print_preview',
+        '#attributes' => ['id' => 'preview-wrapper'],
+      ];
+    }
 
     if (isset($form['user_id'])) {
       $form['user_id']['#group'] = 'author';
@@ -165,7 +197,11 @@ class PrintArticleForm extends ContentEntityForm {
       $actions['quick_preview'] = [
         '#type' => 'submit',
         '#value' => $this->t('Quick preview'),
-        '#submit' => ['::submitForm', '::quickPreview', '::save'],
+        '#submit' => ['::submitForm', '::save'],
+        '#ajax' => [
+          'callback' => '::ajaxSubmitCallback',
+          'wrapper' => 'preview-wrapper',
+        ],
       ];
     }
 
@@ -179,8 +215,13 @@ class PrintArticleForm extends ContentEntityForm {
    *   Form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   Response with command.
    */
-  public function quickPreview(array &$form, FormStateInterface $form_state) {
+  public function ajaxSubmitCallback(array &$form, FormStateInterface $form_state) {
+
+    drupal_get_messages();
 
     try {
       $jobId = $this->indesignServer->createJob($this->entity);
@@ -194,11 +235,14 @@ class PrintArticleForm extends ContentEntityForm {
 
       $queue->createItem($item);
 
+      $response = new AjaxResponse();
+      $response->addCommand(new InitQueueWatcherCommand($jobId));
+
+      return $response;
     }
     catch (\Exception $e) {
       drupal_set_message($this->t('Error during generating preview.'), 'error');
     }
-
   }
 
 }

@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\image\Entity\ImageStyle;
 use Drupal\thunder_print\IndesignServer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -100,6 +101,12 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
       $dir = 'public://print-article/';
       file_prepare_directory($dir, FILE_CREATE_DIRECTORY);
       $thumbnail = file_save_data($zip->getFromName('preview.jpg'), 'public://print-article/' . $printArticle->label() . '-preview.jpg', FILE_EXISTS_REPLACE);
+
+      $imageStyles = ImageStyle::loadMultiple();
+      /** @var \Drupal\image\Entity\ImageStyle $imageStyle */
+      foreach ($imageStyles as $imageStyle) {
+        $imageStyle->flush($thumbnail->getFileUri());
+      }
 
       $printArticle->set('image', $thumbnail);
       $printArticle->save();

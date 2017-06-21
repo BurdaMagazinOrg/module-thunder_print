@@ -5,6 +5,7 @@ namespace Drupal\thunder_print\Controller;
 use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -14,6 +15,7 @@ use Drupal\thunder_print\Plugin\IdmsBuilderManager;
 use Drupal\user\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Yaml\Yaml;
@@ -40,6 +42,8 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
 
   protected $idmsBuilderManager;
 
+  protected $database;
+
   /**
    * Transliteration service.
    *
@@ -60,13 +64,16 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *   The transliteration service.
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
    */
-  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration, PrivateTempStoreFactory $temp_store_factory) {
+  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration, PrivateTempStoreFactory $temp_store_factory, Connection $database) {
     $this->dateFormatter = $dateFormatter;
     $this->renderer = $renderer;
     $this->idmsBuilderManager = $idmsBuilderManager;
     $this->transliteration = $transliteration;
     $this->tempStore = $temp_store_factory->get('thunder_print_download');
+    $this->database = $database;
   }
 
   /**
@@ -78,7 +85,8 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
       $container->get('renderer'),
       $container->get('plugin.manager.thunder_print_idms_builder'),
       $container->get('transliteration'),
-      $container->get('user.private_tempstore')
+      $container->get('user.private_tempstore'),
+      $container->get('database')
     );
   }
 
@@ -354,6 +362,31 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $rootFolder . '.zip');
     $response->headers->set('Content-Disposition', $contentDisposition);
     $response->prepare($request);
+
+    return $response;
+  }
+
+  /**
+   * Checks if a specific idms job is ready.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   * @param string $job_id
+   *   Job id of the current running job.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   The download.
+   */
+  public function jobFinished(Request $request, $job_id) {
+
+    $response = new Response();
+
+    $query = $this
+      ->database
+      ->query("SELECT * FROM {queue} q WHERE q.data LIKE '%$job_id%'");
+    $query->execute();
+
+    $response->setContent(count($query->fetchAll()), 1);
 
     return $response;
   }

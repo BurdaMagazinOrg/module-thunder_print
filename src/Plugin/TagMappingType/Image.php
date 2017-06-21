@@ -75,7 +75,9 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
   protected function iterateMapping(callable $callback, IDMS $idms, $fieldItem) {
 
     foreach ($this->configuration['mapping'] as $field => $tag) {
-      $this->setFileToXmlObject($fieldItem[$field], $tag, $idms, $callback);
+      if (!empty($fieldItem[$field])) {
+        $this->setFileToXmlObject($fieldItem[$field], $tag, $idms, $callback);
+      }
     }
 
     return $idms;

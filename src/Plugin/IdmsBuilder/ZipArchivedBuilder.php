@@ -98,7 +98,12 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
   protected function replaceItem(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
 
     if ($mappingType instanceof AdditionalFilesInterface) {
-      return $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
+      // @TODO: Remove when indesign server can handle external files.
+      return parent::replaceItem($idms, $fieldItem, $mappingType);
+
+      // @codingStandardsIgnoreStart
+      // return $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
+      // @codingStandardsIgnoreEnd
     }
     else {
       return parent::replaceItem($idms, $fieldItem, $mappingType);
