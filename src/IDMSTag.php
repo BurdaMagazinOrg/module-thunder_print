@@ -26,4 +26,18 @@ class IDMSTag {
     return (string) $this->tag['Self'];
   }
 
+  /**
+   * Performs a plain value replacement for this tag.
+   *
+   * @param mixed $value
+   */
+  public function replacePlain($value) {
+    $xpath = "//Story//XMLElement[@MarkupTag='{{$this->tag}}']//Content";
+    /** @var \SimpleXMLElement $xmlElement */
+    $xmlElement = $this->idms->getXml()->xpath($xpath);
+    if ($xmlElement) {
+      $xmlElement[0][0] = trim(strip_tags($value));
+    }
+  }
+
 }
