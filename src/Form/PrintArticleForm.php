@@ -113,7 +113,7 @@ class PrintArticleForm extends ContentEntityForm {
         '#uri' => $this->entity->get('image')->first()->entity->uri->value,
         '#width' => 400,
         '#group' => 'thunder_print_preview',
-        '#attributes' => ['id' => 'preview-wrapper'],
+        '#attributes' => ['id' => 'preview-image'],
       ];
     }
 
@@ -200,7 +200,6 @@ class PrintArticleForm extends ContentEntityForm {
         '#submit' => ['::submitForm', '::save'],
         '#ajax' => [
           'callback' => '::ajaxSubmitCallback',
-          'wrapper' => 'preview-wrapper',
         ],
       ];
     }
