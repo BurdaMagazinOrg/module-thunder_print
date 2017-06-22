@@ -31,10 +31,8 @@
         }
       });
 
-
     }, 2000, response.job_id, response.print_article_id);
 
   };
-
 
 })(jQuery, Drupal);
