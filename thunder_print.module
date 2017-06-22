@@ -81,35 +81,22 @@ function thunder_print_entity_operation_alter(array &$operations, EntityInterfac
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function thunder_print_field_widget_text_textarea_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+function thunder_print_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
   /** @var \Drupal\Core\Field\FieldItemListInterface $items */
   $items = $context['items'];
-  $field_name = $items->getFieldDefinition()->getName();
-  $bundle = $items->getFieldDefinition()->getTargetBundle();
-  $type = $items->getFieldDefinition()->getTargetEntityTypeId();
+  $type = $items->getEntity()->getEntityTypeId();
 
-  $element['#thunder_print'] = [
-    'field' => $field_name,
-    'bundle' => $bundle,
-    'type' => $type,
-    'styles' => [
-      [
-        'element' => 'span',
-        'attributes' => ['class' => 'idms-span1', 'style' => 'color: red'],
-        'name' => 'IDMS Span1',
-      ],
-      [
-        'element' => 'p',
-        'attributes' => ['class' => 'idms-block1', 'style' => 'background: yellow'],
-        'name' => 'IDMS Block1',
-      ],
-      [
-        'element' => 'p',
-        'attributes' => ['class' => 'idms-block2'],
-        'name' => 'IDMS Block2',
-      ],
-    ]
-  ];
+  if ($type != 'print_article') {
+    return;
+  }
+
+  $field_name = $items->getFieldDefinition()->getName();
+  $bundle =   $items->getEntity()->bundle();
+  $print_article_type = \Drupal\thunder_print\Entity\PrintArticleType::load($bundle);
+  $mapping = $print_article_type->getMappingForField($field_name);
+  if ($mapping) {
+    $mapping->getMappingType()->hookFieldWidgetFormAlter($element, $form_state, $context);
+  }
 }
 
 /**
