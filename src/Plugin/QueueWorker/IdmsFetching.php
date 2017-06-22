@@ -4,8 +4,8 @@ namespace Drupal\thunder_print\Plugin\QueueWorker;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\Queue\RequeueException;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\thunder_print\IndesignServer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @QueueWorker(
  *   id = "thunder_print_idms_fetching",
  *   title = @Translation("Thunder print idms fetching"),
- *   cron = {"time" = 10}
+ *   cron = {"time" = 2}
  * )
  */
 class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInterface {
@@ -27,13 +27,6 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
-  /**
-   * Queue factory service.
-   *
-   * @var \Drupal\Core\Queue\QueueFactory
-   */
-  protected $queueFactory;
 
   /**
    * Indesign server.
@@ -53,16 +46,13 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
    *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity type manager service.
-   * @param \Drupal\Core\Queue\QueueFactory $queueFactory
-   *   Queue service.
    * @param \Drupal\thunder_print\IndesignServer $indesignServer
    *   Indesing server object.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, QueueFactory $queueFactory, IndesignServer $indesignServer) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, IndesignServer $indesignServer) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entityTypeManager;
-    $this->queueFactory = $queueFactory;
     $this->indesignServer = $indesignServer;
   }
 
@@ -75,7 +65,6 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
       $plugin_id,
       $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('queue'),
       $container->get('thunder_print.indesign_server')
     );
   }
@@ -115,15 +104,7 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
       unlink($zipFilename);
     }
     else {
-
-      /** @var \Drupal\Core\Queue\QueueInterface $queue */
-      $queue = $this->queueFactory->get('thunder_print_idms_fetching');
-      $item = [
-        'job_id' => $data['job_id'],
-        'print_article_id' => $data['print_article_id'],
-      ];
-
-      $queue->createItem($item);
+      throw new RequeueException();
     }
 
   }
