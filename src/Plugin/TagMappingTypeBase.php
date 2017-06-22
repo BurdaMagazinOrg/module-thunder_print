@@ -266,4 +266,11 @@ abstract class TagMappingTypeBase extends PluginBase implements TagMappingTypeIn
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function hookFieldWidgetFormAlter(array &$element, FormStateInterface $form_state, array $context) {
+    // Do nothing.
+  }
+
 }

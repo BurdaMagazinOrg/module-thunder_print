@@ -5,7 +5,6 @@ namespace Drupal\thunder_print\Plugin;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\thunder_print\Entity\PrintArticleType;
 use Drupal\thunder_print\IDMS;
 
 /**
@@ -102,12 +101,15 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
   public function replacePlaceholder(IDMS $idms, $fieldValue);
 
   /**
-   * @param array $element
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param $context
+   * Alters a render element.
    *
-   * @return mixed
+   * @param array $element
+   *   A render element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The state of the (entire) configuration form.
+   * @param array $context
+   *   Field widget context.
    */
-  public function hookFieldWidgetFormAlter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context);
+  public function hookFieldWidgetFormAlter(array &$element, FormStateInterface $form_state, array $context);
 
 }

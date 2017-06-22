@@ -291,12 +291,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   }
 
   /**
-   * Retrieve mapping definition for given field.
-   *
-   * @param string $field_name
-   *   The field name a mapping may be associated to.
-   *
-   * @return \Drupal\thunder_print\Entity\TagMappingInterface
+   * {@inheritdoc}
    */
   public function getMappingForField($field_name) {
     $mappings = $this->getMappings();

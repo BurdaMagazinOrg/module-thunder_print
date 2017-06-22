@@ -149,11 +149,4 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
     }
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function hookFieldWidgetFormAlter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
-    // Do nothing.
-  }
-
 }

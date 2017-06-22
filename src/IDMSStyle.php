@@ -2,14 +2,23 @@
 
 namespace Drupal\thunder_print;
 
+use Drupal\Component\Utility\Html;
+
+/**
+ * Class IDMSStyle.
+ */
 class IDMSStyle {
 
   /**
+   * Xml element.
+   *
    * @var \SimpleXMLElement
    */
   protected $element;
 
   /**
+   * Style name.
+   *
    * @var string
    */
   protected $name;
@@ -18,6 +27,7 @@ class IDMSStyle {
    * IDMSStyle constructor.
    *
    * @param \SimpleXMLElement $element
+   *   Xml object.
    */
   public function __construct(\SimpleXMLElement $element) {
     $this->element = $element;
@@ -28,6 +38,7 @@ class IDMSStyle {
    * Get style name.
    *
    * @return string
+   *   Style name.
    */
   public function getName() {
     return $this->name;
@@ -37,9 +48,10 @@ class IDMSStyle {
    * Get representative class for the style.
    *
    * @return string
+   *   Class name.
    */
   public function getClass() {
-    return \Drupal\Component\Utility\Html::getClass($this->name);
+    return Html::getClass($this->name);
   }
 
 }

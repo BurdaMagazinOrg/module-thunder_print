@@ -2,7 +2,6 @@
 
 namespace Drupal\thunder_print\Validator\Constraints;
 
-use Drupal\thunder_print\IDMS;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 

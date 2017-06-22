@@ -2,27 +2,43 @@
 
 namespace Drupal\thunder_print;
 
-use Drupal\thunder_print\IDMSStyle;
-
+/**
+ * Class IDMSTag.
+ */
 class IDMSTag {
 
   /**
+   * A tag of the xml.
+   *
    * @var \SimpleXMLElement
    */
   protected $tag;
 
   /**
+   * The current idms representation.
+   *
    * @var \Drupal\thunder_print\IDMS
    */
   protected $idms;
 
+  /**
+   * IDMSTag constructor.
+   *
+   * @param \SimpleXMLElement $tag
+   *   Xml tag.
+   * @param \Drupal\thunder_print\IDMS $idms
+   *   Current idms representation.
+   */
   public function __construct(\SimpleXMLElement $tag, IDMS $idms) {
     $this->tag = $tag;
     $this->idms = $idms;
   }
 
   /**
+   * Returns the self property for the tag.
+   *
    * @return string
+   *   Self property.
    */
   public function getSelf() {
     return (string) $this->tag['Self'];
@@ -32,6 +48,7 @@ class IDMSTag {
    * Performs a plain value replacement for this tag.
    *
    * @param mixed $value
+   *   The plain value to replace.
    */
   public function replacePlain($value) {
     $xpath = "//Story//XMLElement[@MarkupTag='{$this->tag}']//Content";
@@ -48,7 +65,6 @@ class IDMSTag {
    * @return \Drupal\thunder_print\IDMSStyle[]
    *   Array of paragraphs styles.
    */
-
   public function getParagraphStyles() {
     $xpath = "//XMLElement[@MarkupTag='{$this->getSelf()}']/ParagraphStyleRange/@AppliedParagraphStyle";
     $xmlElements = $this->idms->getXml()->xpath($xpath);
@@ -64,9 +80,6 @@ class IDMSTag {
 
   /**
    * Get all character styles for a tag.
-   *
-   * @param string $tagName
-   *   IDMS tag name.
    *
    * @return \Drupal\thunder_print\IDMSStyle[]
    *   Array of paragraphs styles.

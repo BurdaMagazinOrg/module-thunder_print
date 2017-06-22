@@ -8,7 +8,6 @@ use Drupal\media_entity\Entity\Media;
 use Drupal\thunder_print\Entity\PrintArticle;
 use Drupal\thunder_print\Entity\PrintArticleType;
 use Drupal\thunder_print\Entity\TagMapping;
-use Drupal\thunder_print\IDMS;
 
 /**
  * Tests the media entity integration.

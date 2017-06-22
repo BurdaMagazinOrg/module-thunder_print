@@ -68,13 +68,6 @@ class TextPlain extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function hookFieldWidgetFormAlter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
-    // Do nothing.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function replacePlaceholder(IDMS $idms, $fieldValue) {
     $tagname = $this->configuration['mapping']['value'];
     foreach ($idms->getTags() as $tag) {

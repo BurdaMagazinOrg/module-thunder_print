@@ -7,9 +7,11 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Entity\PrintArticleTypeInterface;
+use Drupal\thunder_print\Entity\PrintArticleType;
 
 /**
  * Implements hook_help().
@@ -81,7 +83,7 @@ function thunder_print_entity_operation_alter(array &$operations, EntityInterfac
 /**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function thunder_print_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+function thunder_print_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   /** @var \Drupal\Core\Field\FieldItemListInterface $items */
   $items = $context['items'];
   $type = $items->getEntity()->getEntityTypeId();
@@ -91,8 +93,8 @@ function thunder_print_field_widget_form_alter(&$element, \Drupal\Core\Form\Form
   }
 
   $field_name = $items->getFieldDefinition()->getName();
-  $bundle =   $items->getEntity()->bundle();
-  $print_article_type = \Drupal\thunder_print\Entity\PrintArticleType::load($bundle);
+  $bundle = $items->getEntity()->bundle();
+  $print_article_type = PrintArticleType::load($bundle);
   $mapping = $print_article_type->getMappingForField($field_name);
   if ($mapping) {
     $mapping->getMappingType()->hookFieldWidgetFormAlter($element, $form_state, $context);
@@ -111,6 +113,7 @@ function thunder_print_element_info_alter(&$types) {
  *
  * @param array $element
  *   Form element to adjust.
+ *
  * @return array
  *   Altered element.
  */

@@ -37,6 +37,7 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    * Provides new IDMS object based on the original IDMs.
    *
    * @return \Drupal\thunder_print\IDMS
+   *   New idms object.
    */
   public function getNewIdms();
 
@@ -73,8 +74,20 @@ interface PrintArticleTypeInterface extends ConfigEntityInterface {
    * Get tag mappings associated to this bundle's idms.
    *
    * @return \Drupal\thunder_print\Entity\TagMappingInterface[]
+   *   Tag mappings.
    */
   public function getMappings();
+
+  /**
+   * Retrieve mapping definition for given field.
+   *
+   * @param string $field_name
+   *   The field name a mapping may be associated to.
+   *
+   * @return \Drupal\thunder_print\Entity\TagMappingInterface
+   *   Tag mappings.
+   */
+  public function getMappingForField($field_name);
 
   /**
    * Get the intersection of tags from idms and tag mapping.

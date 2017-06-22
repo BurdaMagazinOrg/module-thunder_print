@@ -2,7 +2,7 @@
 
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
-use Drupal\Core\Render\Element\Html;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
@@ -57,7 +57,7 @@ class TextFormattedLong extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function hookFieldWidgetFormAlter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+  public function hookFieldWidgetFormAlter(array &$element, FormStateInterface $form_state, array $context) {
 
     /** @var \Drupal\Core\Field\WidgetInterface $widget */
     $widget = $context['widget'];
@@ -73,7 +73,7 @@ class TextFormattedLong extends TagMappingTypeBase {
 
       $field_name = $items->getFieldDefinition()->getName();
       $bundle = $items->getFieldDefinition()->getTargetBundle();
-      $print_article_type = \Drupal\thunder_print\Entity\PrintArticleType::load($bundle);
+      $print_article_type = $this->entityTypeManager->getStorage('print_article_type')->load($bundle);
 
       $tag = $this->getMappedTag($print_article_type->getNewIdms(), 'value');
       if (empty($tag)) {
@@ -85,6 +85,7 @@ class TextFormattedLong extends TagMappingTypeBase {
         'bundle' => $bundle,
         'type' => $type,
         'styles' => [
+// @codingStandardsIgnoreStart
 //          [
 //            'element' => 'span',
 //            'attributes' => ['class' => 'idms-span1', 'style' => 'color: red'],
@@ -100,7 +101,8 @@ class TextFormattedLong extends TagMappingTypeBase {
 //            'attributes' => ['class' => 'idms-block2'],
 //            'name' => 'IDMS Block2',
 //          ],
-        ]
+// @codingStandardsIgnoreEnd
+        ],
       ];
 
       foreach ($tag->getParagraphStyles() as $style) {
@@ -120,4 +122,5 @@ class TextFormattedLong extends TagMappingTypeBase {
       }
     }
   }
+
 }
