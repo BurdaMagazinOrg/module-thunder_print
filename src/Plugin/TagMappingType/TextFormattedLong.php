@@ -2,6 +2,7 @@
 
 namespace Drupal\thunder_print\Plugin\TagMappingType;
 
+use Drupal\Core\Render\Element\Html;
 use Drupal\thunder_print\IDMS;
 use Drupal\thunder_print\Plugin\TagMappingTypeBase;
 
@@ -74,36 +75,49 @@ class TextFormattedLong extends TagMappingTypeBase {
       $bundle = $items->getFieldDefinition()->getTargetBundle();
       $print_article_type = \Drupal\thunder_print\Entity\PrintArticleType::load($bundle);
 
-      $tags = $print_article_type->getNewIdms()->getTags();
-
-
+      $tag = $this->getMappedTag($print_article_type->getNewIdms(), 'value');
+      if (empty($tag)) {
+        return;
+      }
 
       $element['#thunder_print'] = [
         'field' => $field_name,
         'bundle' => $bundle,
         'type' => $type,
         'styles' => [
-          [
-            'element' => 'span',
-            'attributes' => ['class' => 'idms-span1', 'style' => 'color: red'],
-            'name' => 'IDMS Span1',
-          ],
-          [
-            'element' => 'p',
-            'attributes' => ['class' => 'idms-block1', 'style' => 'background: yellow'],
-            'name' => 'IDMS Block1',
-          ],
-          [
-            'element' => 'p',
-            'attributes' => ['class' => 'idms-block2'],
-            'name' => 'IDMS Block2',
-          ],
+//          [
+//            'element' => 'span',
+//            'attributes' => ['class' => 'idms-span1', 'style' => 'color: red'],
+//            'name' => 'IDMS Span1',
+//          ],
+//          [
+//            'element' => 'p',
+//            'attributes' => ['class' => 'idms-block1', 'style' => 'background: yellow'],
+//            'name' => 'IDMS Block1',
+//          ],
+//          [
+//            'element' => 'p',
+//            'attributes' => ['class' => 'idms-block2'],
+//            'name' => 'IDMS Block2',
+//          ],
         ]
       ];
 
+      foreach ($tag->getParagraphStyles() as $style) {
+        $element['#thunder_print']['styles'][] = [
+          'element' => 'p',
+          'attributes' => ['class' => $style->getClass()],
+          'name' => $style->getName(),
+        ];
+      }
+
+      foreach ($tag->getCharacterStyles() as $style) {
+        $element['#thunder_print']['styles'][] = [
+          'element' => 'span',
+          'attributes' => ['class' => $style->getClass()],
+          'name' => $style->getName(),
+        ];
+      }
     }
-
   }
-
-
 }
