@@ -50,7 +50,13 @@ class TextFormattedLong extends TagMappingTypeBase {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceholder(IDMS $idms, $fieldItem) {
+  public function replacePlaceholder(IDMS $idms, $fieldValue) {
+    $tagname = $this->configuration['mapping']['value'];
+    foreach ($idms->getTags() as $tag) {
+      if ($tag->getSelf() == $tagname) {
+        $tag->replaceComplex($fieldValue['value']);
+      }
+    }
     return $idms;
   }
 
@@ -84,25 +90,7 @@ class TextFormattedLong extends TagMappingTypeBase {
         'field' => $field_name,
         'bundle' => $bundle,
         'type' => $type,
-        'styles' => [
-// @codingStandardsIgnoreStart
-//          [
-//            'element' => 'span',
-//            'attributes' => ['class' => 'idms-span1', 'style' => 'color: red'],
-//            'name' => 'IDMS Span1',
-//          ],
-//          [
-//            'element' => 'p',
-//            'attributes' => ['class' => 'idms-block1', 'style' => 'background: yellow'],
-//            'name' => 'IDMS Block1',
-//          ],
-//          [
-//            'element' => 'p',
-//            'attributes' => ['class' => 'idms-block2'],
-//            'name' => 'IDMS Block2',
-//          ],
-// @codingStandardsIgnoreEnd
-        ],
+        'styles' => [],
       ];
 
       foreach ($tag->getParagraphStyles() as $style) {

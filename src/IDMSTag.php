@@ -51,12 +51,40 @@ class IDMSTag {
    *   The plain value to replace.
    */
   public function replacePlain($value) {
-    $xpath = "//Story//XMLElement[@MarkupTag='{$this->tag}']//Content";
+    $xpath = "//Story//XMLElement[@MarkupTag='{$this->getSelf()}']//Content";
     /** @var \SimpleXMLElement $xmlElement */
     $xmlElement = $this->idms->getXml()->xpath($xpath);
     if ($xmlElement) {
       $xmlElement[0][0] = trim(strip_tags($value));
     }
+  }
+
+  /**
+   * Performs a plain value replacement for this tag.
+   *
+   * @param mixed $value
+   *   The plain value to replace.
+   */
+  public function replaceComplex($value) {
+
+    $xpath = "//Story//XMLElement[@MarkupTag='{$this->getSelf()}']";
+    /** @var \SimpleXMLElement $xmlElement */
+    $xmlElement = $this->idms->getXml()->xpath($xpath);
+
+    $value = preg_replace('/<span class="(.+?)">(.+?)<\/span>/is', "<CharacterStyleRange AppliedCharacterStyle=\"$1\"><Content>$2</Content></CharacterStyleRange>", $value);
+    $value = preg_replace('/<p class="(.+?)">(.+?)<\/p>/is', "<ParagraphStyleRange AppliedParagraphStyle=\"$1\">$2</ParagraphStyleRange>", $value);
+    $value = str_replace('&nbsp;', ' ', $value);
+
+    $doc = simplexml_load_string('<foo>' . $value . '</foo>');
+
+    $xmlElement[0][0] = "";
+
+    $toDom = dom_import_simplexml($xmlElement[0][0]);
+    foreach ($doc->children() as $child) {
+      $fromDom = dom_import_simplexml($child);
+      $toDom->appendChild($toDom->ownerDocument->importNode($fromDom, TRUE));
+    }
+
   }
 
   /**
