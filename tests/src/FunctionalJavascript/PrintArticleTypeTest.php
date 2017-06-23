@@ -86,7 +86,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
 
     $xml = NULL;
     try {
-      $xml = @new \SimpleXMLElement($testType->getIdms());
+      $xml = @new \SimpleXMLElement($testType->getOriginalIdms());
     }
     catch (\Exception $exception) {
     }

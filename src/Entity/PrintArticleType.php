@@ -121,8 +121,15 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   /**
    * {@inheritdoc}
    */
-  public function getIdms() {
+  public function getOriginalIdms() {
     return $this->idms;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getNewIdms() {
+    return new IDMS($this->idms);
   }
 
   /**
@@ -161,7 +168,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
       return FALSE;
     }
 
-    $idms = new IDMS($this->idms);
+    $idms = $this->getNewIdms();
 
     list ($data, $extension) = $idms->extractThumbnail();
 
@@ -222,7 +229,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
   public function validate() {
     $this->validated = TRUE;
 
-    $idms = new IDMS($this->idms);
+    $idms = $this->getNewIdms();
 
     // Validate IDMS.
     $idmsViolations = $idms->validate();
@@ -266,8 +273,30 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
 
     $entity_type_id = $this->getEntityType()->getBundleOf();
 
-    foreach ($this->getTags() as $tagMapping) {
+    foreach ($this->getMappings() as $tagMapping) {
       $tagMapping->createField($entity_type_id, $this->id());
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMappings() {
+    $tags = $this->getTags();
+    $mappings = [];
+    foreach ($tags as $mapping) {
+      $mappings[$mapping->id()] = $mapping;
+    }
+    return $mappings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMappingForField($field_name) {
+    $mappings = $this->getMappings();
+    if (isset($mappings[$field_name])) {
+      return $mappings[$field_name];
     }
   }
 
@@ -276,10 +305,10 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
    */
   public function getTags() {
 
-    $idms = new IDMS($this->idms);
+    $idms = $this->getNewIdms();
 
     $tags = [];
-    foreach ($idms->getTags() as $tag) {
+    foreach ($idms->getTagNames() as $tag) {
       if ($tagMapping = TagMapping::loadMappingForTag($tag)) {
         $tags[$tag] = $tagMapping;
       }
@@ -306,7 +335,7 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     $dependencies = parent::calculateDependencies();
 
     /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
-    foreach ($this->getTags() as $tagMapping) {
+    foreach ($this->getMappings() as $tagMapping) {
       $dependencies->addDependency('config', $tagMapping->getConfigDependencyName());
     }
     return $dependencies;

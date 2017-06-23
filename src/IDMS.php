@@ -38,17 +38,32 @@ class IDMS {
   /**
    * Get all the tags that are contained in the idms file.
    *
-   * @return array
-   *   Array of tags.
+   * @return \Drupal\thunder_print\IDMSTag[]
+   *   List of tag objects.
    */
   public function getTags() {
 
     $tags = [];
     foreach ($this->xml->XMLTag as $tag) {
-      $tags[] = (string) $tag['Self'];
+      $tags[(string) $tag['Self']] = new IDMSTag($tag, $this);
     }
 
     return $tags;
+  }
+
+  /**
+   * Retrieve all names of tags contained in the idms.
+   *
+   * @return array
+   *   List of tag names.
+   */
+  public function getTagNames() {
+    $tags = $this->getTags();
+    $names = [];
+    foreach ($tags as $tag) {
+      $names[] = $tag->getSelf();
+    }
+    return $names;
   }
 
   /**
@@ -91,6 +106,26 @@ class IDMS {
       $data,
       $extension,
     ];
+  }
+
+  /**
+   * Get styles by xpath.
+   *
+   * @param string $xpath
+   *   Xpath to styles.
+   *
+   * @return array
+   *   Array of styles.
+   */
+  protected function getStyles($xpath) {
+    $xmlElements = $this->xml->xpath($xpath);
+
+    $styles = [];
+    foreach ($xmlElements as $element) {
+      $styles[] = (string) $element;
+    }
+
+    return array_unique($styles);
   }
 
 }

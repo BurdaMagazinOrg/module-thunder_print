@@ -65,10 +65,10 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
     /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $bundle */
     $bundle = $printArticle->type->entity;
 
-    $idms = new IDMS($bundle->getIdms());
+    $idms = $bundle->getNewIdms();
 
     /** @var \Drupal\thunder_print\Entity\TagMappingInterface $tagMapping */
-    foreach ($bundle->getTags() as $tagMapping) {
+    foreach ($bundle->getMappings() as $tagMapping) {
 
       /** @var \Drupal\Core\Field\FieldItemList $field */
       $field = $printArticle->{$tagMapping->id()};

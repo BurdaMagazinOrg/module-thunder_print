@@ -7,9 +7,11 @@
 
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\Entity\PrintArticleTypeInterface;
+use Drupal\thunder_print\Entity\PrintArticleType;
 
 /**
  * Implements hook_help().
@@ -76,4 +78,51 @@ function thunder_print_entity_operation_alter(array &$operations, EntityInterfac
       unset($operations['delete']);
     }
   }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function thunder_print_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Field\FieldItemListInterface $items */
+  $items = $context['items'];
+  $type = $items->getEntity()->getEntityTypeId();
+
+  if ($type != 'print_article') {
+    return;
+  }
+
+  $field_name = $items->getFieldDefinition()->getName();
+  $bundle = $items->getEntity()->bundle();
+  $print_article_type = PrintArticleType::load($bundle);
+  $mapping = $print_article_type->getMappingForField($field_name);
+  if ($mapping) {
+    $mapping->getMappingType()->hookFieldWidgetFormAlter($element, $form_state, $context);
+  }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function thunder_print_element_info_alter(&$types) {
+  $types['text_format']['#pre_render'][] = 'thunder_print_pre_render_text_format';
+}
+
+/**
+ * Pre render callback for text format elements to add IDMSStyle information.
+ *
+ * @param array $element
+ *   Form element to adjust.
+ *
+ * @return array
+ *   Altered element.
+ */
+function thunder_print_pre_render_text_format(array $element) {
+  if (empty($element['#thunder_print'])) {
+    return $element;
+  }
+
+  $field_id = $element['value']['#id'];
+  $element['#attached']['drupalSettings']['thunder_print']['idmsstyle'][$field_id] = $element['#thunder_print']['styles'];
+  return $element;
 }

@@ -23,8 +23,7 @@ class IDMSTest extends UnitTestCase {
 
     $idms = new IDMS(file_get_contents($filename));
 
-    $this->assertArrayEquals($tags, $idms->getTags());
-
+    $this->assertArrayEquals($tags, $idms->getTagNames());
   }
 
   /**
@@ -99,13 +98,55 @@ class IDMSTest extends UnitTestCase {
 
     $idms = new IDMS($xml);
 
-    list ($data , $extension) = $idms->extractThumbnail();
+    list ($data, $extension) = $idms->extractThumbnail();
 
     // Check is binary.
     $this->assertTrue(preg_match('~[^\x20-\x7E\t\r\n]~', $data) > 0);
 
     $this->assertSame('JPEG', $extension);
+  }
 
+  /**
+   * Test the extracting of paragraph styles.
+   */
+  public function testGetParagraphStyles() {
+
+    $xml = file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms');
+
+    $idms = new IDMS($xml);
+    $idmsTags = $idms->getTags();
+
+    $expectedStyles = [
+      'ParagraphStyle/Redaktioneller Teil%3aFließtext 9pt (The Sans Semi Light)',
+      'ParagraphStyle/Titelthema%3aFließtext 9pt (The Sans Semi Light)',
+      'ParagraphStyle/ABBINDER%3aAbbinder - BR-Klassik',
+    ];
+
+    $paragraphStyles = $idmsTags['XMLTag/Body']->getParagraphStyles();
+
+    $this->assertArrayEquals($expectedStyles, array_keys($paragraphStyles));
+  }
+
+  /**
+   * Test the extracting of character styles.
+   */
+  public function testGetCharacterStyles() {
+
+    $xml = file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms');
+
+    $idms = new IDMS($xml);
+    $idmsTags = $idms->getTags();
+
+    $expectedStyles = [
+      'CharacterStyle/Zwischenüberschrift / Interview Frage',
+      'CharacterStyle/Autorenzeile',
+      'CharacterStyle/ABBINDER%3aBR-Klassik %3aFARBE - BR-Klassik',
+      'CharacterStyle/ABBINDER%3aBR-Klassik %3aUNTERSTREICHUNG - BR-Klassik',
+    ];
+
+    $characterStyles = $idmsTags['XMLTag/Body']->getCharacterStyles();
+
+    $this->assertArrayEquals($expectedStyles, array_keys($characterStyles));
   }
 
 }

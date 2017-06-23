@@ -2,7 +2,6 @@
 
 namespace Drupal\thunder_print\Validator\Constraints;
 
-use Drupal\thunder_print\IDMS;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -21,7 +20,7 @@ class IdmsUniqueTagsValidator extends ConstraintValidator {
    */
   public function validate($print_article_type, Constraint $constraint) {
 
-    $idms = new IDMS($print_article_type->getIdms());
+    $idms = $print_article_type->getNewIdms();
     foreach ($print_article_type->getTags() as $tag => $tagMapping) {
       $xpath = "//Story/XMLElement[@MarkupTag='$tag']";
       $elements = $idms->getXml()->xpath($xpath);
