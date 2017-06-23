@@ -21,10 +21,10 @@
 
     var $throbber = $('<div class="ajax-progress ajax-progress-throbber"></div>');
     $throbber.append('<div class="throbber">&nbsp;</div>');
-    $throbber.append($('<div class="message"></div>').text(Drupal.t('Waiting for preview image update.')));
+    $throbber.append($('<div class="message"></div>').text(Drupal.t('Waiting for preview image to update.')));
 
     var $previewImg = $(response.selector);
-    $previewImg.after($throbber);
+    $previewImg.before($throbber);
 
     var $watcher = setInterval(function (jobId, selector) {
 

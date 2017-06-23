@@ -3,7 +3,6 @@
 namespace Drupal\thunder_print\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -24,6 +23,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @ingroup thunder_print
  */
 class PrintArticleForm extends ContentEntityForm {
+
+  const EMPTY_IMAGE_DATA_URI = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
   protected $httpClient;
 
@@ -103,27 +104,33 @@ class PrintArticleForm extends ContentEntityForm {
       '#optional' => TRUE,
     ];
 
-    if (!$this->entity->isNew()) {
-      // Fieldset for print article preview.
-      $form['thunder_print_container'] = [
-        '#type' => 'fieldset',
-        '#title' => $this->t('Thunder for print'),
-        '#group' => 'advanced',
-        '#weight' => 90,
-      ];
+    $image_url = ($this->entity->get('image')->entity) ? $this->entity->get('image')->entity->uri->value : static::EMPTY_IMAGE_DATA_URI;
+    // Fieldset for print article preview.
+    $form['quick_preview'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Quick preview'),
+      '#group' => 'advanced',
+      '#weight' => 90,
+    ];
 
-      $url = ($this->entity->get('image')->entity) ? $this->entity->get('image')->entity->uri->value : '';
+    $form['quick_preview']['preview'] = [
+      '#theme' => 'image',
+      '#uri' => $image_url,
+      '#group' => 'thunder_print_preview',
+      '#attributes' => [
+        'id' => 'thunder-print-preview-image',
+        'style' => 'max-width: 100%',
+      ],
+    ];
 
-      $form['thunder_print_container']['preview'] = [
-        '#theme' => 'image',
-        '#uri' => $url,
-        '#group' => 'thunder_print_preview',
-        '#attributes' => [
-          'id' => 'thunder-print-preview-image',
-          'style' => 'max-width: 100%',
-        ],
-      ];
-    }
+    $form['quick_preview']['quick_preview'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Update quick preview'),
+      '#submit' => ['::submitForm'],
+      '#ajax' => [
+        'callback' => '::ajaxQuickPreviewCallback',
+      ],
+    ];
 
     if (isset($form['user_id'])) {
       $form['user_id']['#group'] = 'author';
@@ -220,26 +227,6 @@ class PrintArticleForm extends ContentEntityForm {
 
     $queue->createItem($item);
     return $jobId;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function actions(array $form, FormStateInterface $form_state) {
-    $actions = parent::actions($form, $form_state);
-
-    if (!$this->entity->isNew()) {
-      $actions['quick_preview'] = [
-        '#type' => 'submit',
-        '#value' => $this->t('Quick preview'),
-        '#submit' => ['::submitForm'],
-        '#ajax' => [
-          'callback' => '::ajaxQuickPreviewCallback',
-        ],
-      ];
-    }
-
-    return $actions;
   }
 
   /**
