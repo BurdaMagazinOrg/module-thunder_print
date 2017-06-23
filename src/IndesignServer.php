@@ -80,23 +80,24 @@ class IndesignServer {
   }
 
   /**
-   * Retrieve preview image for the given job from the indesign server.
+   * Retrieve preview data for the given job from the indesign server.
    *
-   * @param int $id
+   * @param int $jobId
    *   The job id provided by createIdmsJob().
    *
-   * @return string
-   *   Raw data of the preview image.
+   * @return \Drupal\thunder_print\IndesignServerPreview|void
+   *   Returns preview information.
    */
-  public function getPreviewById($id) {
+  public function getPreviewById($jobId) {
 
-    $response = $this->httpClient->request('GET', $this->url . '/getPreviewById/' . $id, []);
+    $response = $this->httpClient->request('GET', $this->url . '/getPreviewById/' . $jobId, []);
 
     if ($response->getStatusCode() !== 200) {
-      return "";
+      return;
     }
 
-    return $response->getBody()->getContents();
+    $content = $response->getBody()->getContents();
+    return new IndesignServerPreview($content);
   }
 
 }

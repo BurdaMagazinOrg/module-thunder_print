@@ -28,13 +28,10 @@ class QuickPreviewCommand implements CommandInterface {
   /**
    * Constructs a InitQueueWatcherCommand object.
    *
-   * @param string $printArticleId
-   *   Id of print article.
    * @param string $jobId
    *   Job id of the current running job.
    */
-  public function __construct($printArticleId, $jobId) {
-    $this->printArticleId = $printArticleId;
+  public function __construct($jobId) {
     $this->jobId = $jobId;
   }
 
@@ -44,7 +41,6 @@ class QuickPreviewCommand implements CommandInterface {
   public function render() {
     return [
       'command' => 'thunderPrintQuickPreview',
-      'print_article_id' => $this->printArticleId,
       'job_id' => $this->jobId,
     ];
   }

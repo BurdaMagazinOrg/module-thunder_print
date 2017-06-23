@@ -19,19 +19,19 @@
    */
   Drupal.AjaxCommands.prototype.thunderPrintQuickPreview = function (ajax, response, status) {
 
-    var watcher = setInterval(function (jobId, print_article_id) {
+    var watcher = setInterval(function (jobId) {
 
-      $.ajax('/print-article/quick-preview/' + print_article_id + '/' + jobId, {
+      $.ajax('/print-article/quick-preview/' + jobId, {
         type: 'GET',
         statusCode: {
           200: function (data) {
             clearInterval(watcher);
-            $('#preview-image')[0].src = data + '?' + new Date().getTime();
+            $('#preview-image')[0].src = data;
           }
         }
       });
 
-    }, 2000, response.job_id, response.print_article_id);
+    }, 2000, response.job_id);
 
   };
 

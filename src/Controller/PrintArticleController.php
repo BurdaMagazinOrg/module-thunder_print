@@ -42,8 +42,6 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
 
   protected $idmsBuilderManager;
 
-  protected $database;
-
   /**
    * Transliteration service.
    *
@@ -64,8 +62,6 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    *   The transliteration service.
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
-   * @param \Drupal\Core\Database\Connection $database
-   *   The database connection.
    */
   public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration, PrivateTempStoreFactory $temp_store_factory, Connection $database) {
     $this->dateFormatter = $dateFormatter;
@@ -73,7 +69,6 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     $this->idmsBuilderManager = $idmsBuilderManager;
     $this->transliteration = $transliteration;
     $this->tempStore = $temp_store_factory->get('thunder_print_download');
-    $this->database = $database;
   }
 
   /**
@@ -85,8 +80,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
       $container->get('renderer'),
       $container->get('plugin.manager.thunder_print_idms_builder'),
       $container->get('transliteration'),
-      $container->get('user.private_tempstore'),
-      $container->get('database')
+      $container->get('user.private_tempstore')
     );
   }
 
@@ -362,39 +356,6 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     $contentDisposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $rootFolder . '.zip');
     $response->headers->set('Content-Disposition', $contentDisposition);
     $response->prepare($request);
-
-    return $response;
-  }
-
-  /**
-   * Checks if a specific idms job is ready.
-   *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The current request.
-   * @param string $print_article_id
-   *   Id of the print article.
-   * @param string $job_id
-   *   Job id of the current running job.
-   *
-   * @return \Symfony\Component\HttpFoundation\Response
-   *   The download.
-   */
-  public function fetchQuickPreview(Request $request, $print_article_id, $job_id) {
-
-    $response = new Response('', 204);
-
-    $query = $this
-      ->database
-      ->query("SELECT * FROM {queue} q WHERE q.data LIKE '%$job_id%'");
-    $query->execute();
-
-    if (!count($query->fetchAll())) {
-      $response->setStatusCode(200);
-      $print_article = $this->entityTypeManager()
-        ->getStorage('print_article')
-        ->load($print_article_id);
-      $response->setContent(file_create_url($print_article->get('image')->entity->uri->value));
-    }
 
     return $response;
   }

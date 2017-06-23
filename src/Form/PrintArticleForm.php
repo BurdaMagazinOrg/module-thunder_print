@@ -10,9 +10,12 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\thunder_print\Ajax\QuickPreviewCommand;
+use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Form controller for Print article edit forms.
@@ -176,17 +179,7 @@ class PrintArticleForm extends ContentEntityForm {
 
     $status = parent::save($form, $form_state);
 
-    // Schedule a job to generate preview.
-    $jobId = $this->indesignServer->createIdmsJob($entity);
-
-    /** @var \Drupal\Core\Queue\QueueInterface $queue */
-    $queue = $this->queueFactory->get('thunder_print_idms_thumbnail_collector');
-    $item = [
-      'job_id' => $jobId,
-      'print_article_id' => $this->entity->id(),
-    ];
-
-    $queue->createItem($item);
+    $jobId = $this->queuePreviewImageCreation($entity);
 
     $form_state->set('thunder_print_job_id', $jobId);
 
@@ -206,6 +199,28 @@ class PrintArticleForm extends ContentEntityForm {
   }
 
   /**
+   * Queues the preview image generation for a saved article.
+   *
+   * @param \Drupal\thunder_print\Entity\PrintArticle $article
+   *
+   * @return string
+   *   Job ID returned by the Indesign server.
+   */
+  protected function queuePreviewImageCreation(PrintArticleInterface $article) {
+    $jobId = $this->indesignServer->createIdmsJob($article);
+
+    /** @var \Drupal\Core\Queue\QueueInterface $queue */
+    $queue = $this->queueFactory->get('thunder_print_idms_thumbnail_collector');
+    $item = [
+      'job_id' => $jobId,
+      'print_article_id' => $article->id(),
+    ];
+
+    $queue->createItem($item);
+    return $jobId;
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function actions(array $form, FormStateInterface $form_state) {
@@ -215,7 +230,7 @@ class PrintArticleForm extends ContentEntityForm {
       $actions['quick_preview'] = [
         '#type' => 'submit',
         '#value' => $this->t('Quick preview'),
-        '#submit' => ['::submitForm', '::save'],
+        '#submit' => ['::submitForm'],
         '#ajax' => [
           'callback' => '::ajaxQuickPreviewCallback',
         ],
@@ -241,15 +256,37 @@ class PrintArticleForm extends ContentEntityForm {
     drupal_get_messages();
 
     try {
+      $jobId = $this->indesignServer->createIdmsJob($this->entity);
 
       $response = new AjaxResponse();
-      $response->addCommand(new QuickPreviewCommand($this->entity->id(), $form_state->get('thunder_print_job_id')));
+      $response->addCommand(new QuickPreviewCommand($jobId));
 
       return $response;
     }
     catch (\Exception $e) {
-      drupal_set_message($this->t('Error during generating preview.'), 'error');
+      drupal_set_message($this->t('Error while generating preview.'), 'error');
     }
+  }
+
+  /**
+   * Checks if a specific idms job is ready.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   * @param string $job_id
+   *   Job id of the current running job.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   The download.
+   */
+  public function fetchQuickPreview(Request $request, $job_id) {
+    $response = new Response('', 204);
+    $preview = $this->indesignServer->getPreviewById($job_id);
+    if ($preview) {
+      $response->setStatusCode(200);
+      $response->setContent($preview->getPreviewImageDataURI());
+    }
+    return $response;
   }
 
 }

@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @QueueWorker(
  *   id = "thunder_print_idms_thumbnail_collector",
- *   title = @Translation("Thunder print idms fetching"),
+ *   title = @Translation("Thunder print idms thumbnail collector"),
  *   cron = {"time" = 2}
  * )
  */
@@ -74,23 +74,17 @@ class IDMSThumbnailCollector extends QueueWorkerBase implements ContainerFactory
    */
   public function processItem($data) {
 
-    // Check if the preview
-    if ($body = $this->indesignServer->getPreviewById($data['job_id'])) {
+    // In case we got preview data, we process the item ...
+    $preview = $this->indesignServer->getPreviewById($data['job_id']);
+    if ($preview) {
 
       $printArticle = $this->entityTypeManager
         ->getStorage('print_article')
         ->load($data['print_article_id']);
 
-      $zip = new \ZipArchive();
-      $zipFilename = tempnam("tmp", "zip");
-
-      file_put_contents($zipFilename, $body);
-
-      $zip->open($zipFilename);
-
       $dir = 'public://print-article/';
       file_prepare_directory($dir, FILE_CREATE_DIRECTORY);
-      $thumbnail = file_save_data($zip->getFromName('preview.jpg'), 'public://print-article/' . $printArticle->id() . '-preview.jpg', FILE_EXISTS_REPLACE);
+      $thumbnail = file_save_data($preview->getPreviewImageContent(), 'public://print-article/' . $printArticle->id() . '-preview.jpg', FILE_EXISTS_REPLACE);
 
       $imageStyles = ImageStyle::loadMultiple();
       /** @var \Drupal\image\Entity\ImageStyle $imageStyle */
@@ -100,11 +94,8 @@ class IDMSThumbnailCollector extends QueueWorkerBase implements ContainerFactory
 
       $printArticle->set('image', $thumbnail);
       $printArticle->save();
-
-      $zip->close();
-      unlink($zipFilename);
     }
-    // Otherwise we requeue the element.
+    // ... otherwise we requeue the element.
     else {
       throw new RequeueException();
     }
