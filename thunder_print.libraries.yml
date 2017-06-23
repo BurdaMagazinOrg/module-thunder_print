@@ -1,0 +1,6 @@
+thunder_print.ajax:
+  version: VERSION
+  js:
+    js/thunder_print.ajax.js: {}
+  dependencies:
+    - core/drupal.ajax

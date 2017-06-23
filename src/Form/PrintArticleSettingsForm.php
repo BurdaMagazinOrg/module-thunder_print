@@ -2,7 +2,7 @@
 
 namespace Drupal\thunder_print\Form;
 
-use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @ingroup thunder_print
  */
-class PrintArticleSettingsForm extends FormBase {
+class PrintArticleSettingsForm extends ConfigFormBase {
 
   /**
    * Returns a unique string identifying the form.
@@ -25,6 +25,15 @@ class PrintArticleSettingsForm extends FormBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return [
+      'thunder_print.settings',
+    ];
+  }
+
+  /**
    * Form submission handler.
    *
    * @param array $form
@@ -33,7 +42,15 @@ class PrintArticleSettingsForm extends FormBase {
    *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Empty implementation of the abstract submit class.
+    $config = $this->config('thunder_print.settings');
+
+    $keys = [
+      'api_url',
+    ];
+    foreach ($keys as $key) {
+      $config->set('general_settings.' . $key, $form_state->getValue($key));
+    }
+    $config->save();
   }
 
   /**
@@ -48,8 +65,16 @@ class PrintArticleSettingsForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['PrintArticle_settings']['#markup'] = 'Settings form for Print article entities. Manage field settings here.';
-    return $form;
+    $config = $this->config('thunder_print.settings');
+
+    $form['api_url'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('API Url'),
+      '#default_value' => $config->get('general_settings.api_url'),
+      '#description' => $this->t('Url to the API that is connected with the InDesign server'),
+    ];
+
+    return parent::buildForm($form, $form_state);
   }
 
 }
