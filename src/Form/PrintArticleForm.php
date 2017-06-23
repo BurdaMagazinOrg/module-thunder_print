@@ -277,4 +277,5 @@ class PrintArticleForm extends ContentEntityForm {
     }
     return $response;
   }
+
 }

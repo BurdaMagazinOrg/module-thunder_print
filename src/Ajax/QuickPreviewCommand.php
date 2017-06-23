@@ -31,7 +31,7 @@ class QuickPreviewCommand implements CommandInterface {
    * @param string $jobId
    *   Job id of the current running job.
    * @param string $selector
-   *   Selector of the preview image
+   *   Selector of the preview image.
    */
   public function __construct($jobId, $selector) {
     $this->jobId = $jobId;
