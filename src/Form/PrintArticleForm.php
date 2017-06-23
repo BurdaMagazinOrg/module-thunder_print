@@ -201,7 +201,8 @@ class PrintArticleForm extends ContentEntityForm {
   /**
    * Queues the preview image generation for a saved article.
    *
-   * @param \Drupal\thunder_print\Entity\PrintArticle $article
+   * @param \Drupal\thunder_print\Entity\PrintArticleInterface $article
+   *   Article object.
    *
    * @return string
    *   Job ID returned by the Indesign server.
@@ -284,7 +285,7 @@ class PrintArticleForm extends ContentEntityForm {
     $preview = $this->indesignServer->getPreviewById($job_id);
     if ($preview) {
       $response->setStatusCode(200);
-      $response->setContent($preview->getPreviewImageDataURI());
+      $response->setContent($preview->getPreviewImageDataUri());
     }
     return $response;
   }

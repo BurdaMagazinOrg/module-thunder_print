@@ -85,19 +85,17 @@ class IndesignServer {
    * @param int $jobId
    *   The job id provided by createIdmsJob().
    *
-   * @return \Drupal\thunder_print\IndesignServerPreview|void
+   * @return \Drupal\thunder_print\IndesignServerPreview
    *   Returns preview information.
    */
   public function getPreviewById($jobId) {
 
     $response = $this->httpClient->request('GET', $this->url . '/getPreviewById/' . $jobId, []);
 
-    if ($response->getStatusCode() !== 200) {
-      return;
+    if ($response->getStatusCode() == 200) {
+      $content = $response->getBody()->getContents();
+      return new IndesignServerPreview($content);
     }
-
-    $content = $response->getBody()->getContents();
-    return new IndesignServerPreview($content);
   }
 
 }

@@ -8,11 +8,15 @@ namespace Drupal\thunder_print;
 class IndesignServerPreview {
 
   /**
+   * Raw response for the preview.
+   *
    * @var string
    */
   protected $raw;
 
   /**
+   * Filename of the zip file.
+   *
    * @var bool|string
    */
   protected $zipFilename;
@@ -37,6 +41,7 @@ class IndesignServerPreview {
    * Provides raw content of the preview image.
    *
    * @return string
+   *   Raw preview image.
    */
   public function getPreviewImageContent() {
     return $this->zip->getFromName('preview.jpg');
@@ -46,18 +51,20 @@ class IndesignServerPreview {
    * Provides data uri for preview image.
    *
    * @return string
+   *   Base64 encoded preview image.
    */
-  public function getPreviewImageDataURI() {
+  public function getPreviewImageDataUri() {
     return 'data:image/jpeg;base64,' . base64_encode($this->getPreviewImageContent());
   }
 
   /**
    * Destructor for the preview archive.
    */
-  function __destruct() {
+  public function __destruct() {
     $this->zip->close();
     if ($this->zipFilename) {
       unlink($this->zipFilename);
     }
   }
+
 }

@@ -5,7 +5,6 @@ namespace Drupal\thunder_print\Controller;
 use Drupal\Component\Transliteration\TransliterationInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
@@ -15,7 +14,6 @@ use Drupal\thunder_print\Plugin\IdmsBuilderManager;
 use Drupal\user\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Yaml\Yaml;
@@ -63,7 +61,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    *   The tempstore factory.
    */
-  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration, PrivateTempStoreFactory $temp_store_factory, Connection $database) {
+  public function __construct(DateFormatter $dateFormatter, RendererInterface $renderer, IdmsBuilderManager $idmsBuilderManager, TransliterationInterface $transliteration, PrivateTempStoreFactory $temp_store_factory) {
     $this->dateFormatter = $dateFormatter;
     $this->renderer = $renderer;
     $this->idmsBuilderManager = $idmsBuilderManager;
