@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\thunder_print\Ajax\InitQueueWatcherCommand;
+use Drupal\thunder_print\Ajax\QuickPreviewCommand;
 use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -177,10 +177,10 @@ class PrintArticleForm extends ContentEntityForm {
     $status = parent::save($form, $form_state);
 
     // Schedule a job to generate preview.
-    $jobId = $this->indesignServer->createJob($entity);
+    $jobId = $this->indesignServer->createIdmsJob($entity);
 
     /** @var \Drupal\Core\Queue\QueueInterface $queue */
-    $queue = $this->queueFactory->get('thunder_print_idms_fetching');
+    $queue = $this->queueFactory->get('thunder_print_idms_thumbnail_collector');
     $item = [
       'job_id' => $jobId,
       'print_article_id' => $this->entity->id(),
@@ -217,7 +217,7 @@ class PrintArticleForm extends ContentEntityForm {
         '#value' => $this->t('Quick preview'),
         '#submit' => ['::submitForm', '::save'],
         '#ajax' => [
-          'callback' => '::ajaxSubmitCallback',
+          'callback' => '::ajaxQuickPreviewCallback',
         ],
       ];
     }
@@ -236,14 +236,14 @@ class PrintArticleForm extends ContentEntityForm {
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   Response with command.
    */
-  public function ajaxSubmitCallback(array &$form, FormStateInterface $form_state) {
+  public function ajaxQuickPreviewCallback(array &$form, FormStateInterface $form_state) {
 
     drupal_get_messages();
 
     try {
 
       $response = new AjaxResponse();
-      $response->addCommand(new InitQueueWatcherCommand($this->entity->id(), $form_state->get('thunder_print_job_id')));
+      $response->addCommand(new QuickPreviewCommand($this->entity->id(), $form_state->get('thunder_print_job_id')));
 
       return $response;
     }

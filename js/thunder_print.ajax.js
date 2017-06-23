@@ -17,11 +17,11 @@
    * @param {number} [status]
    *   The HTTP status code.
    */
-  Drupal.AjaxCommands.prototype.initQueueWatcher = function (ajax, response, status) {
+  Drupal.AjaxCommands.prototype.thunderPrintQuickPreview = function (ajax, response, status) {
 
     var watcher = setInterval(function (jobId, print_article_id) {
 
-      $.ajax('/print-article/jobFinished/' + print_article_id + '/' + jobId, {
+      $.ajax('/print-article/quick-preview/' + print_article_id + '/' + jobId, {
         type: 'GET',
         statusCode: {
           200: function (data) {

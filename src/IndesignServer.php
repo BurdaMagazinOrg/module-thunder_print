@@ -52,7 +52,7 @@ class IndesignServer {
    * @throws \Exception
    *   Exception when error on indesign server occurs.
    */
-  public function createJob(PrintArticleInterface $printArticle) {
+  public function createIdmsJob(PrintArticleInterface $printArticle) {
 
     /** @var \Drupal\thunder_print\Plugin\IdmsBuilderInterface $builder */
     $builder = $this->idmsBuilderManager->createInstance('zip_archived');
@@ -80,15 +80,15 @@ class IndesignServer {
   }
 
   /**
-   * Retrive a image from the indesign server.
+   * Retrieve preview image for the given job from the indesign server.
    *
    * @param int $id
-   *   The job id.
+   *   The job id provided by createIdmsJob().
    *
    * @return string
    *   Raw data of the preview image.
    */
-  public function fetchJob($id) {
+  public function getPreviewById($id) {
 
     $response = $this->httpClient->request('GET', $this->url . '/getPreviewById/' . $id, []);
 
@@ -97,7 +97,6 @@ class IndesignServer {
     }
 
     return $response->getBody()->getContents();
-
   }
 
 }

@@ -379,7 +379,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
    * @return \Symfony\Component\HttpFoundation\Response
    *   The download.
    */
-  public function jobFinished(Request $request, $print_article_id, $job_id) {
+  public function fetchQuickPreview(Request $request, $print_article_id, $job_id) {
 
     $response = new Response('', 204);
 

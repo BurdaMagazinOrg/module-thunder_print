@@ -9,7 +9,7 @@ use Drupal\Core\Ajax\CommandInterface;
  *
  * @ingroup ajax
  */
-class InitQueueWatcherCommand implements CommandInterface {
+class QuickPreviewCommand implements CommandInterface {
 
   /**
    * Id of print article.
@@ -43,7 +43,7 @@ class InitQueueWatcherCommand implements CommandInterface {
    */
   public function render() {
     return [
-      'command' => 'initQueueWatcher',
+      'command' => 'thunderPrintQuickPreview',
       'print_article_id' => $this->printArticleId,
       'job_id' => $this->jobId,
     ];

@@ -49,9 +49,9 @@ thunder_print.print_article.switchType:
     _admin_route: TRUE
 
 thunder_print.print_article.jobFinished:
-  path: '/print-article/jobFinished/{print_article_id}/{job_id}'
+  path: '/print-article/quick-preview/{print_article_id}/{job_id}'
   defaults:
-    _controller: '\Drupal\thunder_print\Controller\PrintArticleController::jobFinished'
+    _controller: '\Drupal\thunder_print\Controller\PrintArticleController::fetchQuickPreview'
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer print article entities'

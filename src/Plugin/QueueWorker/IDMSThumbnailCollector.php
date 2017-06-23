@@ -14,12 +14,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class IdmsGeneration.
  *
  * @QueueWorker(
- *   id = "thunder_print_idms_fetching",
+ *   id = "thunder_print_idms_thumbnail_collector",
  *   title = @Translation("Thunder print idms fetching"),
  *   cron = {"time" = 2}
  * )
  */
-class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInterface {
+class IDMSThumbnailCollector extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
   /**
    * Entity type manager.
@@ -74,7 +74,8 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
    */
   public function processItem($data) {
 
-    if ($body = $this->indesignServer->fetchJob($data['job_id'])) {
+    // Check if the preview
+    if ($body = $this->indesignServer->getPreviewById($data['job_id'])) {
 
       $printArticle = $this->entityTypeManager
         ->getStorage('print_article')
@@ -103,6 +104,7 @@ class IdmsFetching extends QueueWorkerBase implements ContainerFactoryPluginInte
       $zip->close();
       unlink($zipFilename);
     }
+    // Otherwise we requeue the element.
     else {
       throw new RequeueException();
     }
