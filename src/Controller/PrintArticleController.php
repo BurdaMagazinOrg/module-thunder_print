@@ -332,7 +332,7 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
         $dir = $rootFolder . DIRECTORY_SEPARATOR . $id . ' - ' . $print_article->label();
         $zip->addEmptyDir($dir);
         $zip->addFromString($dir . DIRECTORY_SEPARATOR . $filename, $content);
-        $zip->addFromString($dir . DIRECTORY_SEPARATOR . 'metadata.yml', Yaml::dump($this->getMetadata($print_article)));
+        $zip->addFromString($dir . DIRECTORY_SEPARATOR . 'metadata.yml', Yaml::dump($print_article->getMetadata()));
       }
     }
 
@@ -356,26 +356,6 @@ class PrintArticleController extends ControllerBase implements ContainerInjectio
     $response->prepare($request);
 
     return $response;
-  }
-
-  /**
-   * Returns print article metadata.
-   *
-   * @param \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle
-   *   A Print article object.
-   *
-   * @return array
-   *   Metadata array
-   */
-  protected function getMetadata(PrintArticleInterface $printArticle) {
-
-    return [
-      'print_article_id' => $printArticle->id(),
-      'print_article_type' => $printArticle->bundle(),
-      'name' => $printArticle->label(),
-      'date' => $this->dateFormatter->format(time(), 'long'),
-      'user' => $this->currentUser()->getDisplayName(),
-    ];
   }
 
 }

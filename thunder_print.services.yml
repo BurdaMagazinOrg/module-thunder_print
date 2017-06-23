@@ -13,3 +13,6 @@ services:
     arguments: ['@module_handler']
     tags:
       - { name: event_subscriber }
+  thunder_print.indesign_server:
+    class: Drupal\thunder_print\IndesignServer
+    arguments: ['@plugin.manager.thunder_print_idms_builder', '@config.factory', '@http_client']

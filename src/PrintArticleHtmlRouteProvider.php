@@ -208,18 +208,16 @@ class PrintArticleHtmlRouteProvider extends AdminHtmlRouteProvider {
    *   The generated route, if available.
    */
   protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
-    if (!$entity_type->getBundleEntityType()) {
-      $route = new Route("/admin/structure/{$entity_type->id()}/settings");
-      $route
-        ->setDefaults([
-          '_form' => 'Drupal\thunder_print\Form\PrintArticleSettingsForm',
-          '_title' => "{$entity_type->getLabel()} settings",
-        ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
-        ->setOption('_admin_route', TRUE);
+    $route = new Route("/admin/config/content/thunder_print");
+    $route
+      ->setDefaults([
+        '_form' => 'Drupal\thunder_print\Form\PrintArticleSettingsForm',
+        '_title' => "{$entity_type->getLabel()} settings",
+      ])
+      ->setRequirement('_permission', $entity_type->getAdminPermission())
+      ->setOption('_admin_route', TRUE);
 
-      return $route;
-    }
+    return $route;
   }
 
 }

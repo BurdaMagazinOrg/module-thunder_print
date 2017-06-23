@@ -62,4 +62,12 @@ interface PrintArticleInterface extends EntityInterface, RevisionableInterface, 
    */
   public function setCreatedTime($timestamp);
 
+  /**
+   * Returns print article metadata.
+   *
+   * @return array
+   *   Metadata array
+   */
+  public function getMetadata();
+
 }

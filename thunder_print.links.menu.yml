@@ -36,3 +36,11 @@ entity.thunder_print_tag_mapping.collection:
   description: 'List Tag Mapping (bundles)'
   parent: thunder_print.manage
   weight: 99
+
+# Settings form
+print_article.settings:
+  title: 'Thunder for Print'
+  route_name: print_article.settings
+  description: 'Thunder for Print'
+  parent: system.admin_config_content
+  weight: 99
