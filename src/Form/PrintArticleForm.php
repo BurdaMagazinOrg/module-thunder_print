@@ -3,6 +3,7 @@
 namespace Drupal\thunder_print\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -118,7 +119,7 @@ class PrintArticleForm extends ContentEntityForm {
         '#uri' => $url,
         '#group' => 'thunder_print_preview',
         '#attributes' => [
-          'id' => 'preview-image',
+          'id' => 'thunder-print-preview-image',
           'style' => 'max-width: 100%',
         ],
       ];
@@ -260,7 +261,7 @@ class PrintArticleForm extends ContentEntityForm {
       $jobId = $this->indesignServer->createIdmsJob($this->entity);
 
       $response = new AjaxResponse();
-      $response->addCommand(new QuickPreviewCommand($jobId));
+      $response->addCommand(new QuickPreviewCommand($jobId, '#thunder-print-preview-image'));
 
       return $response;
     }
@@ -289,5 +290,4 @@ class PrintArticleForm extends ContentEntityForm {
     }
     return $response;
   }
-
 }

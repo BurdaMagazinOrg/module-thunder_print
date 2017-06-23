@@ -12,13 +12,6 @@ use Drupal\Core\Ajax\CommandInterface;
 class QuickPreviewCommand implements CommandInterface {
 
   /**
-   * Id of print article.
-   *
-   * @var string
-   */
-  protected $printArticleId;
-
-  /**
    * Job id of the current running job.
    *
    * @var string
@@ -26,13 +19,23 @@ class QuickPreviewCommand implements CommandInterface {
   protected $jobId;
 
   /**
+   * Selector for the preview image.
+   *
+   * @var string
+   */
+  protected $selector;
+
+  /**
    * Constructs a InitQueueWatcherCommand object.
    *
    * @param string $jobId
    *   Job id of the current running job.
+   * @param string $selector
+   *   Selector of the preview image
    */
-  public function __construct($jobId) {
+  public function __construct($jobId, $selector) {
     $this->jobId = $jobId;
+    $this->selector = $selector;
   }
 
   /**
@@ -42,6 +45,7 @@ class QuickPreviewCommand implements CommandInterface {
     return [
       'command' => 'thunderPrintQuickPreview',
       'job_id' => $this->jobId,
+      'selector' => $this->selector,
     ];
   }
 
