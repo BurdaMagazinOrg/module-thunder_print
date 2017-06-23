@@ -45,7 +45,7 @@ class IDMS {
 
     $tags = [];
     foreach ($this->xml->XMLTag as $tag) {
-      $tags[] = new IDMSTag($tag, $this);
+      $tags[(string) $tag['Self']] = new IDMSTag($tag, $this);
     }
 
     return $tags;
@@ -106,40 +106,6 @@ class IDMS {
       $data,
       $extension,
     ];
-  }
-
-  /**
-   * Get all paragraphs styles for a tag.
-   *
-   * @param string $tagName
-   *   IDMS tag name.
-   *
-   * @return array
-   *   Array of paragraphs styles.
-   */
-  public function getParagraphStyles($tagName) {
-
-    return $this->getStyles("//XMLElement[@MarkupTag='$tagName']/ParagraphStyleRange/@AppliedParagraphStyle");
-  }
-
-  /**
-   * Get all character styles for a tag.
-   *
-   * @param string $tagName
-   *   IDMS tag name.
-   *
-   * @return array
-   *   Array of character styles.
-   */
-  public function getCharacterStyles($tagName) {
-
-    $characterStyles = $this->getStyles("//XMLElement[@MarkupTag='$tagName']//CharacterStyleRange/@AppliedCharacterStyle");
-
-    $characterStyles = array_filter($characterStyles, function ($style) {
-      return strpos($style, '[No character style]') === FALSE;
-    });
-
-    return array_values($characterStyles);
   }
 
   /**

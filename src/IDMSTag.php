@@ -67,15 +67,44 @@ class IDMSTag {
    */
   public function replaceComplex($value) {
 
+    $value = str_replace('&nbsp;', ' ', $value);
+
+    foreach ($this->getCharacterStyles() as $characterStyle) {
+      $value = str_replace($characterStyle->getClass(), $characterStyle->getName(), $value);
+    }
+    foreach ($this->getParagraphStyles() as $paragraphsStyle) {
+      $value = str_replace($paragraphsStyle->getClass(), $paragraphsStyle->getName(), $value);
+    }
+
     $xpath = "//Story//XMLElement[@MarkupTag='{$this->getSelf()}']";
     /** @var \SimpleXMLElement $xmlElement */
     $xmlElement = $this->idms->getXml()->xpath($xpath);
 
+    $dom = new \DOMDocument('1.0', 'UTF-8');
+    $dom->loadHTML(($value), LIBXML_HTML_NOIMPLIED);
+
+    $element = $dom->childNodes->item(1);
+
+    $replacements = [];
+
+    foreach ($element->childNodes as $childNode) {
+      if ($childNode instanceof \DOMText) {
+        $new = $dom->createElement("span", $childNode->nodeValue);
+        $new->setAttribute('class', 'CharacterStyle/$ID/[No character style]');
+        $replacements[] = ['new' => $new, 'old' => $childNode];
+      }
+    }
+
+    foreach ($replacements as $replacement) {
+      $element->replaceChild($replacement['new'], $replacement['old']);
+    }
+
+    $value = $dom->saveHTML($element);
+
     $value = preg_replace('/<span class="(.+?)">(.+?)<\/span>/is', "<CharacterStyleRange AppliedCharacterStyle=\"$1\"><Content>$2</Content></CharacterStyleRange>", $value);
     $value = preg_replace('/<p class="(.+?)">(.+?)<\/p>/is', "<ParagraphStyleRange AppliedParagraphStyle=\"$1\">$2</ParagraphStyleRange>", $value);
-    $value = str_replace('&nbsp;', ' ', $value);
 
-    $doc = simplexml_load_string('<foo>' . $value . '</foo>');
+    $doc = simplexml_load_string('<foo>' . utf8_decode($value) . '</foo>');
 
     $xmlElement[0][0] = "";
 

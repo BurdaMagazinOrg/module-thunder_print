@@ -114,6 +114,7 @@ class IDMSTest extends UnitTestCase {
     $xml = file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms');
 
     $idms = new IDMS($xml);
+    $idmsTags = $idms->getTags();
 
     $expectedStyles = [
       'ParagraphStyle/Redaktioneller Teil%3aFließtext 9pt (The Sans Semi Light)',
@@ -121,9 +122,9 @@ class IDMSTest extends UnitTestCase {
       'ParagraphStyle/ABBINDER%3aAbbinder - BR-Klassik',
     ];
 
-    $paragraphStyles = $idms->getParagraphStyles('XMLTag/Body');
+    $paragraphStyles = $idmsTags['XMLTag/Body']->getParagraphStyles();
 
-    $this->assertArrayEquals($expectedStyles, $paragraphStyles);
+    $this->assertArrayEquals($expectedStyles, array_keys($paragraphStyles));
   }
 
   /**
@@ -134,6 +135,7 @@ class IDMSTest extends UnitTestCase {
     $xml = file_get_contents(dirname(__FILE__) . '/../../fixtures/Zeitung1.idms');
 
     $idms = new IDMS($xml);
+    $idmsTags = $idms->getTags();
 
     $expectedStyles = [
       'CharacterStyle/Zwischenüberschrift / Interview Frage',
@@ -142,9 +144,9 @@ class IDMSTest extends UnitTestCase {
       'CharacterStyle/ABBINDER%3aBR-Klassik %3aUNTERSTREICHUNG - BR-Klassik',
     ];
 
-    $characterStyles = $idms->getCharacterStyles('XMLTag/Body');
+    $characterStyles = $idmsTags['XMLTag/Body']->getCharacterStyles();
 
-    $this->assertArrayEquals($expectedStyles, $characterStyles);
+    $this->assertArrayEquals($expectedStyles, array_keys($characterStyles));
   }
 
 }
