@@ -67,6 +67,8 @@ class IDMSTag {
    */
   public function replaceComplex($value) {
 
+    $value = "<foo>$value</foo>";
+
     $value = str_replace('&nbsp;', ' ', $value);
 
     foreach ($this->getCharacterStyles() as $characterStyle) {
@@ -81,30 +83,33 @@ class IDMSTag {
     $xmlElement = $this->idms->getXml()->xpath($xpath);
 
     $dom = new \DOMDocument('1.0', 'UTF-8');
-    $dom->loadHTML(($value), LIBXML_HTML_NOIMPLIED);
+    $dom->loadXML($value, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOEMPTYTAG);
 
-    $element = $dom->childNodes->item(1);
+    $elements = $dom->getElementsByTagName('p');
 
-    $replacements = [];
+    /** @var \DOMElement $element */
+    foreach ($elements as $element) {
+      $replacements = [];
+      foreach ($element->childNodes as $childNode) {
 
-    foreach ($element->childNodes as $childNode) {
-      if ($childNode instanceof \DOMText) {
-        $new = $dom->createElement("span", $childNode->nodeValue);
-        $new->setAttribute('class', 'CharacterStyle/$ID/[No character style]');
-        $replacements[] = ['new' => $new, 'old' => $childNode];
+        if ($childNode instanceof \DOMText) {
+          $new = $dom->createElement("span", $childNode->nodeValue);
+          $new->setAttribute('class', 'CharacterStyle/$ID/[No character style]');
+          $replacements[] = ['new' => $new, 'old' => $childNode];
+        }
+      }
+      foreach ($replacements as $replacement) {
+        $element->replaceChild($replacement['new'], $replacement['old']);
       }
     }
 
-    foreach ($replacements as $replacement) {
-      $element->replaceChild($replacement['new'], $replacement['old']);
-    }
+    $value = $dom->saveXML($dom);
 
-    $value = $dom->saveHTML($element);
+    $value = preg_replace('/<span class="(.+?)">(.+?)<\/span>/ims', "<CharacterStyleRange AppliedCharacterStyle=\"$1\"><Content>$2</Content></CharacterStyleRange>", $value);
+    $value = preg_replace('/<p class="(.+?)">(.+?)<\/p>/ims', "<ParagraphStyleRange AppliedParagraphStyle=\"$1\">$2</ParagraphStyleRange>", $value);
+    $value = preg_replace("/<p>(.*?)<\/p>/ims", "", $value);
 
-    $value = preg_replace('/<span class="(.+?)">(.+?)<\/span>/is', "<CharacterStyleRange AppliedCharacterStyle=\"$1\"><Content>$2</Content></CharacterStyleRange>", $value);
-    $value = preg_replace('/<p class="(.+?)">(.+?)<\/p>/is', "<ParagraphStyleRange AppliedParagraphStyle=\"$1\">$2</ParagraphStyleRange>", $value);
-
-    $doc = simplexml_load_string('<foo>' . utf8_decode($value) . '</foo>');
+    $doc = simplexml_load_string($value);
 
     $xmlElement[0][0] = "";
 
