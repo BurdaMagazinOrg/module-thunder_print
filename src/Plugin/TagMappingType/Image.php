@@ -139,7 +139,7 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
 
         $filename = pathinfo($file->getFileUri())['basename'];
 
-        $xmlElement->Link['LinkResourceURI'] = 'file:/' . $filename;
+        $xmlElement->Link['LinkResourceURI'] = 'file:assets/' . $filename;
         $xmlElement->Link['StoredState'] = 'Normal';
 
         if (is_callable($callback)) {
