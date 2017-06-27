@@ -102,7 +102,7 @@ class MediaEntityTest extends KernelTestBase {
 
     $xmlImageLink = (string) $xml->xpath($xpath)[0]->Link['LinkResourceURI'];
 
-    $this->assertContains('file:/druplicon.png', $xmlImageLink);
+    $this->assertContains('file:assets/druplicon.png', $xmlImageLink);
 
     // Test copyright replacement.
     $xpath = "//Story//XMLElement[@MarkupTag='XMLTag/Caption']//Content";
@@ -137,7 +137,7 @@ class MediaEntityTest extends KernelTestBase {
 
     $xmlImageLink = (string) $xml->xpath($xpath)[0]->Link['LinkResourceURI'];
 
-    $this->assertContains('file:/druplicon.png', $xmlImageLink);
+    $this->assertContains('file:assets/druplicon.png', $xmlImageLink);
 
     // Test copyright replacement.
     $xpath = "//Story//XMLElement[@MarkupTag='XMLTag/Caption']//Content";
