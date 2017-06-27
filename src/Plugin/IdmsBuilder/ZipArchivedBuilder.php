@@ -33,8 +33,9 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
       throw new \Exception($this->t('Not possible to create zip archive'));
     }
     else {
+      $zip->addEmptyDir('assets');
       foreach ($this->getAdditionalFiles($printArticle) as $filename => $file) {
-        $zip->addFromString($filename, file_get_contents($file));
+        $zip->addFromString('assets/' . $filename, file_get_contents($file));
       }
       $replacedIdms = $this->replace($printArticle);
       $zip->addFromString('export.idms', $replacedIdms->getXml()->asXml());
@@ -98,12 +99,7 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
   protected function replaceItem(IDMS $idms, $fieldItem, TagMappingTypeInterface $mappingType) {
 
     if ($mappingType instanceof AdditionalFilesInterface) {
-      // @TODO: Remove when indesign server can handle external files.
-      return parent::replaceItem($idms, $fieldItem, $mappingType);
-
-      // @codingStandardsIgnoreStart
-      // return $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
-      // @codingStandardsIgnoreEnd
+      return $mappingType->replacePlaceholderUseRelativeLinks($idms, $fieldItem->getValue());
     }
     else {
       return parent::replaceItem($idms, $fieldItem, $mappingType);

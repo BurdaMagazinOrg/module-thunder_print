@@ -101,7 +101,7 @@ class IDMSBuilderTest extends KernelTestBase {
 
     $zip = new \ZipArchive();
     $zip->open(file_directory_temp() . '/foo.zip');
-    $image = $zip->getFromName('druplicon.png');
+    $image = $zip->getFromName('assets/druplicon.png');
     // Check is binary.
     $this->assertTrue(preg_match('~[^\x20-\x7E\t\r\n]~', $image) > 0);
 
