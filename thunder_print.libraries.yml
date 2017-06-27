@@ -4,3 +4,9 @@ thunder_print.ajax:
     js/thunder_print.ajax.js: {}
   dependencies:
     - core/drupal.ajax
+
+thunder_print.ckeditor:
+  version: VERSION
+  css:
+    base:
+      css/ckeditor.css: {}

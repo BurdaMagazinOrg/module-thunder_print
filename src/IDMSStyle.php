@@ -45,6 +45,18 @@ class IDMSStyle {
   }
 
   /**
+   * Get display name name.
+   *
+   * @return string
+   *   Display name.
+   */
+  public function getDisplayName() {
+    $displayName = substr($this->name, strpos($this->name, '/') + 1);
+    $displayName = urldecode($displayName);
+    return $displayName;
+  }
+
+  /**
    * Get representative class for the style.
    *
    * @return string
