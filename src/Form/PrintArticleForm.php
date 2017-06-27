@@ -87,6 +87,7 @@ class PrintArticleForm extends ContentEntityForm {
     // Use the same form like node edit.
     $form['#theme'] = ['node_edit_form'];
     $form['#attached']['library'][] = 'thunder_print/thunder_print.ajax';
+    $form['#attached']['library'][] = 'thunder_print/thunder_print.lightbox';
     $form['#attached']['library'][] = 'seven/node-form';
 
     // Print article author information for administrators.
@@ -121,6 +122,8 @@ class PrintArticleForm extends ContentEntityForm {
         'id' => 'thunder-print-preview-image',
         'style' => 'max-width: 100%',
       ],
+      '#prefix' => '<a href="#" data-featherlight="#thunder-print-preview-image">',
+      '#suffix' => '</a>',
     ];
 
     $form['quick_preview']['quick_preview'] = [
