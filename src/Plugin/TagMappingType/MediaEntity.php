@@ -32,22 +32,32 @@ class MediaEntity extends Image {
 
     $options = [];
 
+    /** @var \Drupal\media_entity\MediaTypeInterface $bundle */
     foreach ($bundles as $bundle) {
-      $options[$bundle->id()] = $bundle->label();
+      if ($bundle->getType()->getPluginId() == 'image') {
+        $options[$bundle->id()] = $bundle->label();
+      }
     }
 
     $wrapper_id = Html::getId('tap-mapping-form-ajax-wrapper');
 
-    $form['bundle'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Bundle'),
-      '#options' => $options,
-      '#default_value' => $this->getOption('bundle'),
-      '#ajax' => [
-        'callback' => '::ajaxCallback',
-        'wrapper' => $wrapper_id,
-      ],
-    ];
+    if (count($options) > 1) {
+      $form['bundle'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Bundle'),
+        '#options' => $options,
+        '#default_value' => $this->getOption('bundle'),
+        '#ajax' => [
+          'callback' => '::ajaxCallback',
+          'wrapper' => $wrapper_id,
+        ],
+      ];
+    }
+    else {
+      $key = array_keys($options);
+      $this->setOptions($this->getOptions() + ['bundle' => reset($key)]);
+      $form['bundle'] = ['#type' => 'hidden', '#value' => reset($key)];
+    }
 
     return $form;
   }
