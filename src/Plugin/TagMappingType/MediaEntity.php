@@ -41,23 +41,17 @@ class MediaEntity extends Image {
 
     $wrapper_id = Html::getId('tap-mapping-form-ajax-wrapper');
 
-    if (count($options) > 1) {
-      $form['bundle'] = [
-        '#type' => 'select',
-        '#title' => $this->t('Bundle'),
-        '#options' => $options,
-        '#default_value' => $this->getOption('bundle'),
-        '#ajax' => [
-          'callback' => '::ajaxCallback',
-          'wrapper' => $wrapper_id,
-        ],
-      ];
-    }
-    else {
-      $key = array_keys($options);
-      $this->setOptions($this->getOptions() + ['bundle' => reset($key)]);
-      $form['bundle'] = ['#type' => 'hidden', '#value' => reset($key)];
-    }
+    $form['bundle'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Bundle'),
+      '#options' => $options,
+      '#required' => TRUE,
+      '#default_value' => $this->getOption('bundle'),
+      '#ajax' => [
+        'callback' => '::ajaxCallback',
+        'wrapper' => $wrapper_id,
+      ],
+    ];
 
     return $form;
   }
