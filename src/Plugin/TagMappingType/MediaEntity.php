@@ -32,8 +32,11 @@ class MediaEntity extends Image {
 
     $options = [];
 
+    /** @var \Drupal\media_entity\MediaTypeInterface $bundle */
     foreach ($bundles as $bundle) {
-      $options[$bundle->id()] = $bundle->label();
+      if ($bundle->getType()->getPluginId() == 'image') {
+        $options[$bundle->id()] = $bundle->label();
+      }
     }
 
     $wrapper_id = Html::getId('tap-mapping-form-ajax-wrapper');
@@ -42,6 +45,7 @@ class MediaEntity extends Image {
       '#type' => 'select',
       '#title' => $this->t('Bundle'),
       '#options' => $options,
+      '#required' => TRUE,
       '#default_value' => $this->getOption('bundle'),
       '#ajax' => [
         'callback' => '::ajaxCallback',
