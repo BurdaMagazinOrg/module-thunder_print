@@ -108,6 +108,10 @@ class TextFormattedLong extends TagMappingTypeBase {
           'name' => $style->getDisplayName(),
         ];
       }
+
+      // For now we restrict the text format to the included one, so users do
+      // do not get confused with irrelevant styles and buttons.
+      $element['#allowed_formats'] = ['tfp'];
     }
   }
 

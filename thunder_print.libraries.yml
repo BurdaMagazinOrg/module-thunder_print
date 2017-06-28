@@ -10,3 +10,13 @@ thunder_print.ckeditor:
   css:
     base:
       css/ckeditor.css: {}
+
+thunder_print.lightbox:
+  version: VERSION
+  js:
+    assets/featherlight/featherlight.min.js: {}
+  css:
+    theme:
+      assets/featherlight/featherlight.min.css: {}
+  dependencies:
+    - core/drupal.jquery
