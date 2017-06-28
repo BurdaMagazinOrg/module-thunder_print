@@ -4,3 +4,13 @@ thunder_print.ajax:
     js/thunder_print.ajax.js: {}
   dependencies:
     - core/drupal.ajax
+
+thunder_print.lightbox:
+  version: VERSION
+  js:
+    assets/featherlight/featherlight.min.js: {}
+  css:
+    theme:
+      assets/featherlight/featherlight.min.css: {}
+  dependencies:
+    - core/drupal.jquery
