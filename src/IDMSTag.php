@@ -93,7 +93,7 @@ class IDMSTag {
       foreach ($element->childNodes as $childNode) {
 
         if ($childNode instanceof \DOMText) {
-          $new = $dom->createElement("span", htmlspecialchars($childNode->nodeValue));
+          $new = $dom->createElement("span", preg_replace('/&(?![[:alnum:]]+;)/', '&amp;', $childNode->nodeValue));
           $new->setAttribute('class', 'CharacterStyle/$ID/[No character style]');
           $replacements[] = ['new' => $new, 'old' => $childNode];
         }
