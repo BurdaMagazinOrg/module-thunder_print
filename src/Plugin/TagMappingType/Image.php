@@ -88,7 +88,9 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
    */
   public function replacePlaceholderUseRelativeLinks(IDMS $idms, $fieldItem) {
 
-    return $this->iterateMapping(function () {}, $idms, $fieldItem);
+    return $this->iterateMapping(function (\SimpleXMLElement $xmlImage, FileInterface $file) {
+      $xmlImage->Properties = "";
+    }, $idms, $fieldItem);
   }
 
   /**

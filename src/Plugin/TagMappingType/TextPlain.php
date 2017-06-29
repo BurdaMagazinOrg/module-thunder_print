@@ -58,7 +58,7 @@ class TextPlain extends TagMappingTypeBase {
     return [
       'type' => 'string',
       'settings' => [
-        'max_length' => 255,
+        'max_length' => 1024,
         'is_ascii' => FALSE,
         'case_sensitive' => FALSE,
       ],
