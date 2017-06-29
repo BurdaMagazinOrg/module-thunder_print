@@ -5,6 +5,12 @@ thunder_print.ajax:
   dependencies:
     - core/drupal.ajax
 
+thunder_print.ckeditor:
+  version: VERSION
+  css:
+    base:
+      css/ckeditor.css: {}
+
 thunder_print.lightbox:
   version: VERSION
   js:

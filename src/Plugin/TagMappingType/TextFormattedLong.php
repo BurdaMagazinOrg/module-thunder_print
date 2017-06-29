@@ -97,7 +97,7 @@ class TextFormattedLong extends TagMappingTypeBase {
         $element['#thunder_print']['styles'][] = [
           'element' => 'p',
           'attributes' => ['class' => $style->getClass()],
-          'name' => $style->getName(),
+          'name' => $style->getDisplayName(),
         ];
       }
 
@@ -105,7 +105,7 @@ class TextFormattedLong extends TagMappingTypeBase {
         $element['#thunder_print']['styles'][] = [
           'element' => 'span',
           'attributes' => ['class' => $style->getClass()],
-          'name' => $style->getName(),
+          'name' => $style->getDisplayName(),
         ];
       }
 

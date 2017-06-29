@@ -87,6 +87,7 @@ class PrintArticleForm extends ContentEntityForm {
     // Use the same form like node edit.
     $form['#theme'] = ['node_edit_form'];
     $form['#attached']['library'][] = 'thunder_print/thunder_print.ajax';
+    $form['#attached']['library'][] = 'thunder_print/thunder_print.ckeditor';
     $form['#attached']['library'][] = 'thunder_print/thunder_print.lightbox';
     $form['#attached']['library'][] = 'seven/node-form';
 
