@@ -93,7 +93,7 @@ class IDMSTag {
       foreach ($element->childNodes as $childNode) {
 
         if ($childNode instanceof \DOMText) {
-          $new = $dom->createElement("span", $childNode->nodeValue);
+          $new = $dom->createElement("span", htmlspecialchars($childNode->nodeValue));
           $new->setAttribute('class', 'CharacterStyle/$ID/[No character style]');
           $replacements[] = ['new' => $new, 'old' => $childNode];
         }
@@ -106,7 +106,7 @@ class IDMSTag {
     $value = $dom->saveXML($dom);
 
     $value = preg_replace('/<span class="(.+?)">(.+?)<\/span>/ims', "<CharacterStyleRange AppliedCharacterStyle=\"$1\"><Content>$2</Content></CharacterStyleRange>", $value);
-    $value = preg_replace('/<p class="(.+?)">(.+?)<\/p>/ims', "<ParagraphStyleRange AppliedParagraphStyle=\"$1\">$2</ParagraphStyleRange>", $value);
+    $value = preg_replace('/<p class="(.+?)">(.+?)<\/p>/ims', "<ParagraphStyleRange AppliedParagraphStyle=\"$1\">$2<Br/></ParagraphStyleRange>", $value);
     $value = preg_replace("/<p>(.*?)<\/p>/ims", "", $value);
 
     $doc = simplexml_load_string($value);
