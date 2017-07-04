@@ -4,7 +4,10 @@ dependencies: {  }
 id: xmltag_captionportrait
 mapping_type: text_plain
 mapping:
-  value: XMLTag/CaptionPortrait
+  value: XMLTag/CaptionPortrait1
 options:
   widget_type: string_textfield
+  field_settings:
+    size: 60
+    placeholder: ''
   title: false

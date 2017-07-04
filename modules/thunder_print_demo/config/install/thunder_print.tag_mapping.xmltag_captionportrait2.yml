@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_captionportrait2
+mapping_type: text_plain
+mapping:
+  value: XMLTag/CaptionPortrait2
+options:
+  widget_type: string_textfield
+  title: false

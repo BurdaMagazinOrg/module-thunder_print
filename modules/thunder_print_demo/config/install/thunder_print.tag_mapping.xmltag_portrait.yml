@@ -4,6 +4,9 @@ dependencies: {  }
 id: xmltag_portrait
 mapping_type: image
 mapping:
-  target_id: XMLTag/Portrait
+  target_id: XMLTag/Portrait1
 options:
   widget_type: image_image
+  field_settings:
+    progress_indicator: throbber
+    preview_image_style: thumbnail

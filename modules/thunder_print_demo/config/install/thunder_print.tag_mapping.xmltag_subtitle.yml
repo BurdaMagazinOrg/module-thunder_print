@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_subtitle
+mapping_type: text_plain
+mapping:
+  value: XMLTag/Subtitle
+options:
+  widget_type: string_textfield
+  title: false
