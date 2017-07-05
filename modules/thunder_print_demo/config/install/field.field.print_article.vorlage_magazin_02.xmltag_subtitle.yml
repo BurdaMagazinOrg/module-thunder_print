@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.print_article.xmltag_subtitle
+    - thunder_print.print_article_type.vorlage_magazin_02
+id: print_article.vorlage_magazin_02.xmltag_subtitle
+field_name: xmltag_subtitle
+entity_type: print_article
+bundle: vorlage_magazin_02
+label: XMLTag/Subtitle
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

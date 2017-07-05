@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_portrait2
+mapping_type: image
+mapping:
+  target_id: XMLTag/Portrait2
+options:
+  widget_type: image_image

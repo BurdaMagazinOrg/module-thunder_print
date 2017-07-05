@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies: {  }
+id: xmltag_image
+mapping_type: media_entity
+mapping:
+  field_image: XMLTag/Image
+options:
+  widget_type: entity_browser_entity_reference
+  field_settings:
+    entity_browser: image_browser
+    field_widget_display: label
+    field_widget_edit: 1
+    field_widget_remove: 1
+    open: 0
+    selection_mode: selection_append
+  bundle: image

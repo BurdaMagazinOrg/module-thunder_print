@@ -7,4 +7,7 @@ mapping:
   value: XMLTag/CaptionMainImage
 options:
   widget_type: string_textfield
+  field_settings:
+    size: 60
+    placeholder: ''
   title: false

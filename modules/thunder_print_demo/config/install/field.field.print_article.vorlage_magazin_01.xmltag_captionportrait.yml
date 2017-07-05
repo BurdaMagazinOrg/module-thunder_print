@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.print_article.xmltag_captionportrait
+    - thunder_print.print_article_type.vorlage_magazin_01
+id: print_article.vorlage_magazin_01.xmltag_captionportrait
+field_name: xmltag_captionportrait
+entity_type: print_article
+bundle: vorlage_magazin_01
+label: XMLTag/CaptionPortrait1
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

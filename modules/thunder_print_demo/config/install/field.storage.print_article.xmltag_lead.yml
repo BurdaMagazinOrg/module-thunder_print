@@ -8,7 +8,7 @@ field_name: xmltag_lead
 entity_type: print_article
 type: string
 settings:
-  max_length: 255
+  max_length: 1024
   is_ascii: false
   case_sensitive: false
 module: core

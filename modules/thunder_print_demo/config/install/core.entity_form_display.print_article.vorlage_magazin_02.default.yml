@@ -1,0 +1,71 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.print_article.vorlage_magazin_02.xmltag_body
+    - field.field.print_article.vorlage_magazin_02.xmltag_lead
+    - field.field.print_article.vorlage_magazin_02.xmltag_subtitle
+    - field.field.print_article.vorlage_magazin_02.xmltag_title
+    - thunder_print.print_article_type.vorlage_magazin_02
+  module:
+    - text
+id: print_article.vorlage_magazin_02.default
+targetEntityType: print_article
+bundle: vorlage_magazin_02
+mode: default
+content:
+  langcode:
+    type: language_select
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 6
+    region: content
+    third_party_settings: {  }
+  user_id:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  xmltag_body:
+    weight: 3
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  xmltag_lead:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  xmltag_subtitle:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  xmltag_title:
+    weight: 0
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden: {  }

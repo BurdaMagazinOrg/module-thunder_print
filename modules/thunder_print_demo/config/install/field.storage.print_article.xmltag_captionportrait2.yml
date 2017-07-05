@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - thunder_print
+id: print_article.xmltag_captionportrait2
+field_name: xmltag_captionportrait2
+entity_type: print_article
+type: string
+settings:
+  max_length: 1024
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: true
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
