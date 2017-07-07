@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\thunder_print\Plugin\CKeditorPlugin;
+namespace Drupal\thunder_print\Plugin\CKEditorPlugin;
 
 use Drupal\ckeditor\CKEditorPluginContextualInterface;
 use Drupal\ckeditor\CKEditorPluginCssInterface;
