@@ -24,12 +24,19 @@ class IDMSStyle {
   protected $name;
 
   /**
+   * Xml element.
+   *
+   * @var \SimpleXMLElement
+   */
+  protected $fullXml;
+
+  /**
    * IDMSStyle constructor.
    *
    * @param \SimpleXMLElement $element
    *   Xml object.
    */
-  public function __construct(\SimpleXMLElement $element) {
+  public function __construct(\SimpleXMLElement $element, \SimpleXMLElement $fullXml) {
     $this->element = $element;
     $this->name = (string) $element;
   }
@@ -65,5 +72,7 @@ class IDMSStyle {
   public function getClass() {
     return Html::getClass($this->name);
   }
+
+  #public
 
 }

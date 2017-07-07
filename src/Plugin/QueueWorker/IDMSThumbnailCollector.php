@@ -93,6 +93,7 @@ class IDMSThumbnailCollector extends QueueWorkerBase implements ContainerFactory
           $imageStyle->flush($thumbnail->getFileUri());
         }
 
+        $printArticle->image = NULL;
         $printArticle->set('image', $thumbnail);
         $printArticle->save();
       }

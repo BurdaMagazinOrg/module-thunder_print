@@ -3,6 +3,7 @@
 namespace Drupal\thunder_print\Plugin\CKeditorPlugin;
 
 use Drupal\ckeditor\CKEditorPluginContextualInterface;
+use Drupal\ckeditor\CKEditorPluginCssInterface;
 use Drupal\ckeditor\CKEditorPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\editor\Entity\Editor;
@@ -15,7 +16,7 @@ use Drupal\editor\Entity\Editor;
  *   label = @Translation("IDMS style")
  * )
  */
-class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditorPluginContextualInterface {
+class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditorPluginContextualInterface, CKEditorPluginCssInterface {
 
   /**
    * {@inheritdoc}
@@ -43,6 +44,15 @@ class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditor
    */
   public function getFile() {
     return drupal_get_path('module', 'thunder_print') . '/js/plugins/idmsstyle/plugin.js';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCssFiles(Editor $editor) {
+    return [
+      'public://thunder-print-css/fonts.css',
+    ];
   }
 
   /**

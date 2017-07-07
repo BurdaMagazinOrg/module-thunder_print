@@ -40,3 +40,20 @@ entity.print_article_type.collection:
   title: List
   route_name: entity.print_article_type.collection
   base_route: entity.print_article_type.collection
+# Font routing definition
+entity.thunder_print_font.canonical:
+  route_name: entity.thunder_print_font.canonical
+  base_route: entity.thunder_print_font.canonical
+  title: 'View'
+
+entity.thunder_print_font.edit_form:
+  route_name: entity.thunder_print_font.edit_form
+  base_route: entity.thunder_print_font.canonical
+  title: 'Edit'
+
+entity.thunder_print_font.delete_form:
+  route_name:  entity.thunder_print_font.delete_form
+  base_route:  entity.thunder_print_font.canonical
+  title: Delete
+  weight: 10
+

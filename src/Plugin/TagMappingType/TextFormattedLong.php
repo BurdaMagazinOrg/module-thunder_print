@@ -98,6 +98,7 @@ class TextFormattedLong extends TagMappingTypeBase {
           'element' => 'p',
           'attributes' => ['class' => $style->getClass()],
           'name' => $style->getDisplayName(),
+          'styles' => ['font-family' => 'myFirstFont']
         ];
       }
 
