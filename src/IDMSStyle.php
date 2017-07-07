@@ -39,6 +39,7 @@ class IDMSStyle {
   public function __construct(\SimpleXMLElement $element, \SimpleXMLElement $fullXml) {
     $this->element = $element;
     $this->name = (string) $element;
+    $this->fullXml = $fullXml;
   }
 
   /**
@@ -73,6 +74,28 @@ class IDMSStyle {
     return Html::getClass($this->name);
   }
 
-  #public
+  public function getFontFamily() {
+
+    $xpath = "//RootParagraphStyleGroup//ParagraphStyle[@Self='{$this->getName()}']";
+    /** @var \SimpleXMLElement $xmlElement */
+    $xmlElement = $this->fullXml->xpath($xpath)[0];
+
+    return Html::getClass($this->_getFontFamily($this->getName()) . '-' . (string) $xmlElement['FontStyle']);
+  }
+
+  protected function _getFontFamily($name) {
+
+    $xpath = "//RootParagraphStyleGroup//ParagraphStyle[@Self='{$name}']";
+    /** @var \SimpleXMLElement $xmlElement */
+    $xmlElement = $this->fullXml->xpath($xpath)[0];
+
+    if (strpos((string) $xmlElement->Properties->BasedOn, '$ID/[No paragraph style]') !== FALSE) {
+      return (string) $xmlElement->Properties->AppliedFont;
+    }
+    else {
+      return $this->_getFontFamily((string) $xmlElement->Properties->BasedOn);
+    }
+
+  }
 
 }
