@@ -45,7 +45,7 @@ class FontForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
     }
-    $form_state->setRedirect('entity.thunder_print_font.canonical', ['thunder_print_font' => $entity->id()]);
+    $form_state->setRedirect('entity.thunder_print_font.collection');
   }
 
 }

@@ -49,6 +49,6 @@ print_article.settings:
 entity.thunder_print_font.collection:
   title: 'Font list'
   route_name: entity.thunder_print_font.collection
-  description: 'List Font entities'
+  description: 'List fonts'
   parent: thunder_print.manage
   weight: 100
