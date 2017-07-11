@@ -21,10 +21,10 @@ class FontAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\thunder_print\Entity\FontInterface $entity */
     switch ($operation) {
       case 'view':
-        return AccessResult::allowedIfHasPermission($account, 'view published font entities');
+        return AccessResult::forbidden();
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit font entities');
+        return AccessResult::forbidden();
 
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete font entities');

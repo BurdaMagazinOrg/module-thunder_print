@@ -42,14 +42,5 @@ administer font entities:
 delete font entities:
   title: 'Delete Font entities'
 
-edit font entities:
-  title: 'Edit Font entities'
-
 access font overview:
   title: 'Access the Font overview page'
-
-view published font entities:
-  title: 'View published Font entities'
-
-view unpublished font entities:
-  title: 'View unpublished Font entities'
