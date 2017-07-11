@@ -35,6 +35,8 @@ class IDMSStyle {
    *
    * @param \SimpleXMLElement $element
    *   Xml object.
+   * @param \SimpleXMLElement $fullXml
+   *   Complete idms as xml object.
    */
   public function __construct(\SimpleXMLElement $element, \SimpleXMLElement $fullXml) {
     $this->element = $element;
@@ -74,16 +76,31 @@ class IDMSStyle {
     return Html::getClass($this->name);
   }
 
+  /**
+   * Returns the font family and style in the same format it's written to css.
+   *
+   * @return string
+   *   Font family.
+   */
   public function getFontFamily() {
 
     $xpath = "//RootParagraphStyleGroup//ParagraphStyle[@Self='{$this->getName()}']";
     /** @var \SimpleXMLElement $xmlElement */
     $xmlElement = $this->fullXml->xpath($xpath)[0];
 
-    return Html::getClass($this->_getFontFamily($this->getName()) . '-' . (string) $xmlElement['FontStyle']);
+    return Html::getClass($this->getBaseFontFamily($this->getName()) . '-' . (string) $xmlElement['FontStyle']);
   }
 
-  protected function _getFontFamily($name) {
+  /**
+   * Recursive looking for font family.
+   *
+   * @param string $name
+   *   Name of a paragraph style.
+   *
+   * @return string
+   *   Returns the font family.
+   */
+  protected function getBaseFontFamily($name) {
 
     $xpath = "//RootParagraphStyleGroup//ParagraphStyle[@Self='{$name}']";
     /** @var \SimpleXMLElement $xmlElement */
@@ -93,7 +110,7 @@ class IDMSStyle {
       return (string) $xmlElement->Properties->AppliedFont;
     }
     else {
-      return $this->_getFontFamily((string) $xmlElement->Properties->BasedOn);
+      return $this->getBaseFontFamily((string) $xmlElement->Properties->BasedOn);
     }
 
   }

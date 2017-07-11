@@ -17,7 +17,6 @@ class FontListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['name'] = $this->t('Name');
     $header['font'] = $this->t('Font');
     $header['font_style'] = $this->t('Font style');
 
@@ -29,12 +28,11 @@ class FontListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\thunder_print\Entity\Font */
-    $row['name'] = Link::createFromRoute(
-      $entity->label(),
+    $row['font'] = Link::createFromRoute(
+      $entity->get('font')->value,
       'entity.thunder_print_font.edit_form',
       ['thunder_print_font' => $entity->id()]
     );
-    $row['font'] = $entity->get('font')->value;
     $row['font_style'] = $entity->get('font_style')->value;
     return $row + parent::buildRow($entity);
   }

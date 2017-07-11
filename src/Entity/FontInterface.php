@@ -14,25 +14,6 @@ use Drupal\user\EntityOwnerInterface;
 interface FontInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
   /**
-   * Gets the Font name.
-   *
-   * @return string
-   *   Name of the Font.
-   */
-  public function getName();
-
-  /**
-   * Sets the Font name.
-   *
-   * @param string $name
-   *   The Font name.
-   *
-   * @return \Drupal\thunder_print\Entity\FontInterface
-   *   The called Font entity.
-   */
-  public function setName($name);
-
-  /**
    * Gets the Font creation timestamp.
    *
    * @return int
