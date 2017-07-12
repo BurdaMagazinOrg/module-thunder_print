@@ -52,6 +52,7 @@ class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditor
   public function getCssFiles(Editor $editor) {
     return [
       'public://thunder-print-css/fonts.css',
+      'public://thunder-print-css/vorlage-magazin-01.css',
     ];
   }
 

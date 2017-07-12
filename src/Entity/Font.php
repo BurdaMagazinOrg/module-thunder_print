@@ -184,7 +184,7 @@ class Font extends ContentEntityBase implements FontInterface {
 
       /** @var \Drupal\thunder_print\CssFileGeneration $font */
       $font = \Drupal::service('thunder_print.css_generation');
-      $font->generateCssFile();
+      $font->generateFontCssFile();
 
     }
   }

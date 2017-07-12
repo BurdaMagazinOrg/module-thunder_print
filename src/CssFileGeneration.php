@@ -4,6 +4,7 @@ namespace Drupal\thunder_print;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\thunder_print\Entity\PrintArticleTypeInterface;
 
 /**
  * Class CssFileGeneration.
@@ -29,7 +30,7 @@ class CssFileGeneration {
    *
    * @throws \Exception
    */
-  public function generateCssFile() {
+  public function generateFontCssFile() {
 
     $fonts = $this->entityTypeManager->getStorage('thunder_print_font')
       ->loadMultiple();
@@ -39,7 +40,7 @@ class CssFileGeneration {
     foreach ($fonts as $font) {
 
       $path = file_create_url($font->get('file')->entity->uri->value);
-      $fontName = Html::getClass($font->get('font')->value . '-' . $font->get('font_style')->value);
+      $fontName = Html::getClass($font->get('font')->value . '-style-' . $font->get('font_style')->value);
       $css .= "@font-face { font-family: $fontName; src: url($path); }\n";
     }
 
@@ -49,6 +50,42 @@ class CssFileGeneration {
       throw new \Exception("Unable to create directory $destination.");
     }
     file_put_contents($destination . '/fonts.css', $css);
+  }
+
+  /**
+   * Writes a css file for a specific print article type.
+   *
+   * @param \Drupal\thunder_print\Entity\PrintArticleTypeInterface $printArticleType
+   *   The print article type object.
+   *
+   * @throws \Exception
+   */
+  public function generateCssFile(PrintArticleTypeInterface $printArticleType) {
+
+    $filename = Html::getClass($printArticleType->label());
+    $css = '';
+    foreach ($printArticleType->getTags() as $tag) {
+
+      $tag = $tag->getMappingType()
+        ->getMappedTag($printArticleType->getNewIdms(), 'value');
+
+      if (!empty($tag)) {
+
+        foreach ($tag->getParagraphStyles() as $style) {
+          $css .= ".{$style->getClass()} { font-family: {$style->getFontFamilyAndStyle()} }\n";
+          foreach ($tag->getCharacterStyles() as $characterStyle) {
+            $css .= ".{$style->getFontFamily()} .{$characterStyle->getFontFamily()} { font-family: {$style->getFontFamily()}-{$characterStyle->getFontFamily()} }\n";
+          }
+        }
+      }
+    }
+
+    $destination = 'public://thunder-print-css';
+
+    if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+      throw new \Exception("Unable to create directory $destination.");
+    }
+    file_put_contents($destination . DIRECTORY_SEPARATOR . $filename . '.css', $css, FILE_APPEND);
   }
 
 }

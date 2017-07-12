@@ -133,7 +133,7 @@ class IDMSTag {
 
     $styles = [];
     foreach ($xmlElements as $element) {
-      $style = new IDMSStyle($element, $this->idms->getXml());
+      $style = new IDMSParagraphStyle($element, $this->idms->getXml());
       $styles[$style->getName()] = $style;
     }
 
@@ -152,7 +152,7 @@ class IDMSTag {
 
     $styles = [];
     foreach ($xmlElements as $element) {
-      $style = new IDMSStyle($element, $this->idms->getXml());
+      $style = new IDMSCharacterStyle($element, $this->idms->getXml());
       if (strpos($style->getName(), '[No character style]') === FALSE) {
         $styles[$style->getName()] = $style;
       }

@@ -96,16 +96,14 @@ class TextFormattedLong extends TagMappingTypeBase {
       foreach ($tag->getParagraphStyles() as $style) {
         $element['#thunder_print']['styles'][] = [
           'element' => 'p',
-          'attributes' => ['class' => $style->getClass()],
+          'attributes' => ['class' => "{$style->getClass()} {$style->getFontFamily()}"],
           'name' => $style->getDisplayName(),
-          'styles' => ['font-family' => $style->getFontFamily()],
         ];
       }
-
       foreach ($tag->getCharacterStyles() as $style) {
         $element['#thunder_print']['styles'][] = [
           'element' => 'span',
-          'attributes' => ['class' => $style->getClass()],
+          'attributes' => ['class' => "{$style->getClass()} {$style->getFontFamily()}"],
           'name' => $style->getDisplayName(),
         ];
       }

@@ -112,4 +112,28 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    */
   public function hookFieldWidgetFormAlter(array &$element, FormStateInterface $form_state, array $context);
 
+  /**
+   * Retrieve a single tag for the given column.
+   *
+   * @param \Drupal\thunder_print\IDMS $idms
+   *   The IDMS to extract tags from.
+   * @param string $column
+   *   The column of the tag mapping to get tag instance for.
+   *
+   * @return \Drupal\thunder_print\IDMSTag
+   *   Returns a single tag instance or NULL if no mapping tag exists.
+   */
+  public function getMappedTag(IDMS $idms, $column);
+
+  /**
+   * Extract tags from given IDMS that are mapped with this instance.
+   *
+   * @param \Drupal\thunder_print\IDMS $idms
+   *   The IDMS to extract tags from.
+   *
+   * @return \Drupal\thunder_print\IDMSTag[]
+   *   Returns list of mapped Tags, keyed by column.
+   */
+  public function getMappedTags(IDMS $idms);
+
 }
