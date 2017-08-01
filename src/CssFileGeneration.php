@@ -66,14 +66,14 @@ class CssFileGeneration {
     $css = '';
     foreach ($printArticleType->getTags() as $tag) {
 
-      $tag = $tag->getMappingType()
+      $mappedTag = $tag->getMappingType()
         ->getMappedTag($printArticleType->getNewIdms(), 'value');
 
-      if (!empty($tag)) {
+      if (!empty($mappedTag)) {
 
-        foreach ($tag->getParagraphStyles() as $style) {
+        foreach ($mappedTag->getParagraphStyles() as $style) {
           $css .= ".{$style->getClass()} { font-family: {$style->getFontFamilyAndStyle()} }\n";
-          foreach ($tag->getCharacterStyles() as $characterStyle) {
+          foreach ($mappedTag->getCharacterStyles() as $characterStyle) {
             $css .= ".{$style->getFontFamily()} .{$characterStyle->getFontFamily()} { font-family: {$style->getFontFamily()}-{$characterStyle->getFontFamily()} }\n";
           }
         }
