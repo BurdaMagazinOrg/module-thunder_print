@@ -31,3 +31,17 @@ revert all print article revisions:
 delete all print article revisions:
   title: 'Delete all revisions'
   description: 'Role requires permission to <em>view Print article revisions</em> and <em>delete rights</em> for print article entities in question or <em>administer print article entities</em>.'
+
+add font entities:
+  title: 'Add new font'
+
+administer font entities:
+  title: 'Administer fonts'
+  description: 'Allow to access the administration form to configure fonts'
+  restrict access: true
+
+delete font entities:
+  title: 'Delete a font'
+
+access font overview:
+  title: 'Access the font overview page'

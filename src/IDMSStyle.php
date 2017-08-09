@@ -7,7 +7,7 @@ use Drupal\Component\Utility\Html;
 /**
  * Class IDMSStyle.
  */
-class IDMSStyle {
+abstract class IDMSStyle {
 
   /**
    * Xml element.
@@ -24,14 +24,24 @@ class IDMSStyle {
   protected $name;
 
   /**
+   * Xml element.
+   *
+   * @var \SimpleXMLElement
+   */
+  protected $fullXml;
+
+  /**
    * IDMSStyle constructor.
    *
    * @param \SimpleXMLElement $element
    *   Xml object.
+   * @param \SimpleXMLElement $fullXml
+   *   Complete idms as xml object.
    */
-  public function __construct(\SimpleXMLElement $element) {
+  public function __construct(\SimpleXMLElement $element, \SimpleXMLElement $fullXml) {
     $this->element = $element;
     $this->name = (string) $element;
+    $this->fullXml = $fullXml;
   }
 
   /**
@@ -65,5 +75,13 @@ class IDMSStyle {
   public function getClass() {
     return Html::getClass($this->name);
   }
+
+  /**
+   * Returns the font family and style in the same format it's written to css.
+   *
+   * @return string
+   *   Font family.
+   */
+  abstract public function getFontFamily();
 
 }

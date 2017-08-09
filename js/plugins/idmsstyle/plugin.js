@@ -28,6 +28,15 @@
           editor.fire('stylesSet', {styles: fieldStyles, idms: true});
         }
       });
+
+      editor.on('change', function (evt) {
+        var ps = editor.document.$.getElementsByTagName('p');
+        for (var i = 0; i < ps.length; i++) {
+          if (!ps[i].className) {
+            ps[i].className += fieldStyles[0].attributes.class;
+          }
+        }
+      });
     }
   });
 
