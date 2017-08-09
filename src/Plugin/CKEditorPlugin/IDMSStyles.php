@@ -11,6 +11,7 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
+use Drupal\thunder_print\Entity\PrintArticleTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -77,11 +78,14 @@ class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditor
 
     $files = ['public://thunder-print-css/fonts.css'];
 
-    $printArticle = \Drupal::routeMatch()->getParameter('print_article');
+    $printArticle = $this->routeMatch->getParameter('print_article');
+    $printArticleType = $this->routeMatch->getParameter('print_article_type');
     if (!empty($printArticle) && $printArticle instanceof PrintArticleInterface) {
       $files[] = 'public://thunder-print-css/' . Html::getClass($printArticle->bundle()) . '.css';
     }
-
+    elseif (!empty($printArticleType) && $printArticleType instanceof PrintArticleTypeInterface) {
+      $files[] = 'public://thunder-print-css/' . Html::getClass($printArticleType->id()) . '.css';
+    }
     return $files;
   }
 
