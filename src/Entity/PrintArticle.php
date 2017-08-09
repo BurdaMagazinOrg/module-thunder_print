@@ -219,8 +219,7 @@ class PrintArticle extends RevisionableContentEntityBase implements PrintArticle
       ]);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Print article is published.'))
+      ->setLabel(t('Published'))
       ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE)
       ->setDisplayOptions('form', [
