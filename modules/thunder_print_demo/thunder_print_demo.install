@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * @file
+ * Thunder for Print install hooks.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function thunder_print_demo_uninstall() {
+
+  /** @var \Drupal\Core\Entity\EntityRepositoryInterface $entityRepository */
+  $entityRepository = \Drupal::service('entity.repository');
+
+  $files = [
+    '49d629d3-9841-47c6-9674-070c3d04f258',
+    '67f40833-b50c-4523-8484-e277ff99be11',
+    'aa3d5671-0974-4bc6-9022-95b9a8136f0c',
+    'cf667873-da6a-4e32-95cd-0980d6725269',
+  ];
+  foreach ($files as $file) {
+    $entityRepository->loadEntityByUuid('file', $file)->delete();
+  }
+
+  $files = ['dcd616b2-f61d-41c4-ad99-266d9b938ccc'];
+  foreach ($files as $file) {
+    $entityRepository->loadEntityByUuid('print_article', $file)->delete();
+  }
+
+  /** @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory */
+  $configFactory = \Drupal::configFactory();
+  $logger = \Drupal::logger('thunder_print_demo');
+
+  $config = [
+    'core.entity_form_display.print_article.vorlage_magazin_01.default',
+    'core.entity_form_display.print_article.vorlage_magazin_02.default',
+    'field.field.print_article.vorlage_magazin_01.xmltag_body',
+    'field.field.print_article.vorlage_magazin_01.xmltag_captionportrait',
+    'field.field.print_article.vorlage_magazin_01.xmltag_captionportrait2',
+    'field.field.print_article.vorlage_magazin_01.xmltag_lead',
+    'field.field.print_article.vorlage_magazin_01.xmltag_mainimage',
+    'field.field.print_article.vorlage_magazin_01.xmltag_portrait',
+    'field.field.print_article.vorlage_magazin_01.xmltag_portrait2',
+    'field.field.print_article.vorlage_magazin_01.xmltag_quote1',
+    'field.field.print_article.vorlage_magazin_01.xmltag_quote2',
+    'field.field.print_article.vorlage_magazin_01.xmltag_subtitle',
+    'field.field.print_article.vorlage_magazin_01.xmltag_title',
+    'field.field.print_article.vorlage_magazin_02.xmltag_body',
+    'field.field.print_article.vorlage_magazin_02.xmltag_lead',
+    'field.field.print_article.vorlage_magazin_02.xmltag_subtitle',
+    'field.field.print_article.vorlage_magazin_02.xmltag_title',
+    'field.storage.print_article.xmltag_body',
+    'field.storage.print_article.xmltag_captionportrait',
+    'field.storage.print_article.xmltag_captionportrait2',
+    'field.storage.print_article.xmltag_lead',
+    'field.storage.print_article.xmltag_mainimage',
+    'field.storage.print_article.xmltag_portrait',
+    'field.storage.print_article.xmltag_portrait2',
+    'field.storage.print_article.xmltag_quote1',
+    'field.storage.print_article.xmltag_quote2',
+    'field.storage.print_article.xmltag_subtitle',
+    'field.storage.print_article.xmltag_title',
+    'thunder_print.print_article_type.vorlage_magazin_01',
+    'thunder_print.print_article_type.vorlage_magazin_02',
+    'thunder_print.tag_mapping.xmltag_body',
+    'thunder_print.tag_mapping.xmltag_captionmainimage',
+    'thunder_print.tag_mapping.xmltag_captionportrait',
+    'thunder_print.tag_mapping.xmltag_captionportrait2',
+    'thunder_print.tag_mapping.xmltag_image',
+    'thunder_print.tag_mapping.xmltag_lead',
+    'thunder_print.tag_mapping.xmltag_mainimage',
+    'thunder_print.tag_mapping.xmltag_portrait',
+    'thunder_print.tag_mapping.xmltag_portrait2',
+    'thunder_print.tag_mapping.xmltag_quote1',
+    'thunder_print.tag_mapping.xmltag_quote2',
+    'thunder_print.tag_mapping.xmltag_subtitle',
+    'thunder_print.tag_mapping.xmltag_title',
+  ];
+
+  foreach ($config as $tour) {
+    try {
+      $configFactory->getEditable($tour)->delete();
+    }
+    catch (\Exception $e) {
+      $logger->warning(sprintf('Unable to uninstall config: %s.', $tour));
+    }
+  }
+}
