@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\thunder_print\Ajax\QuickPreviewCommand;
-use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -23,6 +22,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @ingroup thunder_print
  */
 class PrintArticleForm extends ContentEntityForm {
+
+  use PrintArticleFormTrait;
 
   const EMPTY_IMAGE_DATA_URI = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
@@ -208,29 +209,6 @@ class PrintArticleForm extends ContentEntityForm {
         ]));
     }
     $form_state->setRedirect('entity.print_article.canonical', ['print_article' => $entity->id()]);
-  }
-
-  /**
-   * Queues the preview image generation for a saved article.
-   *
-   * @param \Drupal\thunder_print\Entity\PrintArticleInterface $article
-   *   Article object.
-   *
-   * @return string
-   *   Job ID returned by the Indesign server.
-   */
-  protected function queuePreviewImageCreation(PrintArticleInterface $article) {
-    $jobId = $this->indesignServer->createIdmsJob($article);
-
-    /** @var \Drupal\Core\Queue\QueueInterface $queue */
-    $queue = $this->queueFactory->get('thunder_print_idms_thumbnail_collector');
-    $item = [
-      'job_id' => $jobId,
-      'print_article_id' => $article->id(),
-    ];
-
-    $queue->createItem($item);
-    return $jobId;
   }
 
   /**

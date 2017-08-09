@@ -80,7 +80,7 @@ class ZipArchivedBuilder extends IdmsBuilderBase {
       $field = $printArticle->{$tagMapping->id()};
 
       $mappingType = $tagMapping->getMappingType();
-      if (($fieldItem = $field->first()) && $mappingType instanceof AdditionalFilesInterface) {
+      if ($field && ($fieldItem = $field->first()) && $mappingType instanceof AdditionalFilesInterface) {
 
         /** @var \Drupal\file\FileInterface $file */
         foreach ($mappingType->getAdditionalFiles($idms, $fieldItem->getValue()) as $file) {
