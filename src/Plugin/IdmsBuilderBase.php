@@ -73,7 +73,7 @@ abstract class IdmsBuilderBase extends PluginBase implements IdmsBuilderInterfac
       /** @var \Drupal\Core\Field\FieldItemList $field */
       $field = $printArticle->{$tagMapping->id()};
 
-      if ($fieldItem = $field->first()) {
+      if ($field && ($fieldItem = $field->first())) {
         $mappingType = $tagMapping->getMappingType();
 
         $idms = $this->replaceItem($idms, $fieldItem, $mappingType);

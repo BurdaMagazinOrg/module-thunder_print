@@ -5,6 +5,8 @@ namespace Drupal\thunder_print\Form;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\thunder_print\IndesignServer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class PrintArticleSwitchTypeForm extends FormBase {
 
+  use PrintArticleFormTrait;
+
   /**
    * The entity type manager service.
    *
@@ -23,14 +27,24 @@ class PrintArticleSwitchTypeForm extends FormBase {
    */
   protected $entityTypeManager;
 
+  protected $indesignServer;
+
+  protected $queueFactory;
+
   /**
    * PrintArticleSwitchTypeForm constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager service.
+   * @param \Drupal\thunder_print\IndesignServer $indesignServer
+   *   The indesign server service.
+   * @param \Drupal\Core\Queue\QueueFactory $queueFactory
+   *   Queue service.
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, IndesignServer $indesignServer, QueueFactory $queueFactory) {
     $this->entityTypeManager = $entityTypeManager;
+    $this->indesignServer = $indesignServer;
+    $this->queueFactory = $queueFactory;
   }
 
   /**
@@ -38,7 +52,9 @@ class PrintArticleSwitchTypeForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('thunder_print.indesign_server'),
+      $container->get('queue')
     );
   }
 
@@ -141,6 +157,8 @@ class PrintArticleSwitchTypeForm extends FormBase {
       $print_article->setRevisionUserId($this->currentUser()->id());
 
       $print_article->save();
+
+      $this->queuePreviewImageCreation($print_article);
 
       $form_state->setRedirectUrl($print_article->toUrl('edit-form'));
     }
