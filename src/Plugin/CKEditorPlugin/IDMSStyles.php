@@ -6,10 +6,11 @@ use Drupal\ckeditor\CKEditorPluginContextualInterface;
 use Drupal\ckeditor\CKEditorPluginCssInterface;
 use Drupal\ckeditor\CKEditorPluginInterface;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\editor\Entity\Editor;
+use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,23 +23,23 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditorPluginContextualInterface, CKEditorPluginCssInterface, ContainerFactoryPluginInterface {
 
-  protected $entityTypeManager;
+  protected $routeMatch;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch) {
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityTypeManager = $entityTypeManager;
+    $this->routeMatch = $routeMatch;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition, $container->get('entity_type.manager'));
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('current_route_match'));
   }
 
   /**
@@ -76,11 +77,9 @@ class IDMSStyles extends PluginBase implements CKEditorPluginInterface, CKEditor
 
     $files = ['public://thunder-print-css/fonts.css'];
 
-    $printArticleTypes = $this->entityTypeManager->getStorage('print_article_type')
-      ->loadMultiple();
-
-    foreach ($printArticleTypes as $printArticleType) {
-      $files[] = 'public://thunder-print-css/' . Html::getClass($printArticleType->label());
+    $printArticle = \Drupal::routeMatch()->getParameter('print_article');
+    if (!empty($printArticle) && $printArticle instanceof PrintArticleInterface) {
+      $files[] = 'public://thunder-print-css/' . Html::getClass($printArticle->bundle()) . '.css';
     }
 
     return $files;
