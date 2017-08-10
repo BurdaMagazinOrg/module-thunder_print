@@ -18,9 +18,23 @@ function thunder_print_demo_uninstall() {
     '67f40833-b50c-4523-8484-e277ff99be11',
     'aa3d5671-0974-4bc6-9022-95b9a8136f0c',
     'cf667873-da6a-4e32-95cd-0980d6725269',
+    '4471e284-e4e8-44fb-8bf8-aefd5374ffc9',
+    'a2c25c45-0e4c-4224-9178-7e7995ea3d54',
+    'b2fe8034-5837-470d-9b68-5bcd5f7daa96',
+    'c5bf62ad-9a89-4d8c-b583-a13c0efc6862',
   ];
   foreach ($files as $file) {
     $entityRepository->loadEntityByUuid('file', $file)->delete();
+  }
+
+  $files = [
+    '00bb6bef-d04e-43ec-8d47-ef7921223392',
+    '222d9e4f-144e-4321-9830-10a9b29b4428',
+    '5386004e-1063-4fa1-a4bb-b94883ab7f63',
+    'e5c4bc04-6b98-4aa8-8d8b-425d80d8d6b4',
+  ];
+  foreach ($files as $file) {
+    $entityRepository->loadEntityByUuid('thunder_print_font', $file)->delete();
   }
 
   $files = ['dcd616b2-f61d-41c4-ad99-266d9b938ccc'];

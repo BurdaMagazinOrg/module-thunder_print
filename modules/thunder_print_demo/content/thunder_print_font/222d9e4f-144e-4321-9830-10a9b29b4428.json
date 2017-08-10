@@ -1,0 +1,75 @@
+{
+    "_links": {
+        "self": {
+            "href": "http:\/\/default\/admin\/structure\/thunder_print\/thunder_print_font\/4?_format=hal_json"
+        },
+        "type": {
+            "href": "http:\/\/drupal.org\/rest\/type\/thunder_print_font\/thunder_print_font"
+        },
+        "http:\/\/drupal.org\/rest\/relation\/thunder_print_font\/thunder_print_font\/user_id": [
+            {
+                "href": "http:\/\/default\/user\/1?_format=hal_json",
+                "lang": "en"
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/thunder_print_font\/thunder_print_font\/file": [
+            {
+                "href": "http:\/\/default\/sites\/default\/files\/thunder-print-fonts\/HelveticaNeueLTStd-Th.otf"
+            }
+        ]
+    },
+    "uuid": [
+        {
+            "value": "222d9e4f-144e-4321-9830-10a9b29b4428"
+        }
+    ],
+    "_embedded": {
+        "http:\/\/drupal.org\/rest\/relation\/thunder_print_font\/thunder_print_font\/user_id": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "http:\/\/default\/user\/1?_format=hal_json"
+                    },
+                    "type": {
+                        "href": "http:\/\/drupal.org\/rest\/type\/user\/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "9b5d471f-098c-43f5-bb0c-99621f187ff1"
+                    }
+                ],
+                "lang": "en"
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/thunder_print_font\/thunder_print_font\/file": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "http:\/\/default\/sites\/default\/files\/thunder-print-fonts\/HelveticaNeueLTStd-Th.otf"
+                    },
+                    "type": {
+                        "href": "http:\/\/drupal.org\/rest\/type\/file\/file"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "c5bf62ad-9a89-4d8c-b583-a13c0efc6862"
+                    }
+                ],
+                "display": "1",
+                "description": ""
+            }
+        ]
+    },
+    "font": [
+        {
+            "value": "Helvetica Neue LT Std"
+        }
+    ],
+    "font_style": [
+        {
+            "value": "35 Thin"
+        }
+    ]
+}
