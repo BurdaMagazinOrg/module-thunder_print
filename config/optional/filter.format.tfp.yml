@@ -4,4 +4,13 @@ dependencies: {  }
 name: TfP
 format: tfp
 weight: 0
-filters: {  }
+filters:
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<p class> <span class>'
+      filter_html_help: false
+      filter_html_nofollow: false
