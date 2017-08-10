@@ -3,13 +3,11 @@
 namespace Drupal\thunder_print\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\thunder_print\Ajax\QuickPreviewCommand;
 use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,8 +22,6 @@ use Symfony\Component\HttpFoundation\Response;
 class PrintArticleForm extends ContentEntityForm {
 
   use PrintArticleFormTrait;
-
-  const EMPTY_IMAGE_DATA_URI = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
   protected $httpClient;
 
@@ -107,7 +103,7 @@ class PrintArticleForm extends ContentEntityForm {
       '#optional' => TRUE,
     ];
 
-    $image_url = ($this->entity->get('image')->entity) ? $this->entity->get('image')->entity->uri->value : static::EMPTY_IMAGE_DATA_URI;
+    $image_url = ($this->entity->get('image')->entity) ? $this->entity->get('image')->entity->uri->value : static::$emptyImagaDataUri;
     // Fieldset for print article preview.
     $form['quick_preview'] = [
       '#type' => 'fieldset',
@@ -224,19 +220,7 @@ class PrintArticleForm extends ContentEntityForm {
    */
   public function ajaxQuickPreviewCallback(array &$form, FormStateInterface $form_state) {
 
-    drupal_get_messages();
-
-    try {
-      $jobId = $this->indesignServer->createIdmsJob($this->entity);
-
-      $response = new AjaxResponse();
-      $response->addCommand(new QuickPreviewCommand($jobId, '#thunder-print-preview-image'));
-
-      return $response;
-    }
-    catch (\Exception $e) {
-      drupal_set_message($this->t('Error while generating preview.'), 'error');
-    }
+    return $this->genericAjaxQuickPreviewCallback($this->entity);
   }
 
   /**

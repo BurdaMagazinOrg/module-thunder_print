@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IndesignServer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -70,18 +71,13 @@ class PrintArticleSwitchTypeForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, $print_article = NULL) {
 
-    $print_article = $this->entityTypeManager->getStorage('print_article')
-      ->load($print_article);
+    drupal_set_message($this->t("Attention! It's not possible to switch back after switching to an other Snippet-Template."), 'warning');
 
-    if ($print_article) {
-
-      /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $print_article_type */
-      $print_article_type = $this->entityTypeManager->getStorage('print_article_type')
-        ->load($print_article->bundle());
+    if ($print_article = $this->entityTypeManager->getStorage('print_article')->load($print_article)) {
 
       $options = [];
       /** @var \Drupal\thunder_print\Entity\PrintArticleTypeInterface $entity */
-      foreach ($print_article_type->getSwitchableBundles() as $entity) {
+      foreach ($print_article->type->entity->getSwitchableBundles() as $entity) {
         $options[$entity->id()] = $entity->label();
       }
 
@@ -91,6 +87,29 @@ class PrintArticleSwitchTypeForm extends FormBase {
           '#title' => $this->t('New snippet template'),
           '#options' => $options,
           '#required' => TRUE,
+          '#ajax' => [
+            'callback' => '::ajaxQuickPreviewCallback',
+          ],
+        ];
+
+        $form['#attached']['library'][] = 'thunder_print/thunder_print.ajax';
+
+        $form['quick_preview'] = [
+          '#type' => 'fieldset',
+          '#title' => $this->t('Quick preview'),
+          '#group' => 'advanced',
+        ];
+
+        $form['quick_preview']['preview'] = [
+          '#theme' => 'image',
+          '#uri' => static::$emptyImagaDataUri,
+          '#group' => 'thunder_print_preview',
+          '#attributes' => [
+            'id' => 'thunder-print-preview-image',
+            'style' => 'max-width: 100%',
+          ],
+          '#prefix' => '<a href="#" data-featherlight="#thunder-print-preview-image">',
+          '#suffix' => '</a>',
         ];
 
         $form['submit'] = [
@@ -148,13 +167,7 @@ class PrintArticleSwitchTypeForm extends FormBase {
       ->load($form_state->getValue('print_article'));
 
     if ($print_article && $new_print_type) {
-      $print_article->type = $new_print_type;
-
-      $print_article->setNewRevision();
-
-      // If a new revision is created, save the current user as revision author.
-      $print_article->setRevisionCreationTime(REQUEST_TIME);
-      $print_article->setRevisionUserId($this->currentUser()->id());
+      $print_article = $this->switchTypeOfPrintArticle($print_article, $new_print_type);
 
       $print_article->save();
 
@@ -162,6 +175,53 @@ class PrintArticleSwitchTypeForm extends FormBase {
 
       $form_state->setRedirectUrl($print_article->toUrl('edit-form'));
     }
+  }
+
+  /**
+   * Switches the bundle type of a print article.
+   *
+   * @param \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle
+   *   Print article.
+   * @param string $newType
+   *   Type to switch.
+   *
+   * @return \Drupal\thunder_print\Entity\PrintArticleInterface
+   *   Switched article.
+   */
+  protected function switchTypeOfPrintArticle(PrintArticleInterface $printArticle, $newType) {
+    $printArticle->type = $newType;
+
+    $printArticle->setNewRevision();
+
+    // If a new revision is created, save the current user as revision author.
+    $printArticle->setRevisionCreationTime(REQUEST_TIME);
+    $printArticle->setRevisionUserId($this->currentUser()->id());
+
+    return $printArticle;
+  }
+
+  /**
+   * Grab a quick preview from InDesign server.
+   *
+   * @param array $form
+   *   Form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   Response with command.
+   */
+  public function ajaxQuickPreviewCallback(array &$form, FormStateInterface $form_state) {
+
+    /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $printArticle */
+    $printArticle = $this->entityTypeManager->getStorage('print_article')
+      ->load($form_state->getValue('print_article'));
+
+    $new_print_type = $form_state->getValue('new_print_type');
+
+    $this->entity = $this->switchTypeOfPrintArticle($printArticle, $new_print_type);
+
+    return $this->genericAjaxQuickPreviewCallback($printArticle);
   }
 
 }
