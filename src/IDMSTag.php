@@ -71,11 +71,11 @@ class IDMSTag {
 
     $value = str_replace('&nbsp;', ' ', $value);
 
-    foreach ($this->getCharacterStyles() as $characterStyle) {
-      $value = str_replace($characterStyle->getClass(), $characterStyle->getName(), $value);
-    }
-    foreach ($this->getParagraphStyles() as $paragraphsStyle) {
-      $value = str_replace($paragraphsStyle->getClass(), $paragraphsStyle->getName(), $value);
+    $styles = array_merge($this->getCharacterStyles(), $this->getParagraphStyles());
+    /** @var \Drupal\thunder_print\IDMSStyle $style */
+    foreach ($styles as $style) {
+      $value = str_replace($style->getClass(), $style->getName(), $value);
+      $value = str_replace(' ' . $style->getFontFamily(), '', $value);
     }
 
     $xpath = "//Story//XMLElement[@MarkupTag='{$this->getSelf()}']";
@@ -107,7 +107,7 @@ class IDMSTag {
 
     $value = preg_replace('/<span class="(.+?)">(.+?)<\/span>/ims', "<CharacterStyleRange AppliedCharacterStyle=\"$1\"><Content>$2</Content></CharacterStyleRange>", $value);
     $value = preg_replace('/<p class="(.+?)">(.+?)<\/p>/ims', "<ParagraphStyleRange AppliedParagraphStyle=\"$1\">$2<Br/></ParagraphStyleRange>", $value);
-    $value = preg_replace("/<p>(.*?)<\/p>/ims", "", $value);
+    $value = preg_replace("/<p>(.*?)<\/p>/ims", "$1", $value);
 
     $doc = simplexml_load_string($value);
 
