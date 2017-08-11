@@ -24,7 +24,10 @@ function thunder_print_demo_uninstall() {
     'c5bf62ad-9a89-4d8c-b583-a13c0efc6862',
   ];
   foreach ($files as $file) {
-    $entityRepository->loadEntityByUuid('file', $file)->delete();
+    $file = $entityRepository->loadEntityByUuid('file', $file);
+    if ($file) {
+      $file->delete();
+    }
   }
 
   $files = [
@@ -34,12 +37,18 @@ function thunder_print_demo_uninstall() {
     'e5c4bc04-6b98-4aa8-8d8b-425d80d8d6b4',
   ];
   foreach ($files as $file) {
-    $entityRepository->loadEntityByUuid('thunder_print_font', $file)->delete();
+    $file = $entityRepository->loadEntityByUuid('thunder_print_font', $file);
+    if ($file) {
+      $file->delete();
+    }
   }
 
   $files = ['dcd616b2-f61d-41c4-ad99-266d9b938ccc'];
   foreach ($files as $file) {
-    $entityRepository->loadEntityByUuid('print_article', $file)->delete();
+    $file = $entityRepository->loadEntityByUuid('print_article', $file);
+    if ($file) {
+      $file->delete();
+    }
   }
 
   /** @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory */
