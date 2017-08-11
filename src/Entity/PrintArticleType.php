@@ -264,9 +264,9 @@ class PrintArticleType extends ConfigEntityBundleBase implements PrintArticleTyp
     if (!$update) {
       $this->createBundleFields();
 
-      /** @var \Drupal\thunder_print\CssFileGeneration $font */
-      $font = \Drupal::service('thunder_print.css_generation');
-      $font->generateCssFile($this);
+      /** @var \Drupal\thunder_print\CssFileGeneration $cssFileGeneration */
+      $cssFileGeneration = \Drupal::service('thunder_print.css_generation');
+      $cssFileGeneration->generateCssFile($this);
     }
   }
 
