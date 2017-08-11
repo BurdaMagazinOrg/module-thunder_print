@@ -33,7 +33,7 @@
         var ps = editor.document.$.getElementsByTagName('p');
         for (var i = 0; i < ps.length; i++) {
           if (!ps[i].className) {
-            for (var j = 0; j< fieldStyles.length; j++) {
+            for (var j = 0; j < fieldStyles.length; j++) {
               var style = fieldStyles[j];
               if (style.element === 'p') {
                 ps[i].className += style.attributes.class;
