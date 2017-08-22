@@ -73,6 +73,14 @@ interface TagMappingInterface extends ConfigEntityInterface {
   public function getOptions();
 
   /**
+   * Retrieve the convert targets for this mapping instance.
+   *
+   * @return array
+   *   List of key value pairs of targets.
+   */
+  public function getConvertTargets();
+
+  /**
    * Retrieve a single option value for this mapping instance.
    *
    * @param string $key

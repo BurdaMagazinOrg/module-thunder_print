@@ -91,6 +91,13 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
   protected $validated = FALSE;
 
   /**
+   * Holds optional plugin-specific options as key value pairs.
+   *
+   * @var array
+   */
+  protected $convert_targets = [];
+
+  /**
    * {@inheritdoc}
    */
   public function label() {
@@ -157,6 +164,13 @@ class TagMapping extends ConfigEntityBase implements TagMappingInterface {
       );
       return $plugin;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConvertTargets() {
+    return $this->convert_targets;
   }
 
   /**

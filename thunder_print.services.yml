@@ -19,3 +19,6 @@ services:
   thunder_print.css_generation:
     class: Drupal\thunder_print\CssFileGeneration
     arguments: ['@entity_type.manager']
+  thunder_print.article_converter:
+    class: Drupal\thunder_print\ArticleConverter
+    arguments: ['@entity_field.manager', '@entity_type.manager', '@plugin.manager.entity_reference_selection']
