@@ -12,21 +12,11 @@ entity.print_article.edit_form:
   route_name: entity.print_article.edit_form
   base_route: entity.print_article.canonical
   title: 'Edit'
-entity.print_article.download:
-  title: 'Download IDMS file'
-  route_name: thunder_print.print_article.downloadIdms
-  base_route: entity.print_article.canonical
-  weight: 5
 entity.print_article.switch:
   title: 'Switch template'
   route_name: thunder_print.print_article.switchType
   base_route: entity.print_article.canonical
   weight: 6
-entity.print_article.delete_form:
-  route_name:  entity.print_article.delete_form
-  base_route:  entity.print_article.canonical
-  title: Delete
-  weight: 10
 
 entity.print_article_type.edit_form:
   title: 'Edit'

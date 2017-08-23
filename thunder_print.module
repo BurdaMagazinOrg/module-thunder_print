@@ -62,6 +62,14 @@ function thunder_print_entity_operation(EntityInterface $entity) {
       'url' => Url::fromRoute('thunder_print.print_article.downloadIdms', ['print_article' => $entity->id()]),
       'weight' => 30,
     ];
+    if ($entity->type->entity->getSwitchableBundles()) {
+      $operations['switch_type'] = [
+        'title' => t('Switch template'),
+        'url' => Url::fromRoute('thunder_print.print_article.switchType', ['print_article' => $entity->id()]),
+        'weight' => 30,
+      ];
+    }
+
   }
 
   return $operations;

@@ -2,10 +2,12 @@
 
 namespace Drupal\thunder_print\Form;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Drupal\thunder_print\IndesignServer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -222,6 +224,24 @@ class PrintArticleSwitchTypeForm extends FormBase {
     $this->entity = $this->switchTypeOfPrintArticle($printArticle, $new_print_type);
 
     return $this->genericAjaxQuickPreviewCallback($printArticle);
+  }
+
+  /**
+   * Checks access for a specific request.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Run access checks for this account.
+   * @param int $print_article
+   *   Print article id.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Access result.
+   */
+  public function access(AccountInterface $account, $print_article = NULL) {
+    /** @var \Drupal\thunder_print\Entity\PrintArticleInterface $print_article */
+    $print_article = $this->entityTypeManager->getStorage('print_article')
+      ->load($print_article);
+    return AccessResult::allowedIf($print_article && $print_article->type->entity->getSwitchableBundles());
   }
 
 }

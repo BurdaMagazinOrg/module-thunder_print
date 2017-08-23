@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Url;
 use Drupal\thunder_print\IndesignServer;
 use GuzzleHttp\ClientInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -148,6 +149,25 @@ class PrintArticleForm extends ContentEntityForm {
     $form['status']['#group'] = 'footer';
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function actions(array $form, FormStateInterface $form_state) {
+    $actions = parent::actions($form, $form_state);
+
+    $actions['download'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Download idms'),
+      '#access' => !$this->entity->isNew(),
+      '#attributes' => [
+        'class' => ['button'],
+      ],
+      '#url' => Url::fromRoute('thunder_print.print_article.downloadIdms', ['print_article' => $this->entity->id()]),
+    ];
+
+    return $actions;
   }
 
   /**
