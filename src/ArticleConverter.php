@@ -62,9 +62,16 @@ class ArticleConverter {
     foreach ($printArticleType->getMappings() as $fieldName => $mapping) {
 
       foreach ($mapping->getConvertTargets() as $target) {
-        if ($target['entity_type'] == $entity_type_id . ':' . $bundle) {
-          $paths = explode('::', $target['property_path']);
-          $this->setValue($paths, $entity, $printArticle->{$fieldName});
+        /** @var \Drupal\Core\Field\FieldItemList $fieldItemList */
+        $fieldItemList = $printArticle->{$fieldName};
+
+        $property_path = explode('.', $target);
+
+        $target_entity_type = array_shift($property_path);
+        $target_bundle = array_shift($property_path);
+
+        if ($target_entity_type == $entity_type_id && $bundle == $target_bundle && !$fieldItemList->isEmpty()) {
+          $this->setValue($property_path, $entity, $printArticle->{$fieldName});
         }
       }
     }
@@ -88,7 +95,7 @@ class ArticleConverter {
 
     $path = array_shift($property_path);
 
-    list($fieldName, $bundle) = explode(':', $path);
+    list($fieldName, $bundle) = array_pad(explode(':', $path), 2, NULL);
 
     if (empty($fields[$fieldName])) {
       return;

@@ -24,7 +24,7 @@ thunder_print.tag_mapping.*:
       type: sequence
       label: 'Convert targets'
       sequence:
-        type: thunder_print.tag_mapping_convert_targets
+        type: string
         # For >= 8.4
         orderby: key
 
@@ -47,14 +47,4 @@ thunder_print.tag_mapping_options.text_plain:
   mapping:
     title:
       type: boolean
-      label: 'Can be used as title'
-
-thunder_print.tag_mapping_convert_targets:
-  type: mapping
-  mapping:
-    entity_type:
-      type: string
-      label: 'Can be used as title'
-    property_path:
-      type: string
       label: 'Can be used as title'

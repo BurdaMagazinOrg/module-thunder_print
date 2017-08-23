@@ -4,7 +4,6 @@ namespace Drupal\thunder_print\Form;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\thunder_print\MachineNameGeneratorInterface;
 use Drupal\thunder_print\Plugin\TagMappingTypeManager;
@@ -121,18 +120,23 @@ class TagMappingForm extends EntityForm {
       ];
 
       $targets = $this->entity->getConvertTargets();
-      $target = reset($targets);
-      $form['configuration']['convert_targets']['entity_type'] = [
-        '#type' => 'textfield',
-        '#title' => 'entity type',
-        '#default_value' => !empty($target['entity_type']) ? $target['entity_type'] : '',
-      ];
-      $form['configuration']['convert_targets']['property_path'] = [
-        '#type' => 'textfield',
-        '#title' => 'property_path',
-        '#default_value' => !empty($target['property_path']) ? $target['property_path'] : '',
-      ];
-
+      if ($targets) {
+        foreach ($targets as $target) {
+          $form['configuration']['convert_targets'][] = [
+            '#type' => 'textfield',
+            '#title' => 'property_path',
+            '#default_value' => $target,
+            '#autocomplete_route_name' => 'thunder_print.tag_mapping.autocomplete',
+          ];
+        }
+      }
+      else {
+        $form['configuration']['convert_targets'][] = [
+          '#type' => 'textfield',
+          '#title' => 'property_path',
+          '#autocomplete_route_name' => 'thunder_print.tag_mapping.autocomplete',
+        ];
+      }
     };
 
     return $form;
@@ -173,14 +177,6 @@ class TagMappingForm extends EntityForm {
    */
   public static function ajaxCallback(array $form, FormStateInterface $form_state) {
     return $form['configuration'];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function copyFormValuesToEntity(EntityInterface $entity, array $form, FormStateInterface $form_state) {
-    parent::copyFormValuesToEntity($entity, $form, $form_state);
-    $entity->set('convert_targets', [$form_state->getValue('convert_targets')]);
   }
 
   /**
