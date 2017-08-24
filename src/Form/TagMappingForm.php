@@ -117,26 +117,41 @@ class TagMappingForm extends EntityForm {
         '#tree' => TRUE,
         '#type' => 'fieldset',
         '#title' => $this->t('Convert targets'),
+        '#prefix' => '<div id="modules-wrapper">',
+        '#suffix' => '</div>',
       ];
 
+      $form['#attached']['library'][] = 'thunder_print/thunder_print.autocomplete';
+
       $targets = $this->entity->getConvertTargets();
-      if ($targets) {
-        foreach ($targets as $target) {
-          $form['configuration']['convert_targets'][] = [
-            '#type' => 'textfield',
-            '#title' => 'property_path',
-            '#default_value' => $target,
-            '#autocomplete_route_name' => 'thunder_print.tag_mapping.autocomplete',
-          ];
-        }
+      $max = $form_state->get('fields_count');
+      if (is_null($max)) {
+        $max = max(1, count($targets));
+        $form_state->set('fields_count', $max);
       }
-      else {
+
+      for ($i = 0; $i < $max; $i++) {
         $form['configuration']['convert_targets'][] = [
           '#type' => 'textfield',
-          '#title' => 'property_path',
+          '#title' => $this->t('Property path'),
+          '#default_value' => !empty($targets[$i]) ? $targets[$i] : '',
           '#autocomplete_route_name' => 'thunder_print.tag_mapping.autocomplete',
+          '#attributes' => [
+            'class' => ['property_path-autocomplete'],
+          ],
         ];
       }
+
+      $form['configuration']['convert_targets']['more_fields'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Add one'),
+        '#submit' => ['::addFieldSubmit'],
+
+        '#ajax' => [
+          'callback' => '::addFieldAjaxCallback',
+          'wrapper' => 'modules-wrapper',
+        ],
+      ];
     };
 
     return $form;
@@ -170,6 +185,22 @@ class TagMappingForm extends EntityForm {
     parent::submitForm($form, $form_state);
     $this->entity->validate();
     $this->buildEntityId();
+  }
+
+  /**
+   * Ajax submit to add new field.
+   */
+  public function addFieldSubmit(array &$form, FormStateInterface &$form_state) {
+    $max = $form_state->get('fields_count') + 1;
+    $form_state->set('fields_count', $max);
+    $form_state->setRebuild(TRUE);
+  }
+
+  /**
+   * Callback for ajax requests.
+   */
+  public static function addFieldAjaxCallback(array $form, FormStateInterface $form_state) {
+    return $form['configuration']['convert_targets'];
   }
 
   /**

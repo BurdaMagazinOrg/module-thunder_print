@@ -6,6 +6,7 @@ use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,16 +35,21 @@ class TagMappingController extends ControllerBase {
     if (substr_count($string, '.') == 0) {
 
       $definitions = $this->entityTypeManager()->getDefinitions();
+
+      $definitions = array_filter($definitions, function (EntityTypeInterface $definition) use ($string) {
+        return (($definition instanceof ContentEntityTypeInterface && $definition->getBundleEntityType()) &&
+          (empty($string) ||
+            (strpos(strtolower($definition->getLabel()), strtolower($string)) !== FALSE ||
+              strpos(strtolower($definition->id()), strtolower($string)) !== FALSE)));
+      });
+
       foreach ($definitions as $definition) {
-        if ($definition instanceof ContentEntityTypeInterface && $definition->getBundleEntityType() &&
-          (strpos(strtolower($definition->getLabel()), strtolower($string)) !== FALSE ||
-            strpos(strtolower($definition->id()), strtolower($string)) !== FALSE)) {
-          $matches[] = [
-            'value' => $definition->id(),
-            'label' => "{$definition->getLabel()} ({$definition->id()})",
-          ];
-        }
+        $matches[] = [
+          'value' => $definition->id() . '.',
+          'label' => "{$definition->getLabel()} ({$definition->id()})",
+        ];
       }
+
     }
     // Select bundle.
     elseif (substr_count($string, '.') == 1) {
@@ -51,7 +57,8 @@ class TagMappingController extends ControllerBase {
       list ($entityType, $bundle) = explode('.', $string);
       $definition = $this->entityTypeManager()->getDefinition($entityType);
 
-      $bundles = $this->entityTypeManager()->getStorage($definition->getBundleEntityType())
+      $bundles = $this->entityTypeManager()
+        ->getStorage($definition->getBundleEntityType())
         ->loadMultiple();
 
       if ($bundle) {
@@ -63,7 +70,7 @@ class TagMappingController extends ControllerBase {
 
       foreach ($bundles as $bundle) {
         $matches[] = [
-          'value' => $entityType . '.' . $bundle->id(),
+          'value' => $entityType . '.' . $bundle->id() . '.',
           'label' => "{$bundle->label()} ({$bundle->id()})",
         ];
       }
@@ -75,7 +82,8 @@ class TagMappingController extends ControllerBase {
       $entityType = array_shift($parts);
       $bundle = array_shift($parts);
 
-      $definitions = $this->entityManager()->getFieldDefinitions($entityType, $bundle);
+      $definitions = $this->entityManager()
+        ->getFieldDefinitions($entityType, $bundle);
 
       $value = $entityType . '.' . $bundle . '.';
       $targetBundles = [];
@@ -87,8 +95,9 @@ class TagMappingController extends ControllerBase {
             $entityType = $definitions[$fieldName]->getFieldStorageDefinition()->getSetting('target_type');
             $definition = $this->entityTypeManager()->getDefinition($entityType);
 
-            $targetBundles = $this->entityTypeManager()->getStorage($definition->getBundleEntityType())->loadMultiple();
-
+            $targetBundles = $this->entityTypeManager()
+              ->getStorage($definition->getBundleEntityType())
+              ->loadMultiple();
             if ($bundle && isset($targetBundles[$bundle])) {
               $definitions = $this->entityManager()->getFieldDefinitions($entityType, $bundle);
               $value .= $fieldName . ':' . $bundle . '.';
@@ -108,8 +117,10 @@ class TagMappingController extends ControllerBase {
           });
         }
         foreach ($definitions as $definition) {
+          $name = $value . $definition->getName();
+          $name .= in_array($definition->getType(), ['entity_reference_revisions', 'entity_reference']) ? ':' : '';
           $matches[] = [
-            'value' => $value . $definition->getName(),
+            'value' => $name,
             'label' => "{$definition->getLabel()} ({$definition->getName()})",
           ];
         }
@@ -124,7 +135,7 @@ class TagMappingController extends ControllerBase {
 
         foreach ($targetBundles as $definition) {
           $matches[] = [
-            'value' => $value . $definition->id(),
+            'value' => $value . $definition->id() . '.',
             'label' => "{$definition->label()} ({$definition->id()})",
           ];
         }

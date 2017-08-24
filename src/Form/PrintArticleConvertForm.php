@@ -66,6 +66,8 @@ class PrintArticleConvertForm extends FormBase {
     if ($print_article = $this->entityTypeManager->getStorage('print_article')
       ->load($print_article)) {
 
+      $form['description']['#markup'] = $this->t('Select a target entity and bundle to convert the print article in. The current article will stay after that.');
+
       $entity_types = [];
 
       $targets = $this->getTargets($print_article);
