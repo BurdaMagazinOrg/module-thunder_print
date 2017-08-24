@@ -108,26 +108,25 @@
     attach: function (context) {
       // Act on textfields with the "property_path-autocomplete" class.
       var $autocomplete = $(context).find('input.property_path-autocomplete').once('autocomplete');
-      console.log($autocomplete);
       if ($autocomplete.length) {
 
         var closing = false;
 
         $.extend(autocomplete.options, {
-          close: function() {
+          close: function () {
             // Avoid double-pop-up issue.
             closing = true;
-            setTimeout(function() {
+            setTimeout(function () {
               closing = false;
             }, 300);
           }
         });
         // Use jQuery UI Autocomplete on the textfield.
         $autocomplete.autocomplete(autocomplete.options)
-          .each(function() {
+          .each(function () {
             $(this).data('ui-autocomplete')._renderItem = autocomplete.options.renderItem;
             // Immediately pop out the autocomplete when the field gets focus.
-            $(this).focus(function() {
+            $(this).focus(function () {
               if (!closing) {
                 $(this).autocomplete('search');
               }
