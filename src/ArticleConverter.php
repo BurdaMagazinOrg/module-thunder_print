@@ -77,6 +77,8 @@ class ArticleConverter {
     }
 
     $entity->save();
+
+    return $entity;
   }
 
   /**
