@@ -44,7 +44,7 @@ thunder_print.print_article.switchType:
     _form: '\Drupal\thunder_print\Form\PrintArticleSwitchTypeForm'
     _title: 'Thunder for Print'
   requirements:
-    _permission: 'administer print article entities'
+    _custom_access: '\Drupal\thunder_print\Form\PrintArticleSwitchTypeForm::access'
   options:
     _admin_route: TRUE
 
