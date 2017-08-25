@@ -5,9 +5,6 @@ namespace Drupal\thunder_print\Controller;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -34,22 +31,18 @@ class TagMappingController extends ControllerBase {
     // Select entity type.
     if (substr_count($string, '.') == 0) {
 
-      $definitions = $this->entityTypeManager()->getDefinitions();
+      $searchKeyword = $string;
 
-      $definitions = array_filter($definitions, function (EntityTypeInterface $definition) use ($string) {
-        return (($definition instanceof ContentEntityTypeInterface && $definition->getBundleEntityType()) &&
-          (empty($string) ||
-            (strpos(strtolower($definition->getLabel()), strtolower($string)) !== FALSE ||
-              strpos(strtolower($definition->id()), strtolower($string)) !== FALSE)));
-      });
-
-      foreach ($definitions as $definition) {
-        $matches[] = [
-          'value' => $definition->id() . '.',
-          'label' => "{$definition->getLabel()} ({$definition->id()})",
-        ];
+      foreach ($this->entityTypeManager()->getDefinitions() as $definition) {
+        if ($definition instanceof ContentEntityTypeInterface && $definition->getBundleEntityType()) {
+          $name = $definition->id();
+          $matches[] = [
+            'value' => $definition->id() . '.',
+            'label' => "$name... ({$definition->getLabel()})",
+            'keyword' => "{$definition->id()} {$definition->getLabel()}",
+          ];
+        }
       }
-
     }
     // Select bundle.
     elseif (substr_count($string, '.') == 1) {
@@ -61,17 +54,14 @@ class TagMappingController extends ControllerBase {
         ->getStorage($definition->getBundleEntityType())
         ->loadMultiple();
 
-      if ($bundle) {
-        $bundles = array_filter($bundles, function (EntityInterface $value) use ($bundle) {
-          return strpos(strtolower($value->label()), strtolower($bundle)) !== FALSE ||
-            strpos(strtolower($value->id()), strtolower($bundle)) !== FALSE;
-        });
-      }
+      $searchKeyword = $bundle;
 
       foreach ($bundles as $bundle) {
+        $name = $entityType . '.' . $bundle->id();
         $matches[] = [
-          'value' => $entityType . '.' . $bundle->id() . '.',
-          'label' => "{$bundle->label()} ({$bundle->id()})",
+          'value' => $name . '.',
+          'label' => "$name... ({$bundle->label()})",
+          'keyword' => "{$bundle->id()} {$bundle->label()}",
         ];
       }
     }
@@ -82,8 +72,7 @@ class TagMappingController extends ControllerBase {
       $entityType = array_shift($parts);
       $bundle = array_shift($parts);
 
-      $definitions = $this->entityManager()
-        ->getFieldDefinitions($entityType, $bundle);
+      $definitions = $this->entityManager()->getFieldDefinitions($entityType, $bundle);
 
       $value = $entityType . '.' . $bundle . '.';
       $targetBundles = [];
@@ -109,37 +98,45 @@ class TagMappingController extends ControllerBase {
         }
       }
       if (strrpos($string, '.') > strrpos($string, ':')) {
-        $lastElement = end($parts);
-        if ($lastElement) {
-          $definitions = array_filter($definitions, function (FieldDefinitionInterface $value) use ($lastElement) {
-            return strpos(strtolower($value->getLabel()), strtolower($lastElement)) !== FALSE ||
-              strpos(strtolower($value->getName()), strtolower($lastElement)) !== FALSE;
-          });
-        }
+        $searchKeyword = end($parts);
+
         foreach ($definitions as $definition) {
-          $name = $value . $definition->getName();
-          $name .= in_array($definition->getType(), ['entity_reference_revisions', 'entity_reference']) ? ':' : '';
-          $matches[] = [
-            'value' => $name,
-            'label' => "{$definition->getLabel()} ({$definition->getName()})",
-          ];
+          if (!$definition->isReadOnly() && $definition->getFieldStorageDefinition()->isQueryable()) {
+            $name = $value . $definition->getName();
+            $matches[] = [
+              'value' => $name,
+              'label' => "$name ({$definition->getLabel()})",
+              'keyword' => "{$definition->getName()} {$definition->getLabel()}",
+            ];
+
+            if (in_array($definition->getType(), ['entity_reference_revisions', 'entity_reference']) && !empty($definition->getSetting('handler_settings')['target_bundles'])) {
+              $matches[] = [
+                'value' => $name . ':',
+                'label' => "$name... ({$definition->getLabel()})",
+                'keyword' => "{$definition->getName()} {$definition->getLabel()}",
+              ];
+            }
+          }
         }
       }
       else {
-        if ($bundle) {
-          $targetBundles = array_filter($targetBundles, function ($value) use ($bundle) {
-            return strpos(strtolower($value->label()), strtolower($bundle)) !== FALSE ||
-              strpos(strtolower($value->id()), strtolower($bundle)) !== FALSE;
-          });
-        }
+        $searchKeyword = $bundle;
 
         foreach ($targetBundles as $definition) {
+          $name = $value . $definition->id();
           $matches[] = [
-            'value' => $value . $definition->id() . '.',
-            'label' => "{$definition->label()} ({$definition->id()})",
+            'value' => $name . '.',
+            'label' => "$name ({$definition->label()})",
+            'keyword' => "{$definition->id()} {$definition->label()}",
           ];
         }
       }
+    }
+
+    if ($searchKeyword) {
+      $matches = array_filter($matches, function ($value) use ($searchKeyword) {
+        return strpos(strtolower($value['keyword']), strtolower($searchKeyword)) !== FALSE;
+      });
     }
 
     usort($matches, [$this, 'sortByLabelElement']);
