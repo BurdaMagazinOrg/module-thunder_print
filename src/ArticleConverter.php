@@ -46,6 +46,9 @@ class ArticleConverter {
    *   Print article.
    * @param \Drupal\Core\Config\Entity\ConfigEntityBundleBase $bundleBase
    *   Bundle for new article.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   Newly created entity.
    */
   public function printToOnline(PrintArticleInterface $printArticle, ConfigEntityBundleBase $bundleBase) {
 

@@ -25,112 +25,16 @@ class TagMappingController extends ControllerBase {
    *   Response.
    */
   public function autocomplete(Request $request) {
-    $matches = [];
     $string = $request->query->get('q');
 
-    // Select entity type.
     if (substr_count($string, '.') == 0) {
-
-      $searchKeyword = $string;
-
-      foreach ($this->entityTypeManager()->getDefinitions() as $definition) {
-        if ($definition instanceof ContentEntityTypeInterface && $definition->getBundleEntityType()) {
-          $name = $definition->id();
-          $matches[] = [
-            'value' => $definition->id() . '.',
-            'label' => "$name... ({$definition->getLabel()})",
-            'keyword' => "{$definition->id()} {$definition->getLabel()}",
-          ];
-        }
-      }
+      list($searchKeyword, $matches) = $this->matchEntityType($string);
     }
-    // Select bundle.
     elseif (substr_count($string, '.') == 1) {
-
-      list ($entityType, $bundle) = explode('.', $string);
-      $definition = $this->entityTypeManager()->getDefinition($entityType);
-
-      $bundles = $this->entityTypeManager()
-        ->getStorage($definition->getBundleEntityType())
-        ->loadMultiple();
-
-      $searchKeyword = $bundle;
-
-      foreach ($bundles as $bundle) {
-        $name = $entityType . '.' . $bundle->id();
-        $matches[] = [
-          'value' => $name . '.',
-          'label' => "$name... ({$bundle->label()})",
-          'keyword' => "{$bundle->id()} {$bundle->label()}",
-        ];
-      }
+      list($searchKeyword, $matches) = $this->matchBundle($string);
     }
-    // Select fields.
     else {
-      $parts = explode('.', $string);
-
-      $entityType = array_shift($parts);
-      $bundle = array_shift($parts);
-
-      $definitions = $this->entityManager()->getFieldDefinitions($entityType, $bundle);
-
-      $value = $entityType . '.' . $bundle . '.';
-      $targetBundles = [];
-      foreach ($parts as $part) {
-
-        if ($part) {
-          if (strpos($part, ':') !== FALSE) {
-            list($fieldName, $bundle) = array_pad(explode(':', $part), 2, NULL);
-            $entityType = $definitions[$fieldName]->getFieldStorageDefinition()->getSetting('target_type');
-            $definition = $this->entityTypeManager()->getDefinition($entityType);
-
-            $targetBundles = $this->entityTypeManager()
-              ->getStorage($definition->getBundleEntityType())
-              ->loadMultiple();
-            if ($bundle && isset($targetBundles[$bundle])) {
-              $definitions = $this->entityManager()->getFieldDefinitions($entityType, $bundle);
-              $value .= $fieldName . ':' . $bundle . '.';
-            }
-            else {
-              $value .= $fieldName . ':';
-            }
-          }
-        }
-      }
-      if (strrpos($string, '.') > strrpos($string, ':')) {
-        $searchKeyword = end($parts);
-
-        foreach ($definitions as $definition) {
-          if (!$definition->isReadOnly() && $definition->getFieldStorageDefinition()->isQueryable()) {
-            $name = $value . $definition->getName();
-            $matches[] = [
-              'value' => $name,
-              'label' => "$name ({$definition->getLabel()})",
-              'keyword' => "{$definition->getName()} {$definition->getLabel()}",
-            ];
-
-            if (in_array($definition->getType(), ['entity_reference_revisions', 'entity_reference']) && !empty($definition->getSetting('handler_settings')['target_bundles'])) {
-              $matches[] = [
-                'value' => $name . ':',
-                'label' => "$name... ({$definition->getLabel()})",
-                'keyword' => "{$definition->getName()} {$definition->getLabel()}",
-              ];
-            }
-          }
-        }
-      }
-      else {
-        $searchKeyword = $bundle;
-
-        foreach ($targetBundles as $definition) {
-          $name = $value . $definition->id();
-          $matches[] = [
-            'value' => $name . '.',
-            'label' => "$name ({$definition->label()})",
-            'keyword' => "{$definition->id()} {$definition->label()}",
-          ];
-        }
-      }
+      list($searchKeyword, $matches) = $this->matchField($string);
     }
 
     if ($searchKeyword) {
@@ -160,6 +64,145 @@ class TagMappingController extends ControllerBase {
    */
   public static function sortByLabelElement(array $a, array $b) {
     return SortArray::sortByKeyString($a, $b, 'label');
+  }
+
+  /**
+   * Matches the current entity type.
+   *
+   * @param string $string
+   *   Current search string.
+   *
+   * @return array
+   *   Possible suggestions.
+   */
+  protected function matchEntityType($string) {
+    $matches = [];
+
+    foreach ($this->entityTypeManager()->getDefinitions() as $definition) {
+      if ($definition instanceof ContentEntityTypeInterface && $definition->getBundleEntityType()) {
+        $name = $definition->id();
+        $matches[] = [
+          'value' => $definition->id() . '.',
+          'label' => "$name... ({$definition->getLabel()})",
+          'keyword' => "{$definition->id()} {$definition->getLabel()}",
+        ];
+      }
+    }
+    return [$string, $matches];
+  }
+
+  /**
+   * Matches the current bundle.
+   *
+   * @param string $string
+   *   Current search string.
+   *
+   * @return array
+   *   Possible suggestions.
+   */
+  protected function matchBundle($string) {
+    list ($entityType, $bundle) = explode('.', $string);
+    $definition = $this->entityTypeManager()->getDefinition($entityType);
+
+    $targetBundles = $this->entityTypeManager()
+      ->getStorage($definition->getBundleEntityType())
+      ->loadMultiple();
+
+    $matches = [];
+    foreach ($targetBundles as $targetBundle) {
+      $name = $entityType . '.' . $targetBundle->id();
+      $matches[] = [
+        'value' => "$name.",
+        'label' => "$name... ({$targetBundle->label()})",
+        'keyword' => "{$targetBundle->id()} {$targetBundle->label()}",
+      ];
+    }
+    return [$bundle, $matches];
+  }
+
+  /**
+   * Matches the current field.
+   *
+   * @param string $string
+   *   Current search string.
+   *
+   * @return array
+   *   Possible suggestions.
+   */
+  protected function matchField($string) {
+    $matches = [];
+
+    $parts = explode('.', $string);
+
+    $entityType = array_shift($parts);
+    $bundle = array_shift($parts);
+
+    $entityManager = $this->entityManager();
+    $entityTypeManager = $this->entityTypeManager();
+
+    $definitions = $entityManager->getFieldDefinitions($entityType, $bundle);
+
+    $value = "$entityType.$bundle.";
+    $targetBundles = [];
+    foreach ($parts as $part) {
+
+      if ($part) {
+        if (strpos($part, ':') !== FALSE) {
+          list($fieldName, $bundle) = array_pad(explode(':', $part), 2, NULL);
+          $entityType = $definitions[$fieldName]->getFieldStorageDefinition()->getSetting('target_type');
+          $definition = $entityTypeManager->getDefinition($entityType);
+
+          $targetBundles = $entityTypeManager->getStorage($definition->getBundleEntityType())
+            ->loadMultiple();
+          if ($bundle && isset($targetBundles[$bundle])) {
+            $definitions = $entityManager->getFieldDefinitions($entityType, $bundle);
+            $value .= "$fieldName:$bundle.";
+          }
+          else {
+            $value .= "$fieldName:";
+          }
+        }
+      }
+    }
+    if (strrpos($string, '.') > strrpos($string, ':')) {
+      $searchKeyword = end($parts);
+
+      foreach ($definitions as $definition) {
+        if (!$definition->isReadOnly() &&
+          $definition->getFieldStorageDefinition()->isQueryable()
+        ) {
+          $name = $value . $definition->getName();
+          $matches[] = [
+            'value' => $name,
+            'label' => "$name ({$definition->getLabel()})",
+            'keyword' => "{$definition->getName()} {$definition->getLabel()}",
+          ];
+
+          if (in_array($definition->getType(), ['entity_reference_revisions', 'entity_reference']) &&
+            !empty($definition->getSetting('handler_settings')['target_bundles'])
+          ) {
+            $matches[] = [
+              'value' => "$name:",
+              'label' => "$name... ({$definition->getLabel()})",
+              'keyword' => "{$definition->getName()} {$definition->getLabel()}",
+            ];
+          }
+        }
+      }
+    }
+    else {
+      $searchKeyword = $bundle;
+
+      foreach ($targetBundles as $definition) {
+        $name = $value . $definition->id();
+        $matches[] = [
+          'value' => "$name.",
+          'label' => "$name ({$definition->label()})",
+          'keyword' => "{$definition->id()} {$definition->label()}",
+        ];
+      }
+    }
+    return [$searchKeyword, $matches];
   }
 
 }

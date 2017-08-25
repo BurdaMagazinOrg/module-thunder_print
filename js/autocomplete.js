@@ -1,6 +1,6 @@
 /**
  * @file
- * Forked from core's autocomplete.
+ * Forked from core's autocomplete. This is copied from the rules module.
  */
 
 (function ($, Drupal) {
