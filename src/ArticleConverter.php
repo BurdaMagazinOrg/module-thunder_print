@@ -56,10 +56,10 @@ class ArticleConverter {
     $printArticleType = $printArticle->type->entity;
 
     $entity_type_id = $bundleBase->getEntityType()->getBundleOf();
-    $bundle = $bundleBase->id();
+    $keys = $this->entityTypeManager->getDefinition($entity_type_id)->getKeys();
 
     $entity = $this->entityTypeManager->getStorage($entity_type_id)
-      ->create(['type' => $bundle, 'title' => 'Thunder 4 Print entity']);
+      ->create([$keys['bundle'] => $bundleBase->id(), $keys['label'] => 'Thunder 4 Print entity']);
     $entity->save();
 
     foreach ($printArticleType->getMappings() as $fieldName => $mapping) {
@@ -73,7 +73,7 @@ class ArticleConverter {
         $target_entity_type = array_shift($property_path);
         $target_bundle = array_shift($property_path);
 
-        if ($target_entity_type == $entity_type_id && $bundle == $target_bundle && !$fieldItemList->isEmpty()) {
+        if ($target_entity_type == $entity_type_id && $bundleBase->id() == $target_bundle && !$fieldItemList->isEmpty()) {
           $this->setValue($property_path, $entity, $printArticle->{$fieldName});
         }
       }

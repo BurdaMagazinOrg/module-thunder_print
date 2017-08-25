@@ -144,24 +144,31 @@ class TagMappingController extends ControllerBase {
 
     $value = "$entityType.$bundle.";
     $targetBundles = [];
+    $reference = TRUE;
     foreach ($parts as $part) {
 
-      if ($part) {
-        if (strpos($part, ':') !== FALSE) {
-          list($fieldName, $bundle) = array_pad(explode(':', $part), 2, NULL);
-          $entityType = $definitions[$fieldName]->getFieldStorageDefinition()->getSetting('target_type');
-          $definition = $entityTypeManager->getDefinition($entityType);
+      if (strpos($part, ':') !== FALSE) {
+        $reference = TRUE;
 
-          $targetBundles = $entityTypeManager->getStorage($definition->getBundleEntityType())
-            ->loadMultiple();
-          if ($bundle && isset($targetBundles[$bundle])) {
-            $definitions = $entityManager->getFieldDefinitions($entityType, $bundle);
-            $value .= "$fieldName:$bundle.";
-          }
-          else {
-            $value .= "$fieldName:";
-          }
+        list($fieldName, $bundle) = array_pad(explode(':', $part), 2, NULL);
+        $entityType = $definitions[$fieldName]->getFieldStorageDefinition()->getSetting('target_type');
+        $definition = $entityTypeManager->getDefinition($entityType);
+
+        $targetBundles = $entityTypeManager->getStorage($definition->getBundleEntityType())
+          ->loadMultiple();
+        if ($bundle && isset($targetBundles[$bundle])) {
+          $definitions = $entityManager->getFieldDefinitions($entityType, $bundle);
+          $value .= "$fieldName:$bundle.";
         }
+        else {
+          $value .= "$fieldName:";
+        }
+      }
+      else {
+        if (!$reference) {
+          $definitions = [];
+        }
+        $reference = FALSE;
       }
     }
     if (strrpos($string, '.') > strrpos($string, ':')) {
