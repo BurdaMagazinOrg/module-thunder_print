@@ -34,7 +34,7 @@ class TagMappingController extends ControllerBase {
       list($searchKeyword, $matches) = $this->matchBundle($string);
     }
     else {
-      list($searchKeyword, $matches) = $this->matchField($string);
+      list($searchKeyword, $matches) = $this->matchField($string, $request->query->get('type'));
     }
 
     if ($searchKeyword) {
@@ -129,7 +129,7 @@ class TagMappingController extends ControllerBase {
    * @return array
    *   Possible suggestions.
    */
-  protected function matchField($string) {
+  protected function matchField($string, $type) {
     $matches = [];
 
     $parts = explode('.', $string);
@@ -176,7 +176,8 @@ class TagMappingController extends ControllerBase {
 
       foreach ($definitions as $definition) {
         if (!$definition->isReadOnly() &&
-          $definition->getFieldStorageDefinition()->isQueryable()
+          $definition->getFieldStorageDefinition()->isQueryable() &&
+          in_array($definition->getType(), array_merge(explode(',', $type), ['entity_reference', 'entity_reference_revisions']))
         ) {
           $name = $value . $definition->getName();
           $matches[] = [

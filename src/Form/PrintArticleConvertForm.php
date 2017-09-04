@@ -181,6 +181,11 @@ class PrintArticleConvertForm extends FormBase {
 
       $entity = $this->articleConverter->printToOnline($print_article, $bundle);
 
+      $request = $this->getRequest();
+      if ($request->query->has('destination')) {
+        $request->query->remove('destination');
+      }
+
       $form_state->setRedirectUrl($entity->toUrl('edit-form'));
     }
 

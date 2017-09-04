@@ -78,4 +78,11 @@ class TextPlain extends TagMappingTypeBase {
     return $idms;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPossibleConvertTargets() {
+    return ['text', 'text_long', 'text_with_summary', 'string_long', 'string'];
+  }
+
 }

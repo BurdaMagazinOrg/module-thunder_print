@@ -259,4 +259,11 @@ abstract class TagMappingTypeBase extends PluginBase implements TagMappingTypeIn
     // Do nothing.
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPossibleConvertTargets() {
+    return [];
+  }
+
 }

@@ -114,4 +114,11 @@ class TextFormattedLong extends TagMappingTypeBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPossibleConvertTargets() {
+    return ['text_long', 'text_with_summary'];
+  }
+
 }

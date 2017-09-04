@@ -136,6 +136,7 @@ class TagMappingForm extends EntityForm {
           '#title' => $this->t('Property path'),
           '#default_value' => !empty($targets[$i]) ? $targets[$i] : '',
           '#autocomplete_route_name' => 'thunder_print.tag_mapping.autocomplete',
+          '#autocomplete_route_parameters' => array('type' => implode(',', $plugin->getPossibleConvertTargets())),
           '#attributes' => [
             'class' => ['property_path-autocomplete'],
           ],
@@ -182,6 +183,9 @@ class TagMappingForm extends EntityForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $targets = $form_state->getValue('convert_targets');
+    $form_state->setValue('convert_targets', array_filter($targets));
+
     parent::submitForm($form, $form_state);
     $this->entity->validate();
     $this->buildEntityId();

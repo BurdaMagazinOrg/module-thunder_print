@@ -124,6 +124,17 @@ class ArticleConverter {
       }
     }
     else {
+
+      if ($value->getFieldDefinition()->getFieldStorageDefinition()->getType() == 'text_long') {
+
+        $formats = filter_formats();
+        $format = reset($formats);
+
+        /** @var \Drupal\Core\Field\FieldItemBase $item */
+        foreach ($value as $item) {
+          $item->set('format', $format->id());
+        }
+      }
       $entity->{$fieldName} = $value;
       $entity->save();
     }
