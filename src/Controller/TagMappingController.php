@@ -125,13 +125,13 @@ class TagMappingController extends ControllerBase {
    *
    * @param string $string
    *   Current search string.
-   * @param array $types
+   * @param string $types
    *   Allowed field types.
    *
    * @return array
    *   Possible suggestions.
    */
-  protected function matchField($string, array $types) {
+  protected function matchField($string, $types) {
     $matches = [];
 
     $parts = explode('.', $string);
