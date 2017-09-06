@@ -125,11 +125,13 @@ class TagMappingController extends ControllerBase {
    *
    * @param string $string
    *   Current search string.
+   * @param array $types
+   *   Allowed field types.
    *
    * @return array
    *   Possible suggestions.
    */
-  protected function matchField($string, $type) {
+  protected function matchField($string, array $types) {
     $matches = [];
 
     $parts = explode('.', $string);
@@ -177,7 +179,7 @@ class TagMappingController extends ControllerBase {
       foreach ($definitions as $definition) {
         if (!$definition->isReadOnly() &&
           $definition->getFieldStorageDefinition()->isQueryable() &&
-          in_array($definition->getType(), array_merge(explode(',', $type), ['entity_reference', 'entity_reference_revisions']))
+          in_array($definition->getType(), array_merge(explode(',', $types), ['entity_reference', 'entity_reference_revisions']))
         ) {
           $name = $value . $definition->getName();
           $matches[] = [

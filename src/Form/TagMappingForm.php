@@ -136,7 +136,7 @@ class TagMappingForm extends EntityForm {
           '#title' => $this->t('Property path'),
           '#default_value' => !empty($targets[$i]) ? $targets[$i] : '',
           '#autocomplete_route_name' => 'thunder_print.tag_mapping.autocomplete',
-          '#autocomplete_route_parameters' => array('type' => implode(',', $plugin->getPossibleConvertTargets())),
+          '#autocomplete_route_parameters' => ['type' => implode(',', $plugin->getPossibleConvertTargets())],
           '#attributes' => [
             'class' => ['property_path-autocomplete'],
           ],
