@@ -4,6 +4,13 @@
 # Template provided by https://github.com/LionsAd/drupal_ti.
 
 language: php
+cache:
+  apt: true
+  directories:
+  - "$HOME/.composer/cache"
+  - "$HOME/.drush/cache"
+  - "vendor"
+  - "travis_selenium"
 
 sudo: false
 
