@@ -18,6 +18,8 @@ php:
   - 5.6
   - 7
 
+dist: precise
+
 addons:
   apt:
     packages:
