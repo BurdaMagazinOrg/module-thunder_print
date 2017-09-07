@@ -62,7 +62,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
 
     $fileFieldSelector = "input[type='file']";
 
-    $fileField = $page->find('css', $fileFieldSelector);
+    $fileField = $this->assertSession()->elementExists('css', $fileFieldSelector);
 
     $filePath = dirname(__FILE__) . '/../../fixtures/Zeitung1.idms';
     var_dump($filePath);
