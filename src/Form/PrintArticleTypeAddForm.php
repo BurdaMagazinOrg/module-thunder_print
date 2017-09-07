@@ -36,7 +36,9 @@ class PrintArticleTypeAddForm extends PrintArticleTypeForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
+    var_dump(\Drupal::request()->files->keys());
     $all_files = \Drupal::request()->files->get('files', []);
+    var_dump($all_files);
     // Make sure there's an upload to process.
     if (!empty($all_files['idms'])) {
       $file_upload = $all_files['idms'];

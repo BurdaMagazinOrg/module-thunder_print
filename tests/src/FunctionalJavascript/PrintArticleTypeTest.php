@@ -65,15 +65,12 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     $fileField = $this->assertSession()->elementExists('css', $fileFieldSelector);
 
     $filePath = dirname(__FILE__) . '/../../fixtures/Zeitung1.idms';
-    var_dump($filePath);
-    var_dump(realpath($filePath));
 
     $fileField->attachFile(realpath($filePath));
 
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Save');
-    var_dump($page->getContent());
 
     $this->drupalGet('admin/structure/thunder_print/print_article_type/' . $typeMachineName . '/edit');
 
