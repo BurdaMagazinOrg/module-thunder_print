@@ -10,15 +10,13 @@ cache:
   - "$HOME/.composer/cache"
   - "$HOME/.drush/cache"
   - "vendor"
-  - "travis_selenium"
+
 
 sudo: false
 
 php:
   - 5.6
   - 7
-
-dist: precise
 
 addons:
   apt:
@@ -45,7 +43,7 @@ env:
 
     # The environment to use, supported are: drupal-7, drupal-8
     - DRUPAL_TI_ENVIRONMENT="drupal-8"
-    - DRUPAL_TI_CORE_BRANCH="8.3.x"
+    - DRUPAL_TI_CORE_BRANCH="8.4.x"
 
     # The installation profile to use:
     #- DRUPAL_TI_INSTALL_PROFILE="testing"
