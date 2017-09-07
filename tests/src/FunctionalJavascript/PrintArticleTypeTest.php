@@ -51,7 +51,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     $page = $this->getSession()->getPage();
 
     $label = 'TestType';
-    $typeMachineName = str_replace(' ', '_', strtolower($label));
+    $typeMachineName = strtolower($label);
 
     $page->fillField('label', $label);
 
@@ -73,6 +73,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     $page->pressButton('Save');
 
     $this->drupalGet('admin/structure/thunder_print/print_article_type/' . $typeMachineName . '/edit');
+    $this->assertSession()->statusCodeEquals(200);
 
     $this->assertSession()->pageTextContains('TestType');
 
