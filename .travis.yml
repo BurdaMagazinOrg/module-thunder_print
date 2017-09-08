@@ -9,7 +9,7 @@ cache:
   directories:
   - "$HOME/.composer/cache"
   - "$HOME/.drush/cache"
-  - "vendor"
+  - "$HOME/travis-phantomjs"
 
 
 sudo: false
@@ -113,7 +113,7 @@ before_install:
 
   # Continue with Drupal Tests
   - cd ./tests
-  - composer global require "lionsad/drupal_ti:1.*"
+  - composer global require "hirak/prestissimo:^0.3" "lionsad/drupal_ti:dev-master"
   - drupal-ti before_install
   - cd ..
 
