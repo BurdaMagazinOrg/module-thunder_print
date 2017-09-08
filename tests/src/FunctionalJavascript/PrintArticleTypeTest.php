@@ -51,7 +51,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     $page = $this->getSession()->getPage();
 
     $label = 'TestType';
-    $typeMachineName = str_replace(' ', '_', strtolower($label));
+    $typeMachineName = strtolower($label);
 
     $page->fillField('label', $label);
 
@@ -62,7 +62,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
 
     $fileFieldSelector = "input[type='file']";
 
-    $fileField = $page->find('css', $fileFieldSelector);
+    $fileField = $this->assertSession()->elementExists('css', $fileFieldSelector);
 
     $filePath = dirname(__FILE__) . '/../../fixtures/Zeitung1.idms';
 
@@ -74,6 +74,7 @@ class PrintArticleTypeTest extends JavascriptTestBase {
 
     $this->drupalGet('admin/structure/thunder_print/print_article_type/' . $typeMachineName . '/edit');
 
+    $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('TestType');
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleType $testType */
