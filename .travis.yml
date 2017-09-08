@@ -73,8 +73,8 @@ env:
     # The version of selenium that should be used.
     - DRUPAL_TI_BEHAT_SELENIUM_VERSION="2.48.2"
     # Set DRUPAL_TI_BEHAT_DRIVER to "selenium" to use "firefox" or "chrome" here.
-    - DRUPAL_TI_BEHAT_DRIVER="selenium"
-    - DRUPAL_TI_BEHAT_BROWSER="chrome"
+    - DRUPAL_TI_BEHAT_DRIVER="phantomjs"
+    - DRUPAL_TI_BEHAT_BROWSER="firefox"
 
     # PHPUnit specific commandline arguments.
     - DRUPAL_TI_PHPUNIT_ARGS="--verbose --debug"
@@ -122,12 +122,14 @@ before_install:
 
 install:
   - drupal-ti install
+  - if [[ $(phantomjs --version) != '2.1.1' ]]; then rm -rf $HOME/travis-phantomjs; mkdir -p $HOME/travis-phantomjs; wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O $HOME/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2; tar -xvf $HOME/travis-phantomjs/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C $HOME/travis-phantomjs; fi
+  - export PATH=$HOME/travis-phantomjs:$PATH
 
 before_script:
   - drupal-ti --include ./scripts/travis/travis-before-script.sh
   - drupal-ti before_script
-  - phantomjs --version
-  - phantomjs --ssl-protocol=any --ignore-ssl-errors=true ../drupal-8/drupal/vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768 2>&1 >> /dev/null &
+  - $HOME/travis-phantomjs/phantomjs --version
+  - $HOME/travis-phantomjs/phantomjs --ssl-protocol=any --ignore-ssl-errors=true ../drupal-8/drupal/vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768 2>&1 >> /dev/null &
   - nc -zvv localhost 8510; out=$?; while [[ $out -ne 0 ]]; do echo "Retry hit port 8510..."; nc -zvv localhost 8510; out=$?; sleep 1; done
 
 script:
