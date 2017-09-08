@@ -111,8 +111,6 @@ mysql:
 before_install:
   - composer self-update
 
-  - echo "mysql.connect_timeout=3000" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  -	echo "default_socket_timeout=3000" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   -	mysql -e "SET GLOBAL wait_timeout = 36000;"
   -	mysql -e "SET GLOBAL max_allowed_packet = 33554432;"
 
