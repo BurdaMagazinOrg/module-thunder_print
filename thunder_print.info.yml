@@ -3,6 +3,7 @@ description: 'Connects Thunder with an InDesign Server to create IDMS snipptes'
 package: Thunder
 type: module
 core: '8.x'
+configure: print_article.settings
 dependencies:
   - drupal:file
   - drupal:field
