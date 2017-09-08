@@ -111,9 +111,6 @@ mysql:
 before_install:
   - composer self-update
 
-  -	mysql -e "SET GLOBAL wait_timeout = 36000;"
-  -	mysql -e "SET GLOBAL max_allowed_packet = 33554432;"
-
   # Code Checks
   - bash -x -e ./scripts/travis/test-source-code.sh
 
