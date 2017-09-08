@@ -75,7 +75,6 @@ class PrintArticleTypeTest extends JavascriptTestBase {
     $this->drupalGet('admin/structure/thunder_print/print_article_type/' . $typeMachineName . '/edit');
 
     $this->assertSession()->statusCodeEquals(200);
-
     $this->assertSession()->pageTextContains('TestType');
 
     /** @var \Drupal\thunder_print\Entity\PrintArticleType $testType */
