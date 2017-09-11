@@ -5,6 +5,7 @@ namespace Drupal\thunder_print\Form;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\thunder_print\ArticleConverter;
 use Drupal\thunder_print\Entity\PrintArticleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -76,10 +77,20 @@ class PrintArticleConvertForm extends FormBase {
         $entity_types[$entity_type] = "{$definition->getLabel()} ({$definition->id()})";
       }
 
+      $default_value = NULL;
+      if (count($entity_types) == 1) {
+        $default_value = key($entity_types);
+        $form_state->setValue('entity_type', $default_value);
+      }
+      elseif (empty($entity_types)) {
+        drupal_set_message($this->t("Attention! There are no convert targets defined."), 'warning');
+      }
+
       $form['entity_type'] = [
         '#type' => 'select',
         '#title' => $this->t('Entity type'),
         '#options' => $entity_types,
+        '#default_value' => $default_value,
         '#required' => TRUE,
         '#ajax' => [
           'callback' => '::selectEntityType',
@@ -100,10 +111,25 @@ class PrintArticleConvertForm extends FormBase {
         }
       }
 
+      $default_value = NULL;
+      if (count($options) == 1) {
+        $default_value = key($options);
+
+        if (count($entity_types) == 1) {
+          $form_state->setValue('print_article', $print_article->id());
+          $form_state->setValue('bundle', $default_value);
+
+          $this->submitForm($form, $form_state);
+
+          return new TrustedRedirectResponse($form_state->getRedirect()->toString());
+        }
+      }
+
       $form['bundle'] = [
         '#type' => 'select',
         '#title' => $this->t('Bundle'),
         '#options' => $options,
+        '#default_value' => $default_value,
         '#required' => TRUE,
         '#prefix' => '<div id="bundle-wrapper">',
         '#suffix' => '</div>',
