@@ -20,3 +20,13 @@ thunder_print.lightbox:
       assets/featherlight/featherlight.min.css: {}
   dependencies:
     - core/drupal.jquery
+
+thunder_print.autocomplete:
+  js:
+    js/autocomplete.js: { weight: -1 }
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.ajax
+    - core/jquery.ui.autocomplete

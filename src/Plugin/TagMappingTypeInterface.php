@@ -136,4 +136,12 @@ interface TagMappingTypeInterface extends PluginInspectionInterface, Configurabl
    */
   public function getMappedTags(IDMS $idms);
 
+  /**
+   * Returns a list of field types where a tag could be copied in.
+   *
+   * @return array
+   *   Field types.
+   */
+  public function getPossibleConvertTargets();
+
 }

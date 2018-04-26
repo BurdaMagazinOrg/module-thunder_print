@@ -153,4 +153,11 @@ class Image extends TagMappingTypeBase implements AdditionalFilesInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPossibleConvertTargets() {
+    return ['image'];
+  }
+
 }

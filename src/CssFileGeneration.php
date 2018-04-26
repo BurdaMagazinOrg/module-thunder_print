@@ -49,7 +49,7 @@ class CssFileGeneration {
     if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
       throw new \Exception("Unable to create directory $destination.");
     }
-    file_put_contents($destination . '/fonts.css', $css);
+    file_put_contents($destination . '/fonts.css', $css, FILE_EXISTS_REPLACE);
   }
 
   /**
@@ -85,7 +85,7 @@ class CssFileGeneration {
     if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
       throw new \Exception("Unable to create directory $destination.");
     }
-    file_put_contents($destination . DIRECTORY_SEPARATOR . $filename . '.css', $css, FILE_APPEND);
+    file_put_contents($destination . DIRECTORY_SEPARATOR . $filename . '.css', $css, FILE_EXISTS_REPLACE);
   }
 
 }

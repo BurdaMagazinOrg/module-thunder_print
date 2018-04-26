@@ -20,6 +20,13 @@ thunder_print.tag_mapping.*:
     options:
       type: thunder_print.tag_mapping_options.[%parent.mapping_type]
       label: 'Mapping options'
+    convert_targets:
+      type: sequence
+      label: 'Convert targets'
+      sequence:
+        type: string
+        # For >= 8.4
+        orderby: key
 
 # We default options to be empty and let each plugin define there own specific
 # schema on their own.

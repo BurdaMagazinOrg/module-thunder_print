@@ -48,10 +48,28 @@ thunder_print.print_article.switchType:
   options:
     _admin_route: TRUE
 
+thunder_print.print_article.convertArticle:
+  path: '/print-article/{print_article}/convert-article'
+  defaults:
+    _form: '\Drupal\thunder_print\Form\PrintArticleConvertForm'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'
+  options:
+    _admin_route: TRUE
+
 thunder_print.print_article.jobFinished:
   path: '/print-article/quick-preview/{job_id}'
   defaults:
     _controller: '\Drupal\thunder_print\Form\PrintArticleForm::fetchQuickPreview'
+    _title: 'Thunder for Print'
+  requirements:
+    _permission: 'administer print article entities'
+
+thunder_print.tag_mapping.autocomplete:
+  path: '/tag-mapping/autocomplete'
+  defaults:
+    _controller: '\Drupal\thunder_print\Controller\TagMappingController::autocomplete'
     _title: 'Thunder for Print'
   requirements:
     _permission: 'administer print article entities'

@@ -17,6 +17,11 @@ entity.print_article.switch:
   route_name: thunder_print.print_article.switchType
   base_route: entity.print_article.canonical
   weight: 6
+entity.print_article.convert:
+  title: 'Convert article'
+  route_name: thunder_print.print_article.convertArticle
+  base_route: entity.print_article.canonical
+  weight: 6
 
 entity.print_article_type.edit_form:
   title: 'Edit'
