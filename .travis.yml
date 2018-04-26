@@ -42,7 +42,7 @@ env:
 
     # The environment to use, supported are: drupal-7, drupal-8
     - DRUPAL_TI_ENVIRONMENT="drupal-8"
-    - DRUPAL_TI_CORE_BRANCH="8.4.x"
+    - DRUPAL_TI_CORE_BRANCH="8.5.x"
 
     # The installation profile to use:
     #- DRUPAL_TI_INSTALL_PROFILE="testing"
@@ -89,6 +89,9 @@ env:
     # Set to "all" to output all files, set to e.g. "xvfb selenium" or "selenium",
     # etc. to only output those channels.
     #- DRUPAL_TI_DEBUG_FILE_OUTPUT="selenium xvfb webserver"
+
+    # Suppress deprecation warnings.
+    - SYMFONY_DEPRECATIONS_HELPER="disabled"
 
   matrix:
     # [[[ SELECT ANY OR MORE OPTIONS ]]]
